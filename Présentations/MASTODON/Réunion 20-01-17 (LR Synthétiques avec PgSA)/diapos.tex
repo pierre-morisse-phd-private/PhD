@@ -1,0 +1,481 @@
+\documentclass[t,12pt]{beamer}
+\usepackage[T1]{fontenc} 
+\usepackage[latin1]{inputenc}
+\usepackage[british,frenchb]{babel}
+\usepackage{pslatex}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{patterns}
+\usetikzlibrary{decorations.pathreplacing}
+\usepackage{multirow}
+
+\def\sl{{\par\leavevmode\par}}
+
+\title{Correction hybride : Les reads longs synthétiques}
+\author[Pierre Morisse]{Pierre Morisse}
+%
+
+\setbeamerfont{page number in head/foot}{size=\scriptsize}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}	
+\beamertemplatenavigationsymbolsempty
+	\frame{\titlepage}
+	
+	\section{NaS}
+	
+	\begin{frame}[c]{NaS}
+		Idée : Création de reads longs synthétiques via une approche hybride, en assemblant des reads courts à l'aide d'un LR template \sl
+		
+		\begin{enumerate}
+			\item Alignement des SR sur le LR, afin de trouver des seeds \sl
+			\begin{center}
+				\resizebox{0.45\textwidth}{!}{
+					\begin{tikzpicture}
+						%TEMPLATE
+						\draw [blue] [|-|] (-6,1) -- (6,1);
+						\node [right] at (6.5,1) {\textcolor{blue}{\emph{LR}}};
+						%SEEDS
+						\draw [|-|] (-5,0) -- (-4,0);
+						\draw [|-|] (0,0) -- (1,0);
+						\draw [|-|] (3.5,0) -- (4.5,0);
+						\node [right] at (6.25,0) {\emph{seeds}};
+					\end{tikzpicture}
+				}
+			\end{center}						
+			
+			
+			\item Recrutement de nouveaux SR, similaires aux seeds, en alignant les SR entre eux
+			\begin{center}
+				\resizebox{0.5\textwidth}{!}{
+					\begin{tikzpicture}[>=triangle 45]
+						%SEEDS
+						\draw [|-|] (-5,-0.5) -- (-3.5,-0.5);
+						\draw [|-|] (0,-0.5) -- (1.5,-0.5);
+						\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+						\node at (0.25,-4) {\LARGE \emph{seeds}};
+						\draw (0,-0.5) ellipse (6cm and 2cm);
+						%RECRUES
+						\draw [red] [|-|] (8,0) -- (9.5,0);
+						\draw [red] [|-|] (9,-2) -- (10.5,-2);
+						\draw [red] [|-|] (10,-1) -- (11.5,-1);
+						\draw [red] [|-|] (10,1) -- (11.5,1);
+						\draw [red] [|-|] (11,0) -- (12.5,0);
+						\draw [red] [|-|] (12.5,-2) -- (14,-2);
+						\draw [red] [|-|] (13,1) -- (14.5,1);
+						\draw [red] [|-|] (14,-1) -- (15.5,-1);
+						\draw [red] [|-|] (15,0) -- (16.5,0);
+						\draw [red] [|-|] (16,-2) -- (17.5,-2);
+						\draw [red] [|-|] (16.5,1) -- (18,1);
+						\draw [red] [|-|] (11.5,2) -- (13,2);
+						\draw [red] [|-|] (17,-1) -- (18.5,-1);
+						\node at (13.75,-4) {\textcolor{red}{\LARGE \emph{reads} recrutés}};
+						\draw (13.4,-0.5) ellipse (6cm and 3cm);
+						% FLECHE ENTRE LES 2 ENSEMBLES
+						\draw [thick] [<->] (6,-0.5) -- (7.425,-0.5);
+					\end{tikzpicture}
+				}
+			\end{center}
+			
+			
+			\item Assemblage de l'ensemble de SR obtenu, et obtention d'un contig
+		\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}[c]{NaS}
+		En général un unique contig est produit, mais de mauvais SR peuvent être recrutés
+		et produire des contigs erronés
+			\begin{center}
+			\resizebox{0.5\textwidth}{!}{
+				\begin{tikzpicture}
+					\draw [blue] [|-|] (-10,0) -- (-5,0);
+					\node [below] at (-7.5,0) {\huge contig 1};
+					\draw [green] [|-|] (-4,0) -- (0,0);
+					\node [below] at (-2,0) {\huge contig 2};
+					\draw [red] [|-|] (1,0) -- (4,0);
+					\node [below] at (2.5,0) {\huge contig 3};
+					\draw [red] [|-|] (7,0) -- (10,0);
+					\node [below] at (8.5,0) {\huge contig 4};
+					\draw [green] [|-|] (11,0) -- (15,0);
+					\node [below] at (13,0) {\huge contig 2};
+					\draw [blue] [|-|] (16,0) -- (23,0);
+					\node [below] at (19.5,0) {\huge contig 5};
+				\end{tikzpicture}
+			}
+			\end{center}
+			
+			\begin{enumerate}
+				\item Construction du graphe des contigs
+				\begin{center}
+				\resizebox{0.5\textwidth}{!}{
+					\begin{tikzpicture}[>=triangle 45]
+						% Contigs
+						\draw [blue] [|-|] (-10,2) -- (-5,2);
+						\node [below] at (-7.5,2) {\huge contig 1};
+						\node [above] at (-7.5,2) {\huge 1};
+						\draw [red] [|-|] (11,2) -- (14,2);
+						\node [below] at (12.5,2) {\huge contig 3};
+						\node [above] at (12.5,2) {\huge 0};
+						\draw [green] [|-|] (1,0) -- (5,0);
+						\node [below] at (3,0) {\huge contig 2};
+						\node [above] at (3,0) {\huge 1};
+						\draw [red] [|-|] (-8,-2) -- (-5,-2);
+						\node [below] at (-6.5,-2) {\huge contig 4};
+						\node [above] at (-6.5,-2) {\huge 0};
+						\draw [blue] [|-|] (11,-2) -- (18,-2);
+						\node [below] at (14.5,-2) {\huge contig 5};
+						\node [above] at (14.5,-2) {\huge 2};
+					
+						% Transitions
+						\draw [->] (-4.5,2) -- (0.5,0.25);
+						\draw [->] (-4.5,-2) -- (0.5,-0.25);
+						\draw [->] (5.5,0.25) -- (10.5,2);
+						\draw [->] (5.5,-0.25) -- (10.5,-2);
+					\end{tikzpicture}
+				}
+				\end{center}
+				
+				\item Sélection du chemin optimal
+				\begin{center}
+					\resizebox{0.5\textwidth}{!}{
+						% Graphe
+						\begin{tikzpicture}[>=triangle 45]
+							% Contigs
+							\draw [blue] [|-|] (-10,2) -- (-5,2);
+							\node [below] at (-7.5,2) {\huge contig 1};
+							\node [above] at (-7.5,2) {\huge 1};
+							\draw [red, opacity=0.3] [|-|] (11,2) -- (14,2);
+							\node [below, opacity=0.3] at (12.5,2) {\huge contig 3};
+							\node [above, opacity=0.3] at (12.5,2) {\huge 0};
+							\draw [green] [|-|] (1,0) -- (5,0);
+							\node [below] at (3,0) {\huge contig 2};
+							\node [above] at (3,0) {\huge 1};
+							\draw [red, opacity=0.3] [|-|] (-8,-2) -- (-5,-2);
+							\node [below, opacity=0.3] at (-6.5,-2) {\huge contig 4};
+							\node [above, opacity=0.3] at (-6.5,-2) {\huge 0};
+							\draw [blue] [|-|] (11,-2) -- (18,-2);
+							\node [below] at (14.5,-2) {\huge contig 5};
+							\node [above] at (14.5,-2) {\huge 2};
+					
+							% Transitions
+							\draw [->] (-4.5,2) -- (0.5,0.25);
+							\draw [->, opacity=0.3] (-4.5,-2) -- (0.5,-0.25);
+							\draw [->, opacity=0.3] (5.5,0.25) -- (10.5,2);
+							\draw [->] (5.5,-0.25) -- (10.5,-2);
+						\end{tikzpicture}
+					}
+				\end{center}
+				
+				\item Vérification du contig obtenu, par alignement des SR
+			\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}[c]{Notre méthode}
+		Idée : Comme NaS, créer des LR synthétiques à partir d'un assemblage de SR et d'un LR template, mais en s'affranchissant 
+		de l'étape d'alignement des SR entre eux, qui est l'étape la plus coûteuse en temps de NaS \sl
+		
+		Méthode divisée en 5 étapes \sl
+	\end{frame}
+	
+	\begin{frame}[c]{Notre méthode}		
+		\begin{enumerate}
+			\item Correction des SR (avec Quorum) \sl		
+		
+			\item Alignement des SR sur le LR, afin de trouver des seeds (avec BLAT)  \sl
+			
+			\item Fusion des seeds se chevauchant sur une longueur assez importante \sl
+			
+			\item Relier les seeds en les étendant à l'aide de chevauchements parfaits avec les k-mers des SR \sl
+			
+			\item Extension du LR sythétique obtenu, à gauche (resp. à droite) du seed le plus à gauche (resp. à droite)
+		\end{enumerate}				
+	\end{frame}
+	
+	\begin{frame}[c]{Outil utilisé}
+		PgSA (Pseudogenome Suffix Array) permet d'indexer un ensemble de reads, et de répondre aux 7 requêtes suivantes,
+		pour une chaîne $f$ donnée :
+		
+		\begin{enumerate}
+			\item Dans quels \emph{reads} $f$ apparaît ?
+			\item Dans combien de \emph{reads} $f$ apparaît ?
+			\item Quelles sont les occurrences de $f$ ?
+			\item Quel est le nombre d'occurrences de $f$ ?
+			\item Dans quels \emph{reads} $f$ n'apparaît qu'une fois ?
+			\item Dans combien de \emph{reads} $f$ n'apparaît qu'une fois ?
+			\item Quelles sont les occurrences de $f$ dans les \emph{reads} où $f$ n'apparaît qu'une fois ?
+		\end{enumerate}
+		
+		Parmi ces requêtes, la 3ème va nous permettre de trouver des chevauchements parfaits entre les k-merrs
+	\end{frame}
+	
+	\begin{frame}[c]{Outil utilisé}
+		D'autres structures (Gk-Arrays, Compressed Gk-Arrays) permettent le traitement des ces requêtes, mais la longueur $k$ de $f$ doit être
+		fixée à la compilation, alors que PgSA permet de traiter les requêtes pour des valeurs de $k$ variables. \sl
+		
+		=> Permet de chercher des chevauchements de longueur k-2 si aucun chevauchement de longueur k-1 n'a été trouvé, sans avoir besoin de recalculer
+		l'index
+	\end{frame}		
+	
+	\begin{frame}[c]{Étape 4}
+		Indexation de l'ensemble des k-mers des SR avec PgSA, et boucle sur la requête 3 afin de trouver des chevauchements parfaits de k-mers
+		permettant de lier les seeds entre eux \sl
+		\begin{itemize}
+			\item[]
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [blue] [|-] (-6,1) -- (5.5,1);
+					\node at (6,1) {\textcolor{blue}{.  .  .  .}};
+					\draw [blue] [-|] (6.5,1) -- (7.5,1);
+					\node [right] at (8,1) {\textcolor{blue}{\emph{LR}}};
+					%SEEDS
+					\draw [fill=black] (-5.5,0.05) rectangle (-3.5,-0.05);
+					\draw [fill=red] (-3.5,0.05) rectangle (-2.5,-0.05);
+					\draw [fill=black] (2,0.05) rectangle (5,-0.05);
+					%K-MERS
+					\draw [fill=green] (-3.25,-0.1) rectangle (-2.25,-0.2);
+				\end{tikzpicture}
+			}
+			\end{center} \sl
+			
+			\item[]
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [blue] [|-] (-6,1) -- (5.5,1);
+					\node at (6,1) {\textcolor{blue}{.  .  .  .}};
+					\draw [blue] [-|] (6.5,1) -- (7.5,1);
+					\node [right] at (8,1) {\textcolor{blue}{\emph{LR}}};
+					%SEEDS
+					\draw [fill=black] (-5.5,0.05) rectangle (-3.25,-0.05);
+					\draw [fill=green] (-3.25,0.05) rectangle (-2.25,-0.05);
+					\draw [fill=black] (2,0.05) rectangle (5,-0.05);
+					%K-MERS
+					\draw [fill=orange] (-3,-0.1) rectangle (-2,-0.2);
+				\end{tikzpicture}
+			}
+			\end{center} \sl
+			
+			\item[]
+			\begin{center}
+				\indent \vdots
+			\end{center} \sl
+			
+			\item[]
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [blue] [|-] (-6,1) -- (5.5,1);
+					\node at (6,1) {\textcolor{blue}{.  .  .  .}};
+					\draw [blue] [-|] (6.5,1) -- (7.5,1);
+					\node [right] at (8,1) {\textcolor{blue}{\emph{LR}}};
+					%SEEDS
+					\draw [fill=black] (-5.5,0.1) rectangle (1.75,0.2);
+					\draw [fill=yellow] (1.75,0.1) rectangle (2.75,0.2);
+					\draw [fill=black] (3,0.05) rectangle (5,-0.05);
+					%K-MERS
+					\draw [fill=pink] (2,0.05) rectangle (3,-0.05);
+				\end{tikzpicture}
+			}
+			\end{center} \sl
+		\end{itemize}
+		
+		Remarque : Il est possible qu'un k-mer chevauche parfaitement plusieurs k-mers $\Rightarrow$ Exploration de toutes les
+		extensions possibles avec du backtracking
+	\end{frame}
+	
+	\begin{frame}[c]{Étape 5}
+		Le seed le plus à gauche ne s'aligne pas toujours en position 0 sur le LR, et de même, le seed le plus à droite n'atteint pas toujours l'extrémité
+		droite du LR. \sl
+		
+		=> Une fois tous les seeds reliés et le LR synthétique produit, on étend, à l'aide de chevauchements parfaits de k-mers, son extrémité gauche et son
+		extrémité droite, jusqu'à atteindre les extrémités du LR initial, ou une ambiguïté (extension possible à l'aide de plus d'un k-mer)
+	\end{frame}
+	
+	\begin{frame}[c]{Étape 5, Cas 1 : Pas d'ambiguïté}
+		\begin{itemize}
+			\item[]
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [fill=blue] [-] (-12,1.05) rectangle (9,0.95);
+					\node [right] at (9,1) {\textcolor{blue}{\emph{LR}}};
+					%LR CORRIGÉ
+					\draw [fill=black] [-] (-9,-0.95) rectangle (5,-1.05);
+					\draw [fill=red] [-] (5,-0.95) rectangle (6,-1.05);
+					\node [right] at (0,-2) {LR synthétique};
+					%EXT GAUCHE
+					\draw [fill=green] (5.25,-1.15) rectangle (6.25,-1.25);
+				\end{tikzpicture}
+			} 
+			\end{center} \sl
+			
+			\item[]
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [fill=blue] [-] (-12,1.05) rectangle (9,0.95);
+					\node [right] at (9,1) {\textcolor{blue}{\emph{LR}}};
+					%LR CORRIGÉ
+					\draw [fill=black] [-] (-9,-0.95) rectangle (5.25,-1.05);
+					\draw [fill=green] [-] (5.25,-0.95) rectangle (6.25,-1.05);
+					\node [right] at (0,-2) {LR synthétique};
+					%EXT GAUCHE
+					\draw [fill=orange] (5.5,-1.15) rectangle (6.50,-1.25);
+				\end{tikzpicture}
+			} 
+			\end{center} \sl
+			
+			\item[]
+			\begin{center}
+				\indent \vdots
+			\end{center} \sl
+			
+			\item[]
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [fill=blue] [-] (-12,1.05) rectangle (9,0.95);
+					\node [right] at (9,1) {\textcolor{blue}{\emph{LR}}};
+					%LR CORRIGÉ
+					\draw [fill=black] [-] (-9,-0.95) rectangle (7.75,-1.05);
+					\draw [fill=yellow] [-] (7.75,-0.95) rectangle (8.75,-1.05);
+					\node [right] at (0,-2) {LR synthétique};
+					%EXT GAUCHE
+					\draw [fill=pink] (8,-1.15) rectangle (9,-1.25);
+					%TRAIT GAUCHE
+					\draw [green, -] (9,1.05) -- (9,-1.25);
+				\end{tikzpicture}
+			} 
+			\end{center}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Étape 5, Cas 2 : Présence d'une ambiguïté}
+		\begin{itemize}
+			\item[]
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [fill=blue] [-] (-12,1.05) rectangle (9,0.95);
+					\node [right] at (9,1) {\textcolor{blue}{\emph{LR}}};
+					%LR CORRIGÉ
+					\draw [fill=black] [-] (-8,-0.95) rectangle (6,-1.05);
+					\draw [fill=red] [-] (-9,-0.95) rectangle (-8,-1.05);
+					\node [right] at (0,-2) {LR synthétique};
+					%EXT GAUCHE
+					\draw [fill=green] (-9.25,-1.15) rectangle (-8.25,-1.25);
+				\end{tikzpicture}
+			} 
+			\end{center} \sl
+			
+			\item[]
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [fill=blue] [-] (-12,1.05) rectangle (9,0.95);
+					\node [right] at (9,1) {\textcolor{blue}{\emph{LR}}};
+					%LR CORRIGÉ
+					\draw [fill=black] [-] (-8.25,-0.95) rectangle (6,-1.05);
+					\draw [fill=green] [-] (-9.25,-0.95) rectangle (-8.25,-1.05);
+					\node [right] at (0,-2) {LR synthétique};
+					%EXT GAUCHE
+					\draw [fill=orange] (-9.50,-1.15) rectangle (-8.50,-1.25);
+				\end{tikzpicture}
+			} 
+			\end{center} \sl
+			
+			\item[]
+			\begin{center}
+				\indent \vdots
+			\end{center} \sl
+			
+			\item[]
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [fill=blue] [-] (-12,1.05) rectangle (9,0.95);
+					\node [right] at (9,1) {\textcolor{blue}{\emph{LR}}};
+					%LR CORRIGÉ
+					\draw [fill=black] [-] (-9.5,-0.95) rectangle (6,-1.05);
+					\draw[fill=yellow] [-] (-10.5,-0.95) rectangle (-9.5,-1.05);
+					\node [right] at (0,-2) {LR synthétique};
+					%EXT GAUCHE
+					\draw [fill=blue] (-10.75,-1.15) rectangle (-9.75,-1.25);
+					\draw [fill=pink] (-10.75,-0.85) rectangle (-9.75,-0.75);
+				\end{tikzpicture}
+			} 
+			\end{center}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Remarques}
+		\begin{itemize}
+			\item Lors de l'étape 4, certains seeds peuvent être impossibles à relier $\Rightarrow$ Production d'un LR synthétique
+			fragmenté en plusieurs parties \sl
+			
+			\item Lorsqu'un LR ne possède qu'un seed, on se contente alors d'étenre celui-ci au maximum à gauche et à droite,
+				  jusqu'à atteindre les extrémités du LR ou une ambiguïté
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Résultats et comparaison avec NaS}		
+	
+			Sur un jeu de LR 1D de ADP1 : \sl
+			
+			\resizebox{1\textwidth}{!}{
+			\begin{tabular}{|c|c|c|c|c|c|}
+				\hline
+				& \textbf{Nombre de reads} & \textbf{Longueur moyenne} & \textbf{Taille totale} & \textbf{Identité moyenne} &s \textbf{Temps} \\
+				\hline
+				\textbf{LR bruts} & 10 567 & 1 873 & 19 788 858 & 3,68 \% & N.A. \\
+				\hline
+				\textbf{NaS} & 784 & 3 764 & 2 951 256 & 99,76 \% & 11h20 \\
+				\hline
+				\textbf{Nous} & 786 LR (dont 59 fragmentés) & 9 871 & 8 420 218 & 99,59 \% & 21 min \\
+				\hline
+			\end{tabular}
+			} \sl \sl \sl
+		
+			Sur un jeu de LR 2D de ADP1 : \sl
+			\resizebox{1\textwidth}{!}{
+			\begin{tabular}{|c|c|c|c|c|c|}
+				\hline
+				& \textbf{Nombre de reads} & \textbf{Longueur moyenne} & \textbf{Taille totale} & \textbf{Identité moyenne} & \textbf{Temps} \\
+				\hline
+				\textbf{LR bruts} & 602 & 5 197 & 3 128 834 & 8,83 \% & N.A. \\
+				\hline
+				\textbf{NaS} & 445 & 5 798 & 2 580 256 & 99,83 \% & 5h49 \\
+				\hline
+				\textbf{Nous} & 443 (dont 22 fragmentés) & 5 627 & 2 633 407 & 99,91 \% & 8 min \\
+				\hline
+			\end{tabular}
+			}
+		
+	\end{frame}
+	
+	\begin{frame}[c]{À faire}
+		\begin{itemize}
+			\item Tester sur d'autres jeux de données \sl
+		
+			\item Trouver une solution pour éviter les LR synthétiques fragmentés (tuning des paramètres de BLAT ?) \sl		
+		
+			\item Utiliser un autre aligneur pour mimer les modes fast et sensitive de NaS \sl
+		
+			\item Paralléliser la correction
+		\end{itemize}
+	\end{frame}
+	
+	
+\end{document}

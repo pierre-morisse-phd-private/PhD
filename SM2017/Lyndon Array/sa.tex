@@ -1,0 +1,250 @@
+\documentclass{article}
+
+\usepackage{ALgo}
+
+\def\iit#1{\mbox{\it #1\/}}
+\def\card{\iit{card}}
+\def\ew{\varepsilon}
+\def\sa#1{\mbox{\tt #1}}
+
+\def\iter{{\mathit iter}}
+\def\Prev{{\mathit Prev}}
+\def\rank{{\mathit rank}}
+\def\Elt{{\mathit Elt}}
+\def\groupj{{\mathit groupj}}
+\def\length{{\mathit length}}
+\def\lastgroup{{\mathit lastgroup}}
+\def\firstgroup{{\mathit firstgroup}}
+\def\nextgroup{{\mathit nextgroup}}
+\def\newgroup{{\mathit newgroup}}
+\def\SA{{\mathit SA}}
+
+\begin{document}
+
+%----------------------------------------------------------------------
+% TITLE
+%----------------------------------------------------------------------
+\title{Linear computation of the Lyndon array and the suffix array
+}
+
+\author{
+Richard Groult
+\and
+Nicolas Guiomard-Kagan
+\and
+Thierry Lecroq
+\and
+Arnaud Lefebvre
+\and
+Pierre Morisse
+\and
+\'Elise Prieur-Gaston
+\and
+Tatiana Rocher
+\and
+Mikaël Salson
+}
+
+\date{}
+
+\maketitle
+
+%----------------------------------------------------------------------
+% ABSTRACT
+%----------------------------------------------------------------------
+\begin{abstract}
+\end{abstract}
+
+%----------------------------------------------------------------------
+% KEYWORDS
+%----------------------------------------------------------------------
+%\begin{keywords}
+%String algorithms.
+%\end{keywords}
+
+%----------------------------------------------------------------------
+% SECTION
+%----------------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+
+%----------------------------------------------------------------------
+% SECTION
+%----------------------------------------------------------------------
+\section{Background and basic string definitions}
+\label{sec:background}
+
+A {\em string} is a sequence of zero or more symbols from an
+ alphabet $\Sigma$; the string with zero symbols is denoted by
+ $\varepsilon$.
+The set of all strings over the alphabet $\Sigma$ is
+ denoted by $\Sigma^*$.
+We consider an alphabet of size $s$;
+ for $1 \leq i \leq s$, $\sigma[i]$ denotes the $i$-th symbol of
+ $\Sigma$.
+A string $x$ of length $n$ is represented
+ by $x[1..n]$, where $x[i]\in\Sigma$ for $1\le i\le n$.
+A string $u$ is a {\em prefix} of $x$ if $x=uw$ for $w\in\Sigma^*$.
+Similarly, $u$ is a {\em suffix} of $x$ if $x=wu$ for
+ $w\in\Sigma^*$.
+A string $u$ is a {\em border} of $x$ if $u$ is a prefix and a
+ suffix of $x$ and $u \neq x$.
+
+%----------------------------------------------------------------------
+% SECTION
+%----------------------------------------------------------------------
+\section{Baier's algorithm}
+\label{sec:baier}
+
+%----------------------------------------------------------------------
+% SECTION
+%----------------------------------------------------------------------
+\section{Our algorithm}
+\label{sec:algo}
+
+\begin{algo}{Phase1}{\lastgroup,P}
+  \SET{\iter}{1}
+  \SET{\Prev[0]}{-1}
+  \DOFOR{G=\lastgroup; G \ne \emptyset; G = G.next}
+    \SET{\rank}{G.rank}
+    \DOFOR{\Elt=G.head; \Elt \ne \emptyset; \Elt = \Elt.next}
+      \SET{i}{\Elt.pos}
+      \SET{j}{i-1}
+      \DOWHILE{j \ne -1 \mbox{ and } P[j].group.rank \le \rank}
+        \SET{j}{\Prev[j]}
+      \OD
+      \SET{\Prev[i]}{j}
+      \IF{j = -1}
+        \SET{\groupj}{P[j].group}
+        \SET{\length}{\groupj.length+G.length}
+        \SET{\nextgroup}{\groupj.next}
+        \IF{\nextgroup.iter = iter \mbox{ and } \nextgroup.length = length}
+          \CALL{Move}{P[j],\groupj,\nextgroup}
+        \ELSEIF{\groupj.size = 1}
+          \SET{\groupj.length}{\length}
+        \ELSE
+          \SET{\newgroup}{\CALL{NewGroupBefore}{\nextgroup,\iter,\length}}
+          \CALL{MoveDown}{P[j],\groupj,\newgroup}
+        \FI
+      \FI
+    \OD
+    \INC{\iter}
+  \OD
+\end{algo}
+
+
+\begin{algo}{Phase2}{\firstgroup,P,n}
+  \IF{P[n].group.size > 1}
+    \SET{\newgroup}{\CALL{NewGroupBefore}{P[n].group}}
+    \CALL{MoveUp}{P[n],P[n].group,\newgroup}
+    \SET{\SA[\newgroup.rank]}{n}
+  \FI
+  \DOFOR{G=\firstgroup; G \ne \emptyset; G = G.next}
+    \DOFOR{\Elt=G.head; \Elt \ne \emptyset; \Elt = \Elt.next}
+      \SET{i}{\Elt.pos}
+      \IF{P[i].group.size = 1}
+        \SET{\SA[P[i].group.rank]}{i}
+      \FI
+      \SET{j}{i-1}
+      \IF{P[j].group.size > 1}
+        \SET{\newgroup}{\CALL{NewGroupBefore}{P[j].group}}
+        \CALL{MoveUp}{P[j],P[j].group,\newgroup}
+        \SET{\SA[\newgroup.rank]}{j}
+      \FI
+    \OD
+  \OD
+  \RETURN{\SA}
+\end{algo}
+
+Example
+
+\begin{verbatim}
+0 1 2 3 4 5 6 7 8 9 10
+m i s s i s s i p p i
+
+iter = 0, rank = 0, size = 4, length = 1, list = (1,4,7,10), context = i
+iter = 0, rank = 4, size = 1, length = 1, list = (0), context = m
+iter = 0, rank = 5, size = 2, length = 1, list = (8,9), context = p
+iter = 0, rank = 7, size = 4, length = 1, list = (2,3,5,6), context = s
+
+Prev[2] = 1
+
+iter = 0, rank = 0, size = 3, length = 1, list = (4,7,10), context = i
+iter = 1, rank = 3, size = 1, length = 2, list = (1), context = is
+iter = 0, rank = 4, size = 1, length = 1, list = (0), context = m
+iter = 0, rank = 5, size = 2, length = 1, list = (8,9), context = p
+iter = 0, rank = 7, size = 4, length = 1, list = (2,3,5,6), context = s
+
+Prev[3] = Prev[2] = 1
+
+iter = 0, rank = 0, size = 3, length = 1, list = (4,7,10), context = i
+iter = 1, rank = 3, size = 1, length = 3, list = (1), context = iss
+iter = 0, rank = 4, size = 1, length = 1, list = (0), context = m
+iter = 0, rank = 5, size = 2, length = 1, list = (8,9), context = p
+iter = 0, rank = 7, size = 4, length = 1, list = (2,3,5,6), context = s
+
+Prev[5] = 4
+
+iter = 0, rank = 0, size = 2, length = 1, list = (7,10), context = i
+iter = 1, rank = 2, size = 1, length = 2, list = (4), context = is
+iter = 1, rank = 3, size = 1, length = 3, list = (1), context = iss
+iter = 0, rank = 4, size = 1, length = 1, list = (0), context = m
+iter = 0, rank = 5, size = 2, length = 1, list = (8,9), context = p
+iter = 0, rank = 7, size = 4, length = 1, list = (2,3,5,6), context = s
+
+Prev[6] = Prev[5] = 4
+
+iter = 0, rank = 0, size = 2, length = 1, list = (7,10), context = i
+iter = 1, rank = 3, size = 2, length = 3, list = (1,4), context = iss
+iter = 0, rank = 4, size = 1, length = 1, list = (0), context = m
+iter = 0, rank = 5, size = 2, length = 1, list = (8,9), context = p
+iter = 0, rank = 7, size = 4, length = 1, list = (2,3,5,6), context = s
+
+Prev[8] = 7
+
+iter = 0, rank = 0, size = 1, length = 1, list = (10), context = i
+iter = 2, rank = 1, size = 1, length = 2, list = (7), context = ip
+iter = 1, rank = 3, size = 2, length = 3, list = (1,4), context = iss
+iter = 0, rank = 4, size = 1, length = 1, list = (0), context = m
+iter = 0, rank = 5, size = 2, length = 1, list = (8,9), context = p
+iter = 0, rank = 7, size = 4, length = 1, list = (2,3,5,6), context = s
+
+Prev[9] = Prev[8] = 7
+
+iter = 0, rank = 0, size = 1, length = 1, list = (10), context = i
+iter = 2, rank = 1, size = 1, length = 3, list = (7), context = ipp
+iter = 1, rank = 3, size = 2, length = 3, list = (1,4), context = iss
+iter = 0, rank = 4, size = 1, length = 1, list = (0), context = m
+iter = 0, rank = 5, size = 2, length = 1, list = (8,9), context = p
+iter = 0, rank = 7, size = 4, length = 1, list = (2,3,5,6), context = s
+
+Prev[0] = -1
+
+Prev[1] = Prev[0] = -1
+
+Prev[4] = Prev[3] = Prev[1] = -1
+
+Prev[7] = Prev[6] = Prev[4] = -1
+
+Prev[10] = Prev[9] = Prev[7] = -1
+\end{verbatim}
+
+%----------------------------------------------------------------------
+% SECTION
+%----------------------------------------------------------------------
+\section{Correctness}
+\label{sec:correc}
+
+%----------------------------------------------------------------------
+% SECTION
+%----------------------------------------------------------------------
+\section{Experiments}
+\label{sec:expe}
+
+%----------------------------------------------------------------------
+% SECTION
+%----------------------------------------------------------------------
+\section{Conclusion}
+\label{sec:conclu}
+
+\end{document}

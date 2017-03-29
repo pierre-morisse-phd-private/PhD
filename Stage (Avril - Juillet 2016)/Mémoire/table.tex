@@ -1,0 +1,33 @@
+%\begin{longtable}[H]
+	%\resizebox{\textwidth}{!}{
+		\begin{longtable}{|c|c|c|c|c|c|c|c|c|c|}
+			\hline
+			Technologie & Technique de séquençage & Plateforme & Nombre de \emph{reads} & Longueur & Précision &
+			Temps & Débit & Coût & Erreurs \\
+			\hline
+			\multirow{2}{*}{Illumina} & \multirow{2}{*}{Synthèse, basé sur ADN polymérases} & HiSeq 2500/1500 & 
+			3 milliards & 36 - 100 & 99 & 2 - 11 jours & 600 & 740 000 & \multirow{2}{*}{Subs.} \\
+			& & MiSeq & 17 millions &	25 - 250 & >99 & 4 - 27 heures & 8,5 & 125 000 & \\
+			\hline
+			\multirow{2}{*}{Roche} & \multirow{2}{*}{Pyroséquençage} & 454 GS FLX+ & 1 million & 700 & 
+			99,997 & 23 heures & 0,7 & 450 000 & \multirow{2}{*}{Indels.} \\
+			& & 454 GS Junior & 1 million & 400 & >99 & 10 heures & 0,4 & 108 000 & \\
+			\hline
+			\multirow{2}{*}{ABI Life Technologies} & Ligature & 5500xl SOLiD & 2,8 millions & 75 & 99,99 & 
+			7 jours & 180 & 595 000 & \multirow{2}{*}{Indels.} \\
+			& Détection de protons & Ion Proton Chip I/II & 60 - 80 millions & jusqu'à 200 & >99 & 
+			2 heures & 10 - 100 & 243 000 & \\
+			\hline
+			Pacific Bioscience & Simple molécule en temps réel & PacBio RS & 50 000 & 3 000 en moyenne &
+			85 & 2 heures & 13 & 750 000 & Indels. \\
+			\hline
+			\multirow{2}{*}{Oxford Nanopore} & \multirow{2}{*}{Exonucléase par Nanopore} & GridION & 
+			4 - 10 millions & > 10 000 & 96 & variable & quelques dizaines & variable & \multirow{2}{*}{Indels.} \\
+			& & MinION & 70 000 & > 10 000 & 70 & 48 heures & 0,132 & 1 000 & \\
+			\hline
+		\end{longtable}
+	%}
+	%%\caption{Récapitulatif des différentes technologies de séquençage. La précision est donnée en \%, le débit en Gb (Gigabases) par \emph{run}, 
+	%%et le coût en \$.}
+	%%\label{tablengs}
+%\end{table}

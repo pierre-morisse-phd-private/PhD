@@ -1,0 +1,703 @@
+\documentclass[portrait,a0b,final]{a0poster}
+
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage[usenames]{xcolor}
+\usepackage{multicol}
+\usepackage{pstricks,pst-grad}
+\usepackage{amsmath,amssymb}
+\usepackage{amscd}
+\usepackage{color}
+\usepackage{multirow}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{tikz}
+\usetikzlibrary{arrows} 
+\usepackage{widetext}
+\usepackage{background}
+\thispagestyle{empty}
+
+
+\newrgbcolor{LightBlue}{0.68 0.85 0.9}
+\newrgbcolor{lblue}{0.8 0.92 0.95}
+
+
+% Largeur de la séparation entre les colonnes
+\setlength{\columnsep}{3cm}
+\setlength{\parindent}{0.0cm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%               Background                     %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\background}[3]{
+  \newrgbcolor{cgradbegin}{#1}
+  \newrgbcolor{cgradend}{#2}
+  \psframe[fillstyle=gradient,gradend=cgradend,
+  gradbegin=cgradbegin,gradmidpoint=#3](0.,0.)(1.\textwidth,-1.\textheight)
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                Poster                        %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{poster}{
+  \begin{center}
+  \begin{minipage}[c]{0.90\textwidth}
+}{
+  \end{minipage}
+  \end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                pbox                          %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newrgbcolor{lcolor}{0. 0. 0.80}
+\newrgbcolor{gcolor1}{1. 1. 1.}
+\newrgbcolor{gcolor2}{.80 .80 1.}
+
+\newcommand{\pbox}[4]{
+\psshadowbox[#3]{
+\begin{minipage}[t][#2][t]{#1}
+#4
+\end{minipage}
+}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                myfig                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \myfig - replacement for \figure
+% necessary, since in multicol-environment
+% \figure won't work
+\newcommand{\myfig}[1]{
+	\begin{center}
+		\vspace{2cm}
+		#1
+	\end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                figcaption                    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \figcaption - replacement for \caption
+% necessary, since in multicol-environment \figure and
+% therefore \caption won't work
+
+\setcounter{figure}{1}
+\newcommand{\figcaption}[1]{
+  \vspace{0.5cm}
+  \begin{quote}
+    {{\sc Figure} \arabic{figure}: #1}
+  \end{quote}
+  \vspace{2cm}
+  \stepcounter{figure}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                mytab                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \mytab - replacement for \table
+% necessary, since in multicol-environment
+% \table won't work
+\newcommand{\mytab}[1]{
+\begin{center}
+  \vspace{2cm}
+	#1
+  \nobreak\medskip
+\end{center}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                tabcaption                    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \tabcaption - replacement for \caption
+% necessary, since in multicol-environment \table and
+% therefore \caption won't work
+
+\setcounter{table}{1}
+\newcommand{\tabcaption}[1]{
+  \vspace{0.5cm}
+  \begin{quote}
+		\begin{center}
+			{{\sc Table} \arabic{table}: #1}
+		\end{center}
+  \end{quote}
+  \stepcounter{table}
+}
+
+
+% Cadres pour les titres (titre principal et titres des sections)
+\newcommand{\titre}[1]{\begin{center}\pbox{0.6\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=blue,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=lblue,gradmidpoint=1.0,framesep=1em}{\begin{center}\LARGE #1\end{center}}\end{center}\vspace{1.5cm}}
+
+\newcommand{\titresec}[1]{\begin{center}\pbox{0.6\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=lblue,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=LightBlue,gradmidpoint=1.0,framesep=1em}{\begin{center}\LARGE #1\end{center}}\end{center}\vspace{1.5cm}}
+
+% Gestion des traits séparant les colonnes.
+% Impossible d'utiliser \columnseprule à cause du bloc s'étendant sur deux colonnes.
+\SetBgScale{1}
+\SetBgAngle{0}
+\SetBgColor{black}
+\SetBgPosition{0,0}
+\SetBgAnchor{below}
+\SetBgContents{
+	\begin{pspicture}(180,180)
+		\psline[linewidth=1mm](120,0)(120,163.5)
+		\psline[linewidth=1mm](147,0)(147,146.5)
+	\end{pspicture}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% 											Début du document												 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{poster}
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% 	 En-tête		%%%
+%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+	\titre{\textbf{\huge Méthodes de \emph{mapping} de \emph{reads} avec indexation des \emph{reads}}}
+
+	\vspace*{1cm}
+
+	\textsl{\LARGE Pierre Morisse, Thierry Lecroq, Arnaud Lefebvre}
+
+	\vspace*{1cm}
+
+	\begin{minipage}[b]{0.3\textwidth}
+		\large
+		\center
+		LITIS \\
+		Université de Rouen \\
+		76000 Rouen, France \\
+	\end{minipage}
+\end{center}
+
+\vspace*{3cm}
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% 	 Contenu		%%%
+%%%%%%%%%%%%%%%%%%%%%
+% 3 colonnes par page
+\begin{multicols}{3}
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% 	Colonne 1		%%%
+%%%%%%%%%%%%%%%%%%%%%
+\titresec{Introduction}
+
+Depuis le milieu des années 2000 et le développement des séquenceurs à très haut débit (\emph{Next Generation Sequencing}), la biologie doit faire face au traitement d'énormes quantités de données, formées par des millions de très courtes séquences appelées \emph{reads}. Dans un papier relativement récent, Philippe et al. ont souligné l'importance de l'indexation de ces \emph{reads} afin de résoudre des problèmes de correction ou de $mapping$, et ont développé un index supportant les 7 requêtes suivantes, pour une séquence $f$ de longueur $k$ donnée : \bigskip
+
+\begin{itemize}
+	\item Dans quels \emph{reads} $f$ apparaît ?
+	\item Dans combien de \emph{reads} $f$ apparaît ?
+	\item Quelles sont les occurrences de $f$ ?
+	\item Quel est le nombre d'occurrences de $f$ ?
+	\item Dans quels \emph{reads} $f$ n'apparaît qu'une fois ?
+	\item Dans combien de \emph{reads} $f$ n'apparaît qu'une fois ?
+	\item Quelles sont les occurrences de $f$ dans les \emph{reads} où $f$ n'apparaît qu'une fois ? \bigskip
+\end{itemize}
+
+Nous présentons ici l'état de l'art concernant les technologies de séquençage et les problèmes susmentionnés, ainsi que le problème sur lequel nous nous sommes principalement penchés durant le déroulement de ce stage.
+
+\vspace*{2cm}
+
+\titresec{\'Etat de l'art}
+
+Les tableaux présentés ci-dessous résument brièvement l'état de l'art concernant les technologies de séquençage et les outils existants, utilisant une structure d'index sur les \emph{reads}, et permettant de résoudre des problèmes de correction, de $mapping$, ou de traitement des 7 requêtes précédentes.
+
+\mytab{
+	\resizebox{\columnwidth}{!}{ 
+		\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+			\hline
+			Technologie & Technique de séquençage & Plateforme & Nombre de $reads$ & Longueur & Précision &
+			Temps & Débit & Coût & Erreurs \\
+			\hline
+			\multirow{2}{*}{Illumina} & \multirow{2}{*}{Synthèse basé sur polymères} & HiSeq 2500/1500 & 
+			3 milliards & 36 - 100 & 99 & 2 - 11 jours & 600 & 740 000 & \multirow{2}{*}{Substitutions} \\
+			& & MiSeq & 17 millions &	25 - 250 & >99 & 4 - 27 heures & 8,5 & 125 000 & \\
+			\hline
+			\multirow{2}{*}{Roche} & \multirow{2}{*}{Polyséquençage} & 454 GS FLX+ & 1 million & 700 & 
+			99,997 & 23 heures & 0,7 & 450 000 & \multirow{2}{*}{Indels.} \\
+			& & 454 GS Junior & 1 million & 400 & >99 & 10 heures & 0,4 & 108 000 & \\
+			\hline
+			\multirow{2}{*}{ABI Life Technologies} & Ligatures & 5500xl SOLiD & 2,8 millions & 75 & 99,99 & 
+			7 jours & 180 & 595 000 & \multirow{2}{*}{Indels.} \\
+			& Détection de protons & Ion Proton Chip I/II & 60 - 80 millions & jusqu'à 200 & >99 & 
+			2 heures & 10 - 100 & 243 000 & \\
+			\hline
+			Pacific Biosciences & Simple molécule en temps réel & PacBio RS & 50 000 & 3 000 en moyenne &
+			85 & 2 heures & 13 & 750 000 & Indels. \\
+			\hline
+			\multirow{2}{*}{Oxford Nanopore} & \multirow{2}{*}{Exonucléase par Nanopore} & GridION & 
+			4 - 10 millions & dizaines de milliers & 96 & variable & quelques dizaines & variable & \multirow{2}{*}{Indels.} \\
+			& & MinION & 70 000 & dizaines de milliers & 70 & 48 heures & 0,132 & 1 000 & \\
+			\hline
+		\end{tabular}
+	}
+	\tabcaption{Récapitulatif des différentes technologies de séquençage. La précision est donnée en \%, le débit en Gb, et le coût en \$.}
+	\label{tablengs}
+}
+
+\mytab{
+	\resizebox{\columnwidth}{!}{ 
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline
+			Outil & Structure de données & Erreurs corrigées & Nombre de $reads$ (longueur) & Espace mémoire & Temps & $reads$ corrigés \\
+			\hline
+			SHREC & Arbre des suffixes & subs. & 1 090 946 (70) & 1 500 & 183 & 88,56 \\
+			\hline
+			HybridSHREC & Arbre des suffixes & subs. + indels & 977 971 (178) & 15 000 & 28 & 98,39 \\
+			\hline
+			\multirow{2}{*}{HiTEC} & \multirow{2}{*}{Table des suffixes} & \multirow{2}{*}{subs.} & 1 090 946 (70) & 757 & 28 & 
+			\multirow{2}{*}{94,43} \\
+			& & & 4 639 675 (70) & 3 210 & 125 & \\
+			\hline
+			\multirow{2}{*}{Fiona} & \multirow{2}{*}{Table des suffixes partielle} & \multirow{2}{*}{subs. + indels} & 977 971 (178) & 2 000 & 15 & 
+			\multirow{2}{*}{66,76} \\
+			& & & 2 464 690 (142) & 3 000 & 32 & \\
+			\hline
+			Coral & Table de hachage & subs. + indels & 977 971 (178) & 8 000 & 5 & 92,88 \\
+			\hline
+			\multirow{2}{*}{RACER} & \multirow{2}{*}{Table de hachage} & \multirow{2}{*}{subs.} & 2 119 404 (75) & 1 437 & 23 & 76,65 \\
+			& & & 101 548 652 (457 595) & 41 700 & 104 & 42,95 \\
+			\hline
+			BLESS & Filtres de Bloom & subs. + indels & 1 096 140 (101) & 11 & 6 & 84,38 \\
+			\hline
+			\multirow{2}{*}{LoRDEC} & \multirow{2}{*}{Graphe de De Bruijn} & \multirow{2}{*}{subs. + indels} & 33 360 $reads$ longs (2 938) &
+			\multirow{2}{*}{960} & \multirow{2}{*}{10} & \multirow{2}{*}{85,78} \\
+			& & & et 2 313 613 $reads$ courts (100) & & & \\
+			\hline
+		\end{tabular}
+	}
+	\tabcaption{Récapitulatif des différentes méthodes de correction des \emph{reads}. L'espace mémoire est
+	donnée en Mo. Le temps est donné en minutes. Les \emph{reads} corrigés sont donnés en \%, et la valeur
+	indiquée est une moyenne.}
+	\label{tablecor}
+}
+
+\mytab{
+	\resizebox{\columnwidth}{!}{ 
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline
+			Outil & Structure de données & Erreurs prises en compte & Nombre de \emph{reads} (longueur) & Espace mémoire (en Mo) & Temps (en min) & 
+			\emph{reads} mappés (en \%) \\
+			\hline
+			MAQ & Table de hachage & subs. + indels & 1 000 000 (44) & 1 200 & 331 & 92,53 \\
+			\hline
+			MrsFAST & Table de hachage & subs. & 1 000 000 (100) & 20 000 & 169 & 90,70 \\
+			\hline
+			MrsFAST-Ultra & Table de hachage & subs. & 2 000 000 (100) & 2 000 & 57 & 91,41 \\
+			\hline 
+		\end{tabular}
+	}
+	\tabcaption{Récapitulatif des différentes méthodes de \emph{mapping} de \emph{reads}. L'espace mémoire est
+	donnée en Mo. Le temps est donné en minutes. Les \emph{reads} mappés sont donnés en \%, et la valeur
+	indiquée est une moyenne.}
+	\label{tablemap}
+}
+
+\vspace*{1cm}
+
+Peu d'outils sont présentés ici, mais de nombreuses méthodes de $mapping$ de \emph{reads}, n'utilisant pas de structure d'index sur les \emph{reads}, existent et produisent de très bons résultats, aussi bien en espace et en temps, qu'en qualité de $mapping$. \bigskip
+
+\mytab{
+	\resizebox{\columnwidth}{!}{ 
+		\begin{tabular}{|c|c|c|c|c|c|c|c|}
+			\hline
+			Outil & Structure de données & Nombre de \emph{reads} (longueur) & Espace mémoire (en Go) & Temps R1 (en ms) & Temps R2 (en ms) &
+			Temps R3 (en ms) & Temps R4 (en ms) \\
+			\hline
+			\multirow{5}{*}{GkA} & Table des suffixes modifiée & \multirow{5}{*}{42 400 000 (75)} & 
+			\multirow{5}{*}{20} & \multirow{5}{*}{16} & \multirow{5}{*}{25} & \multirow{5}{*}{25} & 
+			\multirow{5}{*}{0,1} \\
+			& + & & & & & & \\
+			& Table des suffixes modifiée inverse & & & & & & \\
+			& + & & & & & & \\
+			& Table associant $k$-mer - nombre d'occurrences & & & & & & \\
+			\hline
+			\multirow{3}{*}{CGkA} & Table de suffixes échantillonnée & \multirow{3}{*}{42 400 000 (75)} &
+			\multirow{3}{*}{3 - 7} & \multirow{3}{*}{1203} & \multirow{3}{*}{28} & \multirow{3}{*}{1278} & 
+			\multirow{3}{*}{28} \\
+			& + & & & & & & \\
+			& 3 vecteurs de bits & & & & & & \\
+			\hline
+			\multirow{3}{*}{PgSA} & Table des suffixes échantillonnée & \multirow{3}{*}{42 400 000 (75)} & 
+			\multirow{3}{*}{1 - 4} & \multirow{3}{*}{70} & \multirow{3}{*}{58} & \multirow{3}{*}{70} & 
+			\multirow{3}{*}{58} \\
+			& + & & & & & & \\
+			& Table auxiliaire d'information sur les \emph{reads} et $k$-mers & & & & & & \\
+			\hline
+		\end{tabular}
+	}
+	\tabcaption{Récapitulatif des différentes méthodes permettant de traiter les 7 requêtes. L'espace
+	mémoire est donné en Go. Le temps est donné en millisecondes. Les requêtes 5-7 sont exclues du
+	comparatif, car non implémentées dans GkA et CGkA lors des tests réalisés dans le papier introduisant
+	PgSA.}
+	\label{tablereq}
+}
+
+
+\newpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% 	Minipage, pour permettre au bloc de s'étendre sur 2 colonnes		%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minipage}{2.15\columnwidth}
+	\titresec{Correction de \emph{reads} longs : Les \emph{reads} NaS (Nanopore \emph{Synthetic-long})}
+
+	Les nouvelles technologies de séquençage permettent de séquencer des \emph{reads} de plus en plus longs, mais ceux-ci disposent d'un important taux d'erreur, avoisinant notamment les 30\% pour les \emph{reads} séquencés par la plateforme MinION. Comme le montrent les tableaux précédents, les méthodes de correction classiques ne sont pas adaptées à de tels \emph{reads}, et sont donc très peu efficaces. Une solution alternative pour résoudre ce problème est la génération de \emph{reads} dits synthétiques. Ces derniers sont générés via une approche hybride, utilisant des \emph{reads} longs comme \emph{templates} et des \emph{reads} courts disposant d'un plus faible taux d'erreur. Les \emph{reads} ainsi synthétisés, appelés \emph{reads} NaS, car synthétisés à partir de \emph{reads} de la technologie Nanopore, peuvent atteindre une longueur de 60 000, et s'aligner intégralement et sans erreurs. Nous présentons ici une première méthode permettant de synthétiser de tels \emph{reads}, et la méthode que nous avons développé.
+\end{minipage}
+
+
+\vspace*{2cm}
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% 	Colonne 2		%%%
+%%%%%%%%%%%%%%%%%%%%%
+\titresec{Première méthode}
+
+La première méthode de synthèse des \emph{NaS} repose sur les étapes suivantes : \bigskip
+
+\begin{enumerate}
+	\item Alignement des \emph{reads} courts sur le \emph{read} long utilisé comme \emph{template}, afin de trouver les \emph{seeds} \bigskip
+	
+	\resizebox{0.90\columnwidth}{!}{
+		\centering
+		\begin{tikzpicture}
+			% Template
+			\draw [blue] [|-|] (-6,1) -- (6,1);
+			\node [right] at (6,1) {\textcolor{blue}{\tiny \emph{template}}};
+			% Seeds
+			\draw [|-|] (-5,0) -- (-4,0);
+			\draw [|-|] (0,0) -- (1,0);
+			\draw [|-|] (3.5,0) -- (4.5,0);
+			\node [right] at (6.25,0) {\tiny \emph{seeds}};
+		\end{tikzpicture}
+	}
+	
+	\item Recrutement de nouveaux \emph{reads} courts, en recherchant des \emph{reads} similaires aux \emph{seeds} \bigskip
+	
+	\resizebox{0.90\columnwidth}{!}{
+		\centering
+		\begin{tikzpicture}[>=triangle 45]
+			% Seeds
+			\draw [|-|] (-5,-0.5) -- (-3.5,-0.5);
+			\draw [|-|] (0,-0.5) -- (1.5,-0.5);
+			\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+			\node at (0.25,-4) {\small \emph{seeds}};
+			\draw (0,-0.5) ellipse (6cm and 2cm);
+			% Recrues
+			\draw [red] [|-|] (8,0) -- (9.5,0);
+			\draw [red] [|-|] (9,-2) -- (10.5,-2);
+			\draw [red] [|-|] (10,-1) -- (11.5,-1);
+			\draw [red] [|-|] (10,1) -- (11.5,1);
+			\draw [red] [|-|] (11,0) -- (12.5,0);
+			\draw [red] [|-|] (12.5,-2) -- (14,-2);
+			\draw [red] [|-|] (13,1) -- (14.5,1);
+			\draw [red] [|-|] (14,-1) -- (15.5,-1);
+			\draw [red] [|-|] (15,0) -- (16.5,0);
+			\draw [red] [|-|] (16,-2) -- (17.5,-2);
+			\draw [red] [|-|] (16.5,1) -- (18,1);
+			\draw [red] [|-|] (11.5,2) -- (13,2);
+			\draw [red] [|-|] (17,-1) -- (18.5,-1);
+			\node at (13.75,-4) {\textcolor{red}{\small \emph{reads} similaires aux \emph{seeds}}};
+			\draw (13.4,-0.5) ellipse (6cm and 3cm);
+			% Flèche entre les deux ensembles
+			\draw [thick] [<->] (6,-0.5) -- (7.425,-0.5);
+		\end{tikzpicture}
+	}
+	
+	\item Micro-assemblage de l'ensemble de \emph{reads} obtenu \bigskip
+	
+	\resizebox{0.765\columnwidth}{!}{
+		\centering
+		\begin{tikzpicture}
+			\draw [|-|] (-5,-0.5) -- (-3.5,-0.5);
+			\draw [|-|] (-4,0.5) -- (-2.5,0.5);
+			\draw [|-|] (-2.75,-1) -- (-1.25,-1);
+			\draw [|-|] (-1.5,0) -- (0,0);
+			\draw [|-|] (0,-0.5) -- (1.5,-0.5);
+			\draw [|-|] (1,0.5) -- (2.5,0.5);
+			\draw [|-|] (2.5,-1) -- (4,-1);
+			\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+			\draw [|-|] (4.5,0.5) -- (6,0.5);
+			\draw [|-|] (2,0) -- (3.5,0);
+			\draw [|-|] (6,-1) -- (7.5,-1);
+			\draw [|-|] (7,0.5) -- (8.5,0.5);
+			\draw [|-|] (8,-0.5) -- (9.5,-0.5);
+			\draw [|-|] (5,0) -- (6.5,0);
+			\draw [|-|] (-3.5,0) -- (-2,0);
+			\draw [|-|] (-0.5,-1) -- (1,-1);
+		\end{tikzpicture}
+	}
+	
+	\vspace*{1cm}
+	
+	\item Obtention du \emph{read NaS} \bigskip
+	
+	\resizebox{0.9\columnwidth}{!}{
+		\centering
+		\begin{tikzpicture}
+			\draw [|-|] (-6,1) -- (6,1);
+			\node [right] at (6,1) {\tiny \emph{read NaS}};
+		\end{tikzpicture}
+	}
+\end{enumerate}
+
+\vspace*{1cm}
+
+En général, un seul contig est produit par cette méthode, mais il est cependant possible que la phase de recrutement des \emph{reads}, notamment dans les régions répétitives, recrute de mauvais \emph{reads}, et que des contigs erronés, ne devant pas être associé au \emph{template}, soient alors produits. Pour résoudre ce problème, et ne produire qu'un seul contig en sortie, il suffit d'employer la démarche suivante : \bigskip
+
+\begin{enumerate}
+	\item Obtention de plusieurs contigs \bigskip
+	
+	\resizebox{0.765\columnwidth}{!}{
+		\centering
+		\begin{tikzpicture}
+			\draw [blue] [|-|] (-10,0) -- (-5,0);
+			\node [below] at (-7.5,0) {contig 1};
+			\draw [green] [|-|] (-4,0) -- (0,0);
+			\node [below] at (-2,0) {contig 2};
+			\draw [blue] [|-|] (1,0) -- (8,0);
+			\node [below] at (4.5,0) {contig 3};
+			\draw [red] [|-|] (11,0) -- (14,0);
+			\node [below] at (12.5,0) {contig 4};
+			\draw [green] [|-|] (15,0) -- (19,0);
+			\node [below] at (17,0) {contig 2};
+			\draw [red] [|-|] (20,0) -- (23,0);
+			\node [below] at (21.5,0) {contig 5};
+		\end{tikzpicture}
+	}
+	
+	\item Construction du graphe des contigs, weighted par le degré de couverture des contigs par les \emph{seeds} \bigskip
+	
+	\resizebox{0.765\columnwidth}{!}{
+		\centering
+		\begin{tikzpicture}[>=triangle 45]
+			% Contigs
+			\draw [blue] [|-|] (-10,2) -- (-5,2);
+			\node [below] at (-7.5,2) {contig 1};
+			\node [above] at (-7.5,2) {1};
+			\draw [blue] [|-|] (11,2) -- (18,2);
+			\node [below] at (14.5,2) {contig 3};
+			\node [above] at (14.5,2) {2};
+			\draw [green] [|-|] (1,0) -- (5,0);
+			\node [below] at (3,0) {contig 2};
+			\node [above] at (3,0) {1};
+			\draw [red] [|-|] (-8,-2) -- (-5,-2);
+			\node [below] at (-6.5,-2) {contig 4};
+			\node [above] at (-6.5,-2) {0};
+			\draw [red] [|-|] (11,-2) -- (14,-2);
+			\node [below] at (12.5,-2) {contig 5};
+			\node [above] at (12.5,-2) {0};
+			% Transitions
+			\draw [->] (-4.5,2) -- (0.5,0.25);
+			\draw [->] (-4.5,-2) -- (0.5,-0.25);
+			\draw [->] (5.5,0.25) -- (10.5,2);
+			\draw [->] (5.5,-0.25) -- (10.5,-2);
+		\end{tikzpicture}
+	}
+	
+	\item Sélection du chemin optimal, passant par les contigs ayant le plus haut degré de couverture par les \emph{seeds} \bigskip
+	
+	\resizebox{0.765\columnwidth}{!}{
+		\centering
+		\begin{tikzpicture}[>=triangle 45]
+			% Contigs
+			\draw [blue] [|-|] (-10,2) -- (-5,2);
+			\node [below] at (-7.5,2) {contig 1};
+			\node [above] at (-7.5,2) {1};
+			\draw [blue] [|-|] (11,2) -- (18,2);
+			\node [below] at (14.5,2) {contig 3};
+			\node [above] at (14.5,2) {2};
+			\draw [green] [|-|] (1,0) -- (5,0);
+			\node [below] at (3,0) {contig 2};
+			\node [above] at (3,0) {1};
+			\draw [red, opacity=0.3] [|-|] (-8,-2) -- (-5,-2);
+			\node [below, opacity=0.3] at (-6.5,-2) {contig 4};
+			\node [above, opacity=0.3] at (-6.5,-2) {0};
+			\draw [red, opacity=0.3] [|-|] (11,-2) -- (14,-2);
+			\node [below, opacity=0.3] at (12.5,-2) {contig 5};
+			\node [above, opacity=0.3] at (12.5,-2) {0};
+			% Transitions
+			\draw [->] (-4.5,2) -- (0.5,0.25);
+			\draw [->, opacity=0.3] (-4.5,-2) -- (0.5,-0.25);
+			\draw [->] (5.5,0.25) -- (10.5,2);
+			\draw [->, opacity=0.3] (5.5,-0.25) -- (10.5,-2);
+		\end{tikzpicture}
+	}
+	
+	\item Vérification du contig produit par alignement des \emph{reads} courts, et acceptation si la couverture est suffisante \bigskip
+	
+	\resizebox{0.85\columnwidth}{!}{
+	\centering
+	\begin{tikzpicture}
+		% NaS
+		\draw [blue] [|-|] (-6,1) -- (-1,1);
+		\draw [green] [|-|] (-1,1) -- (3,1);
+		\draw [blue] [|-|] (3,1) -- (10,1);
+		\node [right] at (10,1) {\textcolor{blue}{\footnotesize contig}};
+		% Reads courts
+		\draw [|-|] (-6,-0.5) -- (-4.5,-0.5);
+		\draw [|-|] (-5,0.5) -- (-3.5,0.5);
+		\draw [|-|] (-3,-1) -- (-1.5,-1);
+		\draw [|-|] (-1.5,0) -- (0,0);
+		\draw [|-|] (0,-0.5) -- (1.5,-0.5);
+		\draw [|-|] (1,0.5) -- (2.5,0.5);
+		\draw [|-|] (2.5,-1) -- (4,-1);
+		\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+		\draw [|-|] (4.5,0.5) -- (6,0.5);
+		\draw [|-|] (2,0) -- (3.5,0);
+		\draw [|-|] (6,-1) -- (7.5,-1);
+		\draw [|-|] (7.25,0.5) -- (8.75,0.5);
+		\draw [|-|] (8.5,-0.5) -- (10,-0.5);
+		\draw [|-|] (5,0) -- (6.5,0);
+		\draw [|-|] (-4,0) -- (-2.5,0);
+		\draw [|-|] (-0.5,-1) -- (1,-1);
+	\end{tikzpicture}
+	}
+\end{enumerate}
+
+\vspace*{1cm}
+
+Le temps de traitement d'un \emph{read} long, et donc la synthèse d'un \emph{read} NaS, prend en moyenne moins d'une minute, la majorité de ce temps étant provoquée par la méthode peu efficace de recrutement de \emph{reads} similaires. Celle-ci est réalisée en indexant l'ensemble des $k$-mers de tous les \emph{reads} non alignés dans un BFT, et en recherchant les $k$-mers des \emph{seeds} dans celui-ci. Un \emph{seed} et un \emph{read} non aligné sont alors considérés comme similaires s'ils partagent au moins $t$ $k$-mers ne se chevauchant pas. \bigskip
+
+La synthèse de \emph{reads} NaS par cette méthode a été testée sur un ensemble de 66 492 \emph{reads} longs séquencés par MinION, et à l'aide de plusieurs sous-ensembles de \emph{reads} courts de la technologie Illumina. 11 275 \emph{reads} NaS, d'une longueur maximale de 59 863, ont ainsi été produits. Seulement 17\% des \emph{reads} longs ont donc produit un NaS, ce qui est du au fort taux d'erreurs des \emph{reads} MinION. De plus, 97\% des \emph{reads} ainsi synthétisés ont pu être alignés sur le génome de référence sans aucune erreur, prouvant ainsi l'efficacité de cette méthode.
+
+
+\newpage
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% 	Colonne 3		%%%
+%%%%%%%%%%%%%%%%%%%%%
+% Vspace pour aligner la 3ème colonne avec la 2ème
+\vspace*{15.80cm}
+
+\titresec{Notre méthode}
+
+Notre méthode repose sur le même principe que la méthode précédente, mais vise à diminuer le temps d'exécution en proposant une méthode différente pour le recrutement de \emph{reads}. Nous alignons donc tout d'abord les \emph{reads} courts sur les \emph{reads} longs \emph{templates}, en se fixant un seuil $lmin$, et récupérons les \emph{reads} : \bigskip
+
+\begin{itemize}
+	\item Totalement alignés \medskip
+	\item Avec un préfixe de longueur $\geq lmin$ aligné \medskip
+	\item Avec un suffixe de longueur $\geq lmin$ aligné
+\end{itemize}
+
+\vspace*{1cm}
+
+Pour chaque \emph{reads} long \emph{template}, les différents ensembles de \emph{reads} sont ajoutés à trois listes, triées en fonction des positions de début d'alignements préalablement calculées. Notre méthode se décompose alors en deux phases. La première parcourt ces listes en parallèle, afin de recruter de nouveaux \emph{reads} similaires aux \emph{reads} totalement alignés, utilisés comme \emph{seeds}, en considérant qu'un \emph{read} est similaire à un \emph{seed} si son préfixe (respectivement son suffixe) correctement aligné chevauche ce \emph{seed} sur une longueur supérieure ou égale au seuil fixé $lmin$. Le processus de recrutement, met à jour la liste des \emph{seeds}, afin de prendre en compte les allongements provoqués par les recrutements, et ainsi couvrir d'avantage le \emph{read} long \emph{template} considéré.
+
+\myfig{
+	\begin{tikzpicture}
+		% Recrutement
+		% Template
+		\draw [blue] [|-|] (-4,2) -- (14,2);
+		\node [right] at (14,2) {\textcolor{blue}{\footnotesize \emph{template}}};
+		
+		% Seed
+		\draw [|-|] (2,1) -- (5,1);
+		\node [right] at (5,1) {\tiny seed};
+		
+		% Suffs
+		\draw [red] [|-|] (-0.5,0) -- (0.5,0);
+		\draw [red] [|-|] (0.5,0) -- (2.5,0);
+		\node [left] at (-0.5,0) {\textcolor{red}{\tiny $r1$}};
+		\draw [red] [<->] (0.5,-0.5) -- (2.5,-0.5);
+		\node [below] at (1.5,-0.5) {\textcolor{red}{\tiny suffixe aligné}};
+		
+		% Prefs
+		\draw [green] [|-|] (3.5,0) -- (4.75,0);
+		\draw [green] [|-|] (4.75,0) -- (6.5,0);
+		\node [right] at (6.5,0) {\textcolor{green}{\tiny $r2$}};
+		\draw [green] [<->] (3.5,-0.5) -- (4.75,-0.5);
+		\node [below] at (4.125,-0.5) {\textcolor{green}{\tiny préfixe aligné}};
+		
+		% Lmin
+		\draw [<->] (2,0.5) -- (3,0.5);
+		\node [below] at (2.5,1.2) {\tiny $lmin$};
+		\draw [<->] (3.5,0.5) -- (4.5,0.5);
+		\node [below] at (4,1.2) {\tiny $lmin$};
+		
+		% Flèche
+		\draw [-triangle 45] (4.25,-1.5) -- (4.25,-3);
+		
+		% Mise à jour
+		% Template
+		\draw [blue] [|-|] (-4,-4) -- (14,-4);
+		\node [right] at (14,-4) {\textcolor{blue}{\footnotesize \emph{template}}};
+		
+		% Seed
+		\draw [|-|] (2,-5) -- (5,-5);
+		\draw [|-|] [green] (5,-5) -- (6.5,-5);
+		\node [right] at (6.5,-5) {\tiny \emph{seed} mis à jour};		
+	\end{tikzpicture}
+	\figcaption{Illustration du processus de recrutement de \emph{reads} similaires pour un \emph{seed} donné. $lmin$ représente le seuil 
+	permettant de déterminer la similarité. Ici, on remarque que le \emph{seed} est similaire à $r2$, mais pas à $r1$. $r2$ est donc recruté, et
+	le \emph{seed} est mis à jour avec les parties de ce \emph{read} ne le chevauchant pas, afin d'étendre sa longueur.}
+	\label{figrec}
+}
+
+La deuxième phase parcourt de nouveau les listes en parallèle, afin d'étendre les contigs produits par la phrase précédente. Nous nous affranchissons ici de la relation de similarité définie précédemment, définissions un seuil $lmax$, et recrutons alors un \emph{read} partiellement aligné si son préfixe (respectivement son suffixe) chevauche le contig sur une longueur inférieure ou égale au seuil $lmax$.
+
+\myfig{
+	\begin{tikzpicture}
+		%RECRUTEMENT
+		%TEMPLATE
+		\draw [blue] [|-|] (-4,2) -- (14,2);
+		\node [right] at (14,2) {\textcolor{blue}{\tiny \emph{template}}};
+		
+		%SEED
+		\draw [|-|] (0,1) -- (7,1);
+		\node [right] at (7,1) {\tiny contig};
+		
+		%LMAX
+		\draw [<->] (0,1.5) -- (0.5,1.5);
+		\node [above] at (0.25,1.5) {\tiny $lmax$};
+		\draw [<->] (6.5,1.5) -- (7,1.5);
+		\node [above] at (6.75,1.5) {\tiny $lmax$};
+		
+		%SUFF
+		\draw [red] [|-|] (-2,0.5) -- (-0.3,0.5);
+		\draw [red] [|-|] (-0.3,0.5) -- (1,0.5);
+		\node [left] at (-2.7,0.5) {\textcolor{red}{\tiny $s1$}};
+		
+		%PREF
+		\draw [green] [|-|] (6.60,0.5) -- (8.1,0.5);
+		\draw [green] [|-|] (8.1,0.5) -- (9,0.5);
+		\node [right] at (9,0.5) {\textcolor{green}{\tiny $p1$}};
+		
+		\draw [green] [|-|] (6.85,0) -- (8.25,0);
+		\draw [green] [|-|] (8.25,0) -- (9.85,0);
+		\node [right] at (9.85,0) {\textcolor{green}{\tiny $p1$}};
+		
+		%FLECHE
+		\draw [-triangle 45] (4.925,-1.5) -- (4.925,-3);
+		
+		%MISE A JOUR
+		%TEMPLATE
+		\draw [blue] [|-|] (-4,-4) -- (14,-4);
+		\node [right] at (14,-4) {\textcolor{blue}{\tiny \emph{template}}};
+		%SEED
+		\draw [|-|] (0,-5) -- (7,-5);
+		\draw [green] [|-|] (7,-5) -- (9.85,-5);
+		\node [right] at (9.85,-5) {\tiny contig mis à jour};		
+	\end{tikzpicture}
+	\figcaption{Ill.}
+	\label{figrec2}
+}
+
+Et la re du blabla pe ça passe
+
+
+%si biblio
+%\bibliographystyle{unsrt}
+%\bibliography{bib}
+
+\end{multicols}
+\end{poster}
+
+\end{document}

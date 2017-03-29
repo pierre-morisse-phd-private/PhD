@@ -1,0 +1,10 @@
+\beamer@endinputifotherversion {3.36pt}
+\select@language {french}
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@sectionintoc {2}{S\'equenceurs \`a tr\`es haut d\'ebit (NGS)}{7}{0}{2}
+\beamer@sectionintoc {3}{\'Etat de l'art}{10}{0}{3}
+\beamer@sectionintoc {4}{M\'ethode alternative \`a la correction de reads longs : les reads NaS}{17}{0}{4}
+\beamer@sectionintoc {5}{Conclusion et perspectives}{46}{0}{5}
+\select@language {british}
+\select@language {frenchb}
+\beamer@sectionintoc {6}{Notre m\'ethode}{49}{0}{6}

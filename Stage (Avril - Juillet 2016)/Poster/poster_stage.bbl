@@ -1,0 +1,16 @@
+\begin{thebibliography}{1}
+
+\bibitem{Madoui2015}
+M.-A. Madoui, S.~Engelen, C.~Cruaud, C.~Belser, L.~Bertrand, A.~Alberti,
+  A.~Lemainque, P.~Wincker, and J.-M. Aury.
+\newblock {Genome assembly using Nanopore-guided long and error-free DNA
+  reads}.
+\newblock {\em BMC Genomics}, 16:327, 2015.
+
+\bibitem{Philippe2011}
+N.~Philippe, M.~Salson, T.~Lecroq, M.~Leonard, T.~Commes, and E.~Rivals.
+\newblock {Querying large read collections in main memory: a versatile data
+  structure}.
+\newblock {\em BMC bioinformatics}, 12(1):242, 2011.
+
+\end{thebibliography}

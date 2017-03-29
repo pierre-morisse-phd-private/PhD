@@ -1,0 +1,7 @@
+\beamer@endinputifotherversion {3.36pt}
+\select@language {french}
+\beamer@sectionintoc {1}{First correction approach}{3}{0}{1}
+\beamer@sectionintoc {2}{Scaffolding with long reads}{29}{0}{2}
+\beamer@sectionintoc {3}{Comparing k-mers from short reads and from long reads}{45}{0}{3}
+\beamer@sectionintoc {4}{Working correction approach}{62}{0}{4}
+\beamer@sectionintoc {5}{Long reads mapping on a DBG}{134}{0}{5}

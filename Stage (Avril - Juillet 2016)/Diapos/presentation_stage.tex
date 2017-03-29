@@ -1,0 +1,931 @@
+\documentclass[t,12pt]{beamer}
+\usepackage[T1]{fontenc} 
+\usepackage[latin1]{inputenc}
+\usepackage[british,frenchb]{babel}
+\usepackage{pslatex}
+\usetheme[secheader]{Boadilla}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{patterns}
+\usetikzlibrary{decorations.pathreplacing}
+\usepackage{multirow}
+
+\def\sl{{\par\leavevmode\par}}
+
+\title[Méthodes de \emph{mapping} de \emph{reads}]{Soutenance de stage M2 ITA \\ \hfill \\ Méthodes de \emph{mapping} de \emph{reads} avec indexation des \emph{reads}}
+\date{\today}
+\author[Pierre Morisse]{Pierre Morisse \\ Encadrants : M. Thierry Lecroq et M. Arnaud Lefebvre}
+%
+\begin{document}
+
+	\AtBeginSection{
+		\begin{frame}
+			\tableofcontents[currentsection]
+		\end{frame}
+	}
+	
+	\frame{\titlepage}
+	
+	\begin{frame}[c]{Plan de la présentation}
+		\tableofcontents[hideallsubsections]
+	\end{frame}
+	
+	\section{Introduction}
+	
+	\begin{frame}[c]{Contexte}
+		\begin{itemize}
+			\item Milieu des années 2000 $\Rightarrow$ Développement des séquenceurs à très haut débit (NGS) \sl
+			
+			\item Production de millions de très courtes séquences appelées \emph{reads}, utilisés pour résoudre des problèmes :
+			\begin{itemize}
+				\item De \emph{mapping}
+				\item D'assemblage
+				\item De traitement des requêtes suivantes, pour $f$ de longueur $k$ fixé :
+					\begin{enumerate}
+					\item Dans quels \emph{reads} $f$ apparaît ?
+					\item Dans combien de \emph{reads} $f$ apparaît ?
+					\item Quelles sont les occurrences de $f$ ?
+					\item Quel est le nombre d'occurrences de $f$ ?
+					\item Dans quels \emph{reads} $f$ n'apparaît qu'une fois ?
+					\item Dans combien de \emph{reads} $f$ n'apparaît qu'une fois ?
+					\item Quelles sont les occurrences de $f$ dans les \emph{reads} où $f$ n'apparaît qu'une fois ? \bigskip
+				\end{enumerate}
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Contexte}
+		\begin{itemize}
+			\item 7 requêtes précédentes introduites dans \cite{Philippe2011}, en complément d'un index les supportant \sl
+		
+			\item \emph{Reads} produits bruités $\Rightarrow$ Nécessité d'une procédure de correction avant utilisation \sl
+			
+			\item Nécessité d'indexer ces \emph{reads} pour traiter les différents problèmes rapidement identifiée \sl
+			
+			\item De nombreuses méthodes d'indexation permettant de traiter ces problèmes existent
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Définitions et notations}
+		\begin{block}{Définitions et notations}
+			\begin{description}
+				\item [Alphabet : ] $\Sigma = \{A, C, G, T\}$ \sl
+				\item [Séquence : ] mot sur l'alphabet $\Sigma$ \sl
+				\item [$k$-mer : ] facteur de longueur $k$ d'une séquence \sl
+				\item [Contig : ] séquence générée par l'assemblage de plus courtes séquences se chevauchant \sl
+				\item [Gb  : ] Gigabases
+			\end{description}
+		\end{block}
+	\end{frame}
+	
+	
+	
+	\section{Séquenceurs à très haut débit (NGS)}
+	
+	\begin{frame}[c]{Description}
+		\begin{itemize}
+			\item Ont pour but de produire des séquences à partir d'un échantillon d'ADN \sl
+			\item Différentes technologies et plateformes $\Rightarrow$ Possibilité de traiter
+						divers problèmes de génomique \sl
+			\item Prix désormais abordable $\Rightarrow$ Séquençage accessible à tous \sl 
+			\item Depuis peu, séquençage de \emph{reads} de plus en plus longs $\Rightarrow$ Très utiles
+						dans les problèmes d'assemblage \sl
+			\item Mais ces \emph{reads} sont très bruités
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Principaux séquenceurs}
+		\resizebox{\textwidth}{!}{ 
+			\begin{tabular}{|c|c|c|c|c|c|c|c|}
+				\hline
+				\multirow{2}{*}{\textbf{Technologie}} & \multirow{2}{*}{\textbf{Plateforme}} & \multirow{2}{*}{\textbf{Nombre de \emph{reads}}} &
+				\multirow{2}{*}{\textbf{Longueur}} & \textbf{Précision} & \multirow{2}{*}{\textbf{Temps}} & \textbf{Coût} & 
+				\multirow{2}{*}{\textbf{Erreurs}} \\
+				& & & & \textbf{(en \%)} & & \textbf{(en \$)} & \\
+				\hline
+				\multirow{2}{*}{Illumina} & HiSeq 2500/1500 & 
+				3 milliards & 36 - 100 & 99 & 2 - 11 jours & 740 000 & \multirow{2}{*}{Subs.} \\
+				& MiSeq & 17 millions &	25 - 250 & >99 & 4 - 27 heures & 125 000 & \\
+				\hline
+				\multirow{2}{*}{Roche} & 454 GS FLX+ & 1 million & 700 & 99,997 & 23 heures & 450 000 & \multirow{2}{*}{Indels.} \\
+				& 454 GS Junior & 1 million & 400 & >99 & 10 heures & 108 000 & \\
+				\hline
+				\multirow{2}{*}{ABI Life Technologies} & 5500xl SOLiD & 2,8 millions & 75 & 99,99 & 7 jours & 595 000 & \multirow{2}{*}{Indels.} \\
+				& Ion Proton Chip I/II & 60 - 80 millions & jusqu'à 200 & >99 & 2 heures & 243 000 & \\
+				\hline
+				Pacific Biosciences & PacBio RS & 50 000 & 3 000 en moyenne & 85 & 2 heures & 750 000 & Indels. \\
+				\hline
+				\multirow{2}{*}{Oxford Nanopore} & GridION & 4 - 10 millions & dizaines de milliers & 96 & variable & variable & 
+				\multirow{2}{*}{Indels.} \\
+				& MinION & 70 000 & dizaines de milliers & 70 & 48 heures & 1 000 & \\
+				\hline
+			\end{tabular}
+		}
+	\end{frame}
+	
+	
+	
+	\section{\'Etat de l'art}
+	
+	\begin{frame}[c]{Méthodes de correction}
+		\begin{block}{Motivations}
+			\begin{itemize}
+				\item \emph{Reads} bruités \sl
+				\item Difficiles à utiliser \sl
+				\item Nécessité d'améliorer leur précision
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Méthodes de correction}
+		Principaux outils : \sl
+		
+		\resizebox{\textwidth}{!}{  
+			\begin{tabular}{|c|c|c|c|c|c|c|}
+				\hline
+				\multirow{2}{*}{\textbf{Outil}} & \multirow{2}{*}{\textbf{Structure de données}} & \multirow{2}{*}{\textbf{Erreurs corrigées}} & 
+				\multirow{2}{*}{\textbf{Nombre de \emph{reads} (longueur)}} & \textbf{Espace mémoire} & 
+				\textbf{Temps} & \multirow{2}{*}{\textbf{\emph{Reads} corrigés}} \\
+				& & & & \textbf{(en Mo)} & \textbf{(en min)} & \\
+				\hline
+				SHREC & Arbre des suffixes & subs. & 1 090 946 (70) & 1 500 & 183 & 88,56 \\
+				\hline
+				HybridSHREC & Arbre des suffixes & subs. + indels & 977 971 (178) & 15 000 & 28 & 98,39 \\
+				\hline
+				\multirow{2}{*}{HiTEC} & \multirow{2}{*}{Table des suffixes} & \multirow{2}{*}{subs.} & 1 090 946 (70) & 757 & 28 & 
+				\multirow{2}{*}{94,43} \\
+				& & & 4 639 675 (70) & 3 210 & 125 & \\
+				\hline
+				\multirow{2}{*}{Fiona} & \multirow{2}{*}{Table des suffixes partielle} & \multirow{2}{*}{subs. + indels} & 977 971 (178) & 2 000 & 
+				15 & \multirow{2}{*}{66,76} \\
+				& & & 2 464 690 (142) & 3 000 & 32 & \\
+				\hline
+				Coral & Table de hachage & subs. + indels & 977 971 (178) & 8 000 & 5 & 92,88 \\
+				\hline
+				\multirow{2}{*}{RACER} & \multirow{2}{*}{Table de hachage} & \multirow{2}{*}{subs.} & 2 119 404 (75) & 1 437 & 23 & 76,65 \\
+				& & & 101 548 652 (457 595) & 41 700 & 104 & 42,95 \\
+				\hline
+				BLESS & Filtres de Bloom & subs. + indels & 1 096 140 (101) & 11 & 6 & 84,38 \\
+				\hline
+				\multirow{2}{*}{LoRDEC} & \multirow{2}{*}{Graphe de de Bruijn} & \multirow{2}{*}{subs. + indels} & 33 360 \emph{reads} longs (2 938) &
+				\multirow{2}{*}{960} & \multirow{2}{*}{10} & \multirow{2}{*}{85,78} \\
+				& & & et 2 313 613 \emph{reads} courts (100) & & & \\
+				\hline
+			\end{tabular}
+		}
+	\end{frame}
+	
+	\begin{frame}[c]{Méthodes de \emph{mapping}}
+		\begin{block}{Motivations}
+			\begin{itemize}
+				\item Comparer ADN d'un individu à un génome de référence \sl
+				\item Détection de mutations dans l'ADN séquencé \sl
+				\item $\Rightarrow$ Détection de pathologies
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Méthodes de \emph{mapping}}
+		Principaux outils : \sl
+		
+		\resizebox{\textwidth}{!}{ 
+			\begin{tabular}{|c|c|c|c|c|c|c|}
+				\hline
+				\multirow{2}{*}{\textbf{Outil}} & \multirow{2}{*}{\textbf{Structure de données}} & \multirow{2}{*}{\textbf{Erreurs prises en compte}} & 
+				\multirow{2}{*}{\textbf{Nombre de \emph{reads} (longueur)}} & \textbf{Espace mémoire} & \textbf{Temps} & 
+				\textbf{\emph{reads} mappés} \\
+				& & & & \textbf{(en Mo)} & \textbf{(en min)} & \textbf{(en \%)} \\
+				\hline
+				MAQ & Table de hachage & subs. + indels & 1 000 000 (44) & 1 200 & 331 & 92,53 \\
+				\hline
+				MrsFAST & Table de hachage & subs. & 1 000 000 (100) & 20 000 & 169 & 90,70 \\
+				\hline
+				MrsFAST-Ultra & Table de hachage & subs. & 2 000 000 (100) & 2 000 & 57 & 91,41 \\
+				\hline 
+			\end{tabular}
+		}
+		
+		\sl \sl
+		
+		\begin{block}{Remarques}
+			\begin{itemize}
+				\item Peu d'outils présentés ici \sl
+				\item De nombreux outils, n'utilisant pas de structure d'index sur les \emph{reads}, existent
+				et produisent de bons résultats
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Méthodes de traitement des 7 requêtes}
+		\begin{block}{Applications}
+			\begin{itemize}
+				\item Détection d'erreurs de séquençage \sl
+				\item Détection de mutations \sl
+				\item Assemblage
+			\end{itemize}
+		\end{block}
+	\end{frame}
+
+	\begin{frame}[c]{Méthodes de traitement des 7 requêtes}
+		Principaux outils : \sl
+		\resizebox{\textwidth}{!}{ 
+			\begin{tabular}{|c|c|c|c|c|c|c|c|}
+				\hline
+				\multirow{2}{*}{\textbf{Outil}} & \multirow{2}{*}{\textbf{Structure de données}} & 
+				\multirow{2}{*}{\textbf{Nombre de \emph{reads} (longueur)}} & 
+				\textbf{Espace mémoire} &
+				\multirow{2}{*}{\textbf{Temps R1}} & \multirow{2}{*}{\textbf{Temps R2}} &
+				\multirow{2}{*}{\textbf{Temps R3}} & \multirow{2}{*}{\textbf{Temps R4}} \\
+				& & & \textbf{(en Go)} & & & & \\
+				\hline
+				\multirow{5}{*}{GkA} & Table des suffixes modifiée & \multirow{5}{*}{42 400 000 (75)} & 
+				\multirow{5}{*}{20} & \multirow{5}{*}{16} & \multirow{5}{*}{25} & \multirow{5}{*}{25} & 
+				\multirow{5}{*}{0,1} \\
+				& + & & & & & & \\
+				& Table des suffixes modifiée inverse & & & & & & \\
+				& + & & & & & & \\
+				& Table associant $k$-mer - nombre d'occurrences & & & & & & \\
+				\hline
+				\multirow{3}{*}{CGkA} & Table de suffixes échantillonnée & \multirow{3}{*}{42 400 000 (75)} &
+				\multirow{3}{*}{3 - 7} & \multirow{3}{*}{1203} & \multirow{3}{*}{28} & \multirow{3}{*}{1278} & 
+				\multirow{3}{*}{28} \\
+				& + & & & & & & \\
+				& 3 vecteurs de bits & & & & & & \\
+				\hline
+				\multirow{3}{*}{PgSA} & Table des suffixes échantillonnée & \multirow{3}{*}{42 400 000 (75)} & 
+				\multirow{3}{*}{1 - 4} & \multirow{3}{*}{70} & \multirow{3}{*}{58} & \multirow{3}{*}{70} & 
+				\multirow{3}{*}{58} \\
+				& + & & & & & & \\
+				& Table auxiliaire d'information sur les \emph{reads} et $k$-mers & & & & & & \\
+				\hline
+			\end{tabular}
+		}
+		
+		\sl \sl
+		
+		\begin{block}{Remarque}
+			Les requêtes 5-7 sont exclues du comparatifs, car non implémentées dans GkA et CGkA au moment
+			des tests réalisés.
+		\end{block}
+	\end{frame}
+	
+	
+	
+	\section{Méthode alternative à la correction de reads longs : les reads NaS}
+	
+	\begin{frame}[c]{Problématique}
+		\begin{itemize}
+			\item \emph{Reads} longs très utiles, notamment pour résoudre des problèmes d'assemblage
+			longs et complexes \sl
+			\item Séquencer de tels \emph{reads} est devenu rapide, peu coûteux et facile, notamment
+			à l'aide de MinION \sl
+			\item Ces \emph{reads} présentent un fort taux d'erreur \sl
+			\item La correction de ces \emph{reads} longs par des méthodes classiques n'est pas aussi 
+			efficace que la correction de \emph{reads} courts \sl
+			\item $\Rightarrow$ Nécessité de proposer une méthode alternative
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Solution : les \emph{reads} NaS}
+		\begin{itemize}
+			\item Création de \emph{reads} longs synthétiques via une approche hybride \sl
+			\item Peuvent atteindre une longueur de 60 000 et s'aligner sur le génome de référence
+			avec un précision de 99,99\% \sl
+			\item $\Rightarrow$ Première solution efficace permettant d'appliquer un traitement correctif
+			aux \emph{reads} longs
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Solution : les \emph{reads} NaS}
+		Nous présentons ici deux méthodes de synthèse des \emph{reads} NaS : \sl
+		\begin{itemize}
+			\item La première \cite{Madoui2015} nécessite d'aligner les \emph{reads} courts sur les \emph{reads} longs, mais également entre eux \sl
+			\item La deuxième, que nous avons mis en place, vise à ne déduire des informations qu'à partir de l'alignement des \emph{reads} courts sur
+			les \emph{reads} longs
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{\emph{Reads} Nanopore}
+		La technologie Nanopore permet de séquences deux types de \emph{reads} : \sl
+		\begin{itemize}
+			\item Des \emph{reads} 2D, plus longs et plus précis \sl
+			\item Des \emph{reads} 1D, plus courts et moins précis
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Jeu de données utilisé}
+		\begin{itemize}
+			\item 66 492 \emph{reads} longs MinION répartis en 5 ensembles comme suit : \sl
+			
+			\begin{tabular}{|c|c|c|c|}
+				\hline
+				Ensemble & Nombre de \emph{reads} & \% \emph{reads} 2D & \% taille totale \\
+				\hline
+				1 & 9 241 & 6,5 & 14,6 \\
+				\hline
+				2 & 3 990 & 13,6 & 27,1 \\
+				\hline
+				3 & 6 052 & 43,3 & 57,1 \\
+				\hline 
+				4 & 11 957 & 11,6 & 42,7 \\
+				\hline 
+				5 & 35 252 & 9,7 & 44,6 \\
+				\hline
+			\end{tabular}
+			
+			\sl \sl
+			
+			\item 83,2\% des \emph{reads} 2D et 16,6\% des \emph{reads} 1D alignés \sl
+			
+			\item Identité moyenne de 74,5\% et 56,5\%, respectivement \sl
+			
+			\item Deux ensembles de  5 984 858 \emph{reads} courts Illumina
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Première méthode}
+		Nous présentons ici la méthode pour le traitement d'un \emph{read} long : \sl
+		
+		\begin{block}{Première étape}
+			Alignement des \emph{reads} courts sur le \emph{read} long \emph{template} \sl
+			
+			\centering
+			\resizebox{0.9\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [blue] [|-|] (-6,1) -- (6,1);
+					\node [right] at (6,1) {\textcolor{blue}{\emph{template}}};
+					%SEEDS
+					\draw [|-|] (-5,0) -- (-4,0);
+					\draw [|-|] (0,0) -- (1,0);
+					\draw [|-|] (3.5,0) -- (4.5,0);
+					\node [right] at (6.25,0) {\emph{seeds}};
+				\end{tikzpicture}
+			}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Première méthode}
+		\begin{block}{Deuxième étape}
+			Recrutement de nouveaux \emph{reads}, en alignant les \emph{reads} courts entre eux \sl
+			
+			\begin{center}
+				\resizebox{0.9\textwidth}{!}{
+					\begin{tikzpicture}[>=triangle 45]
+						%SEEDS
+						\draw [|-|] (-5,-0.5) -- (-3.5,-0.5);
+						\draw [|-|] (0,-0.5) -- (1.5,-0.5);
+						\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+						\node at (0.25,-4) {\LARGE \emph{seeds}};
+						\draw (0,-0.5) ellipse (6cm and 2cm);
+						%RECRUES
+						\draw [red] [|-|] (8,0) -- (9.5,0);
+						\draw [red] [|-|] (9,-2) -- (10.5,-2);
+						\draw [red] [|-|] (10,-1) -- (11.5,-1);
+						\draw [red] [|-|] (10,1) -- (11.5,1);
+						\draw [red] [|-|] (11,0) -- (12.5,0);
+						\draw [red] [|-|] (12.5,-2) -- (14,-2);
+						\draw [red] [|-|] (13,1) -- (14.5,1);
+						\draw [red] [|-|] (14,-1) -- (15.5,-1);
+						\draw [red] [|-|] (15,0) -- (16.5,0);
+						\draw [red] [|-|] (16,-2) -- (17.5,-2);
+						\draw [red] [|-|] (16.5,1) -- (18,1);
+						\draw [red] [|-|] (11.5,2) -- (13,2);
+						\draw [red] [|-|] (17,-1) -- (18.5,-1);
+						\node at (13.75,-4) {\textcolor{red}{\LARGE \emph{reads} recrutés}};
+						\draw (13.4,-0.5) ellipse (6cm and 3cm);
+						% FLECHE ENTRE LES 2 ENSEMBLES
+						\draw [thick] [<->] (6,-0.5) -- (7.425,-0.5);
+					\end{tikzpicture}
+				}
+			\end{center}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Première méthode}
+		\begin{block}{Troisième étape}
+			Micro-assemblage de l'ensemble de \emph{reads} obtenu \sl
+			
+			\centering
+			\resizebox{0.8\textwidth}{!}{
+				\begin{tikzpicture}
+					\draw [|-|] (-5,-0.5) -- (-3.5,-0.5);
+					\draw [|-|, red] (-4,0.5) -- (-2.5,0.5);
+					\draw [|-|, red] (-2.75,-1) -- (-1.25,-1);
+					\draw [|-|, red] (-1.5,0) -- (0,0);
+					\draw [|-|] (0,-0.5) -- (1.5,-0.5);
+					\draw [|-|, red] (1,0.5) -- (2.5,0.5);
+					\draw [|-|, red] (2.5,-1) -- (4,-1);
+					\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+					\draw [|-|, red] (4.5,0.5) -- (6,0.5);
+					\draw [|-|, red] (2,0) -- (3.5,0);
+					\draw [|-|, red] (6,-1) -- (7.5,-1);
+					\draw [|-|, red] (7,0.5) -- (8.5,0.5);
+					\draw [|-|, red] (8,-0.5) -- (9.5,-0.5);
+					\draw [|-|, red] (5,0) -- (6.5,0);
+					\draw [|-|, red] (-3.5,0) -- (-2,0);
+					\draw [|-|, red] (-0.5,-1) -- (1,-1);
+				\end{tikzpicture}
+			}
+			\sl
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Première méthode}
+		\begin{block}{Quatrième étape}
+			Obtention d'un contig \sl
+			
+			\centering
+			\resizebox{0.9\textwidth}{!}{
+				\begin{tikzpicture}
+					\draw [|-|] (-6,1) -- (6,1);
+					\node [right] at (6,1) {contig};
+				\end{tikzpicture}
+			}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Première méthode}
+		En général un unique contig est produit, mais de mauvais \emph{reads} peuvent être recrutés
+		et produire des contigs erronés \sl
+		
+		\begin{block}{Obtention de plusieurs contigs}
+			\sl
+			\centering
+			\resizebox{0.9\textwidth}{!}{
+				\begin{tikzpicture}
+					\draw [blue] [|-|] (-10,0) -- (-5,0);
+					\node [below] at (-7.5,0) {\huge contig 1};
+					\draw [green] [|-|] (-4,0) -- (0,0);
+					\node [below] at (-2,0) {\huge contig 2};
+					\draw [red] [|-|] (1,0) -- (4,0);
+					\node [below] at (2.5,0) {\huge contig 3};
+					\draw [red] [|-|] (7,0) -- (10,0);
+					\node [below] at (8.5,0) {\huge contig 4};
+					\draw [green] [|-|] (11,0) -- (15,0);
+					\node [below] at (13,0) {\huge contig 2};
+					\draw [blue] [|-|] (16,0) -- (23,0);
+					\node [below] at (19.5,0) {\huge contig 5};
+				\end{tikzpicture}
+			}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Première méthode}
+		\begin{block}{Première étape}
+			Construction du graphe des contigs \sl
+			
+			\centering
+			\resizebox{0.9\textwidth}{!}{
+				\begin{tikzpicture}[>=triangle 45]
+					% Contigs
+					\draw [blue] [|-|] (-10,2) -- (-5,2);
+					\node [below] at (-7.5,2) {\huge contig 1};
+					\node [above] at (-7.5,2) {\huge 1};
+					\draw [red] [|-|] (11,2) -- (14,2);
+					\node [below] at (12.5,2) {\huge contig 3};
+					\node [above] at (12.5,2) {\huge 0};
+					\draw [green] [|-|] (1,0) -- (5,0);
+					\node [below] at (3,0) {\huge contig 2};
+					\node [above] at (3,0) {\huge 1};
+					\draw [red] [|-|] (-8,-2) -- (-5,-2);
+					\node [below] at (-6.5,-2) {\huge contig 4};
+					\node [above] at (-6.5,-2) {\huge 0};
+					\draw [blue] [|-|] (11,-2) -- (18,-2);
+					\node [below] at (14.5,-2) {\huge contig 5};
+					\node [above] at (14.5,-2) {\huge 2};
+					
+					% Transitions
+					\draw [->] (-4.5,2) -- (0.5,0.25);
+					\draw [->] (-4.5,-2) -- (0.5,-0.25);
+					\draw [->] (5.5,0.25) -- (10.5,2);
+					\draw [->] (5.5,-0.25) -- (10.5,-2);
+				\end{tikzpicture}
+			}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Première méthode}
+		\begin{block}{Deuxième étape}
+			Sélection du chemin optimal \sl
+			
+			\centering
+			\resizebox{0.9\textwidth}{!}{
+				% Graphe
+				\begin{tikzpicture}[>=triangle 45]
+					% Contigs
+					\draw [blue] [|-|] (-10,2) -- (-5,2);
+					\node [below] at (-7.5,2) {\huge contig 1};
+					\node [above] at (-7.5,2) {\huge 1};
+					\draw [red, opacity=0.3] [|-|] (11,2) -- (14,2);
+					\node [below, opacity=0.3] at (12.5,2) {\huge contig 3};
+					\node [above, opacity=0.3] at (12.5,2) {\huge 0};
+					\draw [green] [|-|] (1,0) -- (5,0);
+					\node [below] at (3,0) {\huge contig 2};
+					\node [above] at (3,0) {\huge 1};
+					\draw [red, opacity=0.3] [|-|] (-8,-2) -- (-5,-2);
+					\node [below, opacity=0.3] at (-6.5,-2) {\huge contig 4};
+					\node [above, opacity=0.3] at (-6.5,-2) {\huge 0};
+					\draw [blue] [|-|] (11,-2) -- (18,-2);
+					\node [below] at (14.5,-2) {\huge contig 5};
+					\node [above] at (14.5,-2) {\huge 2};
+					
+					% Transitions
+					\draw [->] (-4.5,2) -- (0.5,0.25);
+					\draw [->, opacity=0.3] (-4.5,-2) -- (0.5,-0.25);
+					\draw [->, opacity=0.3] (5.5,0.25) -- (10.5,2);
+					\draw [->] (5.5,-0.25) -- (10.5,-2);
+				\end{tikzpicture}
+			}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Première méthode}
+		\begin{block}{Troisième étape}
+			Vérification du contig obtenu, par alignement des \emph{reads} courts \sl
+			
+			\centering
+			\resizebox{0.9\textwidth}{!}{
+				\begin{tikzpicture}
+					%NAS
+					\draw [blue] [|-|] (-6,1) -- (-1,1);
+					\draw [green] [|-|] (-1,1) -- (3,1);
+					\draw [blue] [|-|] (3,1) -- (10,1);
+					\node [right] at (10,1) {\textcolor{blue}{\large contig}};
+					%READS COURTS
+					\draw [|-|] (-6,-0.5) -- (-4.5,-0.5);
+					\draw [|-|] (-5,0.5) -- (-3.5,0.5);
+					\draw [|-|] (-3,-1) -- (-1.5,-1);
+					\draw [|-|] (-1.5,0) -- (0,0);
+					\draw [|-|] (0,-0.5) -- (1.5,-0.5);
+					\draw [|-|] (1,0.5) -- (2.5,0.5);
+					\draw [|-|] (2.5,-1) -- (4,-1);
+					\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+					\draw [|-|] (4.5,0.5) -- (6,0.5);
+					\draw [|-|] (2,0) -- (3.5,0);
+					\draw [|-|] (6,-1) -- (7.5,-1);
+					\draw [|-|] (7.25,0.5) -- (8.75,0.5);
+					\draw [|-|] (8.5,-0.5) -- (10,-0.5);
+					\draw [|-|] (5,0) -- (6.5,0);
+					\draw [|-|] (-4,0) -- (-2.5,0);
+					\draw [|-|] (-0.5,-1) -- (1,-1);
+				\end{tikzpicture}
+			}
+			\sl
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Première méthode}
+		\begin{block}{Résultats}
+			\begin{itemize}
+				\item 11 275 \emph{reads} NaS produits \sl
+				\item Longueur maximale de 59 863 \sl
+				\item Seulement 17\% des \emph{reads} longs ont produit un \emph{read} NaS \\ (76,4\% 2D, 8,1\% 1D) \sl
+				\item Certains \emph{reads} NaS sont plus longs que leur \emph{template} de référence \sl
+				\item Temps de traitement : moins d'une minute en moyenne pour un \emph{read} long, 7 jours au total
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Première méthode}
+		\begin{block}{Résultats}
+			\begin{itemize}
+				\item Les \emph{reads} NaS produits couvrent 99,96\% du génome de référence \sl
+				\item Identité moyenne de 99,99\% \sl
+				\item 97\% s'alignent sans erreur \sl
+				\item 99,2\% s'alignent avec au plus une erreur
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Notre méthode}
+		Nous présentons la méthode pour le traitement d'un \emph{read} long \sl
+		
+		\begin{block}{Principe}
+				Alignement des \emph{reads} courts sur le \emph{read} long \emph{template}, en se
+				fixant un seuil $lmin$, pour récupérer les \emph{reads} : \sl
+				\begin{itemize}
+					\item Totalement alignés, et servant de \emph{seeds}
+					\item Avec un préfixe de longueur $\geqslant lmin$ aligné
+					\item Avec un suffixe de longueur $\geqslant lmin$ aligné
+				\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Notre méthode}
+		\begin{block}{Principe}
+			Deux étapes d'extensions : \sl
+				\begin{enumerate}
+					\item Recrutement de \emph{reads} partiellement alignés, similaires aux \emph{seeds} \sl
+					\begin{center}
+						\resizebox{0.4\textwidth}{!}{
+							\begin{tikzpicture}
+								%SEED
+								\draw [|-|] (1,1) -- (4,1);
+								\node [right] at (4,1) {seed};
+								%SUFFS
+								\draw [red] [|-|] (-1.5,0) -- (-0.5,0);
+								\draw [red] [|-|] (-0.5,0) -- (1.5,0);
+								\node [left] at (-1.5,0) {\textcolor{red}{$r_1$}};
+								\draw [red] [<->] (-0.5,-0.5) -- (1.5,-0.5);
+								\node [below] at (0.5,-0.5) {\textcolor{red}{suffixe aligné}};
+								%PREF
+								\draw [green] [|-|] (2.5,0) -- (4,0);
+								\draw [green] [|-|] (4,0) -- (5.5,0);
+								\node [right] at (5.5,0) {\textcolor{green}{$r_2$}};
+								\draw [green] [<->] (2.5,-0.5) -- (4,-0.5);
+								\node [below] at (3.225,-0.5) {\textcolor{green}{préfixe aligné}};
+								%LMINS
+								\draw [<->] (1,0.5) -- (2,0.5);
+								\node [above] at (1.5,0.5) {$lmin$};
+								\draw [<->] (3,0.5) -- (4,0.5);
+								\node [above] at (3.5,0.5) {$lmin$};
+							\end{tikzpicture}
+						}
+					\end{center}
+					\item Recrutement de nouveaux \emph{reads} partiellement alignés, sans relation de similarité,
+					en se fixant un nouveau seuil $lmax$ \sl
+					\begin{center}
+						\resizebox{0.6\textwidth}{!}{
+							\begin{tikzpicture}
+								%SEED
+								\draw [|-|] (0,1) -- (7,1);
+								\node [right] at (7,1) {contig};
+								
+								%LMAX
+								\draw [<->] (0,1.5) -- (0.5,1.5);
+								\node [above] at (0.25,1.5) {$lmax$};
+								\draw [<->] (6.5,1.5) -- (7,1.5);
+								\node [above] at (6.75,1.5) {$lmax$};
+								
+								%SUFF
+								\draw [red] [|-|] (-2,0.5) -- (-0.3,0.5);
+								\draw [red] [|-|] (-0.3,0.5) -- (1,0.5);
+								\node [left] at (-2,0.5) {\textcolor{red}{$s_1$}};
+								
+								%PREF								
+								\draw [green] [|-|] (6.85,0.5) -- (8.25,0.5);
+								\draw [green] [|-|] (8.25,0.5) -- (9.85,0.5);
+								\node [right] at (9.85,0.5) {\textcolor{green}{$p_1$}};
+							\end{tikzpicture}
+						}
+					\end{center}
+				\end{enumerate}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Notre méthode}
+		\resizebox{1\textwidth}{!}{
+			\begin{tikzpicture}
+				% Etape 1
+				% Template
+				\fill [pattern=north west lines, pattern color=blue] (-4,1.9) rectangle (-1,2.1);
+				\draw [-, blue] (-1,2) -- (0.5,2);
+				\fill [pattern=north west lines, pattern color=blue] (0.5,1.9) rectangle (1,2.1);
+				\draw [-, blue] (1,2) -- (5,2);
+				\fill [pattern=north west lines, pattern color=blue] (5,1.9) rectangle (6.3,2.1);
+				\draw [-, blue] (6.3,2) -- (7.3,2);
+				\fill [pattern=north west lines, pattern color=blue] (7.3,1.9) rectangle (14,2.1);
+				\node [right] at (14,2) {\textcolor{blue}{\footnotesize \emph{template}}};
+				
+				% Seed
+				\onslide<2->{
+					\fill[fill=black] (2,0.8) rectangle (5,1);
+					\node [right] at (5,1) {\footnotesize seed};
+				}
+				
+				% Read avec suffixe aligné
+				\onslide<3->{
+					\draw [green] [|-] (0,0) -- (1,0);
+					\fill [green] (1,-0.1) rectangle (3,0.1);
+				}
+				
+				% Read avec préfixe aligné
+				\onslide<4->{
+					\fill [green] (3.5,-0.1) rectangle (5,0.1);
+					\draw [green] [-|] (5,0) -- (6.5,0);
+				}
+				
+				% Lmin
+				\onslide<3->{
+					\draw [<->] (2,0.6) -- (3,0.6);
+					\node [below] at (2.5,0.6) {\footnotesize $lmin$};
+				}
+				\onslide<4->{
+					\draw [<->] (4,0.6) -- (5,0.6);
+					\node [below] at (4.5,0.6) {\footnotesize $lmin$};
+				}
+				
+				% Flèche
+				\onslide<5->{
+					\draw [-triangle 45] (3.25,-1) -- (3.25,-2.5);
+				}
+				
+				% Contig obtenu
+				\onslide<5->{
+					\draw [green] [|-] (0,-3.5) -- (1,-3.5);
+					\fill [green] (1,-3.4) rectangle (2,-3.6);
+					\fill[fill=black] (2,-3.4) rectangle (5,-3.6);
+					\draw [green] [-|] (5,-3.5) -- (6.5,-3.5);
+					\node [right] at (6.5,-3.5) {\footnotesize contig obtenu};
+				}
+				
+				% Accolade
+				\onslide<6->{
+					\draw [decorate,decoration={brace, amplitude=10pt, mirror}]
+					(-1,1) -- (-1,-3.6) node [black, midway, xshift=-2cm] 
+					{\footnotesize \'Etape 1};
+				}
+				
+				
+				% Etape 2
+				% Read avec suffixe aligné
+				\onslide<7->{
+					\draw [green] [|-] (-2.5,-4.5) -- (-1,-4.5);
+					\fill [green] (-1,-4.4) rectangle (0.5,-4.6);
+				}
+				
+				% Read avec préfixe aligné
+				\onslide<8->{
+					\fill [green] (6.3,-4.4) rectangle (7.3,-4.6);
+					\draw [green] [-|] (7.3,-4.5) -- (9.3,-4.5);
+				}
+				
+				% Lmax
+				\onslide<7->{
+					\draw [<->] (0,-4.1) -- (0.5,-4.1);
+					\node [above] at (0.25,-4.1) {\footnotesize $lmax$};
+				}
+				\onslide<8->{
+					\draw [<->] (6,-4.1) -- (6.5,-4.1);
+					\node [above] at (6.25,-4.1) {\footnotesize $lmax$};
+				}
+				
+				% Lmin
+				\onslide<7->{
+					\draw [<->] (-0.5,-4.9) -- (0.5,-4.9);
+					\node [below] at (0,-4.85) {\footnotesize $lmin$};
+				}
+				\onslide<8->{
+					\draw [<->] (6.3,-4.9) -- (7.3,-4.9);
+					\node [below] at (6.8,-4.85) {\footnotesize $lmin$};
+				}
+				
+				% Flèche
+				\onslide<9->{
+					\draw [-triangle 45] (3.4,-6) -- (3.4,-7.5);
+				}
+				
+				% Contig obtenu
+				\onslide<9->{
+					\draw [green] [|-] (-2.5,-8.5) -- (-1,-8.5);
+					\fill [green] (-1,-8.4) rectangle (0,-8.6);
+					\draw [green] [-] (0,-8.5) -- (1,-8.5);
+					\fill [green] (1,-8.4) rectangle (2,-8.6);
+					\fill[fill=black] (2,-8.4) rectangle (5,-8.6);
+					\draw [green] [-] (5,-8.5) -- (6.5,-8.5);
+					\fill [green] (6.5,-8.4) rectangle (7.3,-8.6);
+					\draw [green] [-|] (7.3,-8.5) -- (9.3,-8.5);
+					\node [right] at (9.3,-8.5) {\footnotesize contig obtenu};
+				}
+				
+				% Accolade
+				\onslide<10->{
+					\draw [decorate,decoration={brace, amplitude=10pt}]
+					(14,-3.4) -- (14,-8.5) node [black, midway, xshift=2cm] 
+					{\footnotesize \'Etape 2};
+				}
+			\end{tikzpicture}
+		}
+	\end{frame}
+	
+	\begin{frame}[c]{Notre méthode}
+		Résultats après application de notre méthode sur 9 641 \emph{reads} du jeu de données précédent, avec $lmin = 100$ et $lmax = 10$ : \sl
+		
+		\resizebox{\textwidth}{!}{
+			\begin{tabular}{|c|c|c|c|c|c|c|}
+				\hline
+				\emph{Reads} & Longueur moyenne & Précision moyenne & Contigs / \emph{read} & Longueur moyenne & Précision moyenne & Template couvert \\
+				\hline
+				1D & 2 052 & 56,5\% & 2,296 & 645 & 88,636\% & 72,17\% \\
+				\hline
+				2D & 10 033 & 74,5\% & 2,732 & 2 421 & 88,186\% & 65,93\% \\
+				\hline
+			\end{tabular}
+		}
+		
+		\begin{itemize}
+			\item Temps de traitement : moins de 10 secondes en moyenne pour un \emph{read} long, 14 h 30 min au total \sl
+			\item Réduction du taux d'erreur à moins de 12\% \sl
+			\item Faible taux de couverture des \emph{templates} $\Rightarrow$ Synthèse de contigs courts \sl
+			\item Notre méthode semble déjà constituer un prétraitement efficace
+		\end{itemize}
+		
+		
+	\end{frame}
+	
+	\section{Conclusion et perspectives}
+	
+	\begin{frame}[c]{Conclusion}
+		Nous avons donc pu 
+		
+		\begin{itemize}
+			\item Dresser l'état de l'art des technologies de séquençage et des solutions aux principaux problèmes concernant les reads,
+			utilisant une structure d'index sur ces \emph{reads} \sl
+			\item Nous pencher sur le cas des \emph{reads} longs \sl
+			\item Introduire une méthode alternative permettant d'appliquer un traitement à ces \emph{reads} avant utilisation $\Rightarrow$
+			\emph{reads} NaS \sl
+			\item \'Etudier une méthode de synthèse de \emph{reads} NaS, et en développer une nouvelle
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Perspectives}
+		\begin{itemize}
+			\item Ajuster les paramètres de notre méthode \sl
+			\item \'Etudier plus en détails les résultats obtenus \sl
+			\item Dresser l'état de l'art des méthodes d'assemblage de \emph{reads}, utilisant une structure d'index sur les \emph{reads}
+		\end{itemize}
+	\end{frame}
+	
+	\selectlanguage{british} 
+	\bibliographystyle{apalike}
+	\bibliography{../../../Bibliographies/reads_mapping}
+	
+	\selectlanguage{frenchb}
+	
+	\section{Notre méthode}
+	
+	\begin{frame}[c]{Implémentation}
+		\begin{itemize}
+			\item Ajout des \emph{seeds} et \emph{reads} partiellement alignés à des listes \sl
+			\item Tri des listes \sl
+			\item Parcours parallèle des listes pour effectuer les recrutements
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Implémentation}
+		\begin{block}{Recrutement de \emph{reads} similaires}
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%RECRUTEMENT
+					%TEMPLATE
+					\draw [blue] [|-|] (-4,2) -- (14,2);
+					\node [right] at (14,2) {\textcolor{blue}{\emph{template}}};
+					
+					%SEED
+					\draw [|-|] (6,1) -- (11,1);
+					\node [right] at (11,1) {seed};
+					
+					%SUFFS
+					\draw [red] [|-|] (5,0.5) -- (6,0.5);
+					\draw [red] [|-|] (6,0.5) -- (8,0.5);
+					\node [left] at (5,0.5) {\textcolor{red}{$s_1$}};
+					
+					\draw [red] [|-|] (4.5,0) -- (6,0);
+					\draw [red] [|-|] (6,0) -- (7.5,0);
+					\node [left] at (4.5,0) {\textcolor{red}{$s_2$}};
+					
+					\draw [red] [|-|] (4,-0.5) -- (6,-0.5);
+					\draw [red] [|-|] (6,-0.5) -- (7,-0.5);
+					\node [left] at (4,-0.5) {\textcolor{red}{$s_3$}};
+					
+					%PREF
+					\draw [green] [|-|] (8.5,0.5) -- (11,0.5);
+					\draw [green] [|-|] (11,0.5) -- (11.5,0.5);
+					\node [right] at (11.5,0.5) {\textcolor{green}{$p_1$}};
+					
+					\draw [green] [|-|] (9,0) -- (11,0);
+					\draw [green] [|-|] (11,0) -- (12,0);
+					\node [right] at (12,0) {\textcolor{green}{$p_2$}};
+					
+					\draw [green] [|-|] (9.5,-0.5) -- (11,-0.5);
+					\draw [green] [|-|] (11,-0.5) -- (12.5,-0.5);
+					\node [right] at (12.5,-0.5) {\textcolor{green}{$p_3$}};
+					
+					%LMINS
+					\draw [<->] (6,-1) -- (7,-1);
+					\node [above] at (6.5,-1) {$lmin$};
+					\draw [<->] (10,-1) -- (11,-1);
+					\node [above] at (10.5,-1) {$lmin$};
+					
+					%FLECHE
+					\draw [-triangle 45] (8.25,-2) -- (8.25,-3.5);
+					
+					%MISE A JOUR
+					%SEED
+					\draw [red] [|-|] (4,-4.5) -- (6,-4.5);
+					\draw [|-|] (6,-4.5) -- (11,-4.5);
+					\draw [green] [|-|] (11,-4.5) -- (12.5,-4.5);
+					\node [right] at (12.5,-4.5) {contig obtenu};	
+				\end{tikzpicture}
+			}
+			\end{center}
+		\end{block}
+	\end{frame}
+	
+	
+	
+\end{document}

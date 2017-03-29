@@ -1,0 +1,5 @@
+Notre méthode :
+On parle de liste, mais utilisation de tableaux : problème de vocabulaire ?
+
+Bug package AlGo:
+Commentaire en première ligne -> Erreur de numérotation

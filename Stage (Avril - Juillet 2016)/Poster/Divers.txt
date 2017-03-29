@@ -1,0 +1,7 @@
+
+	\caption{Illustration de la similarité entre $seeds$ et $reads$ courts partiellement alignés. $lmin$ représente le seuil permettant de déterminer cette similarité. Ici, on remarque que le $seed$ est similaire à $r2$, mais pas à $r1$.}
+	\label{figsim}
+
+Pour permettre une synthèse de $NaS$ plus efficace, nous utilisons des paramètres différents pour les \emph{reads} 2D (séquencés à partir de deux brins d'ADN) et pour les \emph{reads} 1D (séquencés à partir d'un seul brin d'ADN). Cette méthode ne permet pas directement la synthèse d'un $NaS$, mais produit plusieurs contigs de bonne qualité. \bigskip
+
+Cette méthode permet de produire des contigs de longeur moyenne blablabla, s'alignant avec une idendité de blablabla et semble donc représenter un bon prétraitement à la synthèse de ces \emph{reads} NaS blablabla, il faudra voir durant la thèse comment on fait pour réutiliser les contigs produits pour poursuivre la correction et les joindre !!! 

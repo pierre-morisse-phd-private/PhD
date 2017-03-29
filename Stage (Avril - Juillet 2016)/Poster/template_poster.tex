@@ -1,0 +1,395 @@
+
+\documentclass[portrait,a0b,final]{a0poster}
+
+
+
+
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage[usenames]{color}
+\usepackage{multicol}
+\usepackage{pstricks,pst-grad}
+\usepackage{amsmath,amssymb}
+\usepackage{amscd}
+\usepackage{color}
+\thispagestyle{empty}
+
+\newgray{grispale}{0.7}
+\newgray{grismoy}{0.5}
+%\newrgbcolor{LemonChiffon}{1. 0.98 0.8}
+\newrgbcolor{LightBlue}{0.68 0.85 0.9}
+\newrgbcolor{lblue}{0.8 0.92 0.95}
+\newrgbcolor{lred}{1 0.8 0.8}
+\definecolor{lgreen}{rgb}{0.2,0.7,0.2}
+\newrgbcolor{lyellow}{1 1 0.6}
+\newrgbcolor{orange}{1 0.7 0.2}
+\newrgbcolor{lorange}{0.9 0.9 0.7}
+\newrgbcolor{lgreen}{0.87 0.95 0.8}
+\newrgbcolor{dgreengray}{0.37 0.43 0.37}
+\newrgbcolor{dgreen}{0.36 0.75 0.41}
+\newrgbcolor{violet}{0.7 0.4 0.7}
+
+\newcommand{\RR}{{\ensuremath{\mathbb R}}}
+\newcommand{\ZZ}{{\ensuremath{\mathbb Z}}}
+\newcommand{\LL}{{\ensuremath{\mathrm L}}}
+\newcommand{\HH}{{\ensuremath{\mathrm H}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definition of some variables and colors
+\setlength{\columnsep}{3cm}
+\setlength{\columnseprule}{2mm}
+\setlength{\parindent}{0.0cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%               Background                     %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\background}[3]{
+  \newrgbcolor{cgradbegin}{#1}
+  \newrgbcolor{cgradend}{#2}
+  \psframe[fillstyle=gradient,gradend=cgradend,
+  gradbegin=cgradbegin,gradmidpoint=#3](0.,0.)(1.\textwidth,-1.\textheight)
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                Poster                        %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{poster}{
+  \begin{center}
+  \begin{minipage}[c]{0.80\textwidth}
+}{
+  \end{minipage}
+  \end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                pbox                          %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newrgbcolor{lcolor}{0. 0. 0.80}
+\newrgbcolor{gcolor1}{1. 1. 1.}
+\newrgbcolor{gcolor2}{.80 .80 1.}
+
+\newcommand{\pbox}[4]{
+\psshadowbox[#3]{
+\begin{minipage}[t][#2][t]{#1}
+#4
+\end{minipage}
+}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                myfig                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \myfig - replacement for \figure
+% necessary, since in multicol-environment
+% \figure won't work
+\newcommand{\myfig}[3][0]{
+\begin{center}
+  \vspace{1.5cm}
+  \includegraphics[width=#3\hsize,angle=#1]{#2}
+  \nobreak\medskip
+\end{center}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                mycaption                     %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \mycaption - replacement for \caption
+% necessary, since in multicol-environment \figure and
+% therefore \caption won't work
+
+%\newcounter{figure}
+\setcounter{figure}{1}
+\newcommand{\mycaption}[1]{
+  \vspace{0.5cm}
+  \begin{quote}
+    {{\sc Figure} \arabic{figure}: #1}
+  \end{quote}
+  \vspace{1cm}
+  \stepcounter{figure}
+}
+
+%qq cadres pour les titres
+%on applique les couleurs que l'on veut
+\newcommand{\titreic}[1]{\begin{center}\pbox{0.5\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=lightblue,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=whiteblue,gradmidpoint=1.0,framesep=1em}{\begin{center}\LARGE #1\end{center}}\end{center}\vspace{1.5cm}}
+
+\newcommand{\titrebleu}[1]{\begin{center}\pbox{0.6\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=blue,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=lblue,gradmidpoint=1.0,framesep=1em}{\begin{center}\LARGE #1\end{center}}\end{center}\vspace{1.5cm}}
+
+\newcommand{\titrerouge}[1]{\begin{center}\pbox{0.6\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=red,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=red,gradmidpoint=1.0,framesep=1em}{\begin{center}\large #1\end{center}}\end{center}\vspace{1.5cm}}
+
+\newcommand{\titrevert}[1]{\begin{center}\pbox{0.6\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=green,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=green,gradmidpoint=1.0,framesep=1em}{\begin{center}\large #1\end{center}}\end{center}\vspace{1.5cm}}
+
+\newcommand{\titreorange}[1]{\begin{center}\pbox{0.6\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=orange,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=orange,gradmidpoint=1.0,framesep=1em}{\begin{center}\LARGE #1\end{center}}\end{center}\vspace{1.5cm}}
+
+\newcommand{\sstitre}[1]{\begin{center}\bf \Large #1 \end{center}\vspace{1cm}}
+
+
+\newtheorem{defn}{Definition}
+\newtheorem{prop}{Proposition}
+\def\ia{\rightarrow\hspace{-40pt}+\ }
+\def\ca{\nearrow\hspace{-32pt}\searrow}
+\def\cs{\rightarrow\hspace{-15pt}+\ }
+\def\SGS{\bigoplus_{n\geq0}{\mathbb Q}[\SG_n]}
+\def\FQSym{{\bf FQSym}}
+\def\MQSym{{\bf MQSym}}
+\def\Zy{\frak Z}
+\def\F{\mathbf{F}}
+\def\ncp#1#2{#1\langle #2 \rangle}
+\def\ncs#1#2{#1\langle\langle #2 \rangle\rangle}
+\def\G{\frak{G}}
+\def\SG{\frak{S}}
+\def\si{\sigma}
+\def\om{\omega}
+\def\al{\alpha}
+
+\def\N{\mathbb{N}}
+\def\Q{\mathbb{Q}}
+\def\Z{\mathbb{Z}}
+\def\p{\frak p}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Begin of Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+
+\newrgbcolor{lightblue}{0. 0. 0.80}
+\newrgbcolor{white}{1. 1. 1.}
+\newrgbcolor{whiteblue}{.80 .80 1.}
+
+
+\begin{poster}
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% Header
+%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+\titreorange{\textbf{\huge Free Quasi-Symmetric Functions, Product
+Actions and Quantum Field Theory of Partitions\\}}
+
+\vspace*{1cm}
+
+\textsl{\LARGE G. H.E. Duchamp$^1$ J.-G. Luque$^2$, K. A. Penson$^3$ and  C. Tollu$^1$}
+
+\vspace*{1cm}
+
+\begin{tabular}{ccc}
+
+\begin{minipage}[b]{0.3\textwidth} \large %\center
+
+      $^1$ Institut Galil\'ee, LIPN\\
+      Universit\'e Paris 13\\
+      F- 93430 Villetaneuse, France\\
+      e-mail: \textsf{\{ghed,ct\}@lipn-univ.paris13.fr}
+    \end{minipage} &
+
+
+    \begin{minipage}[b]{0.3\textwidth} \large %\center
+
+      $^2$ Institut G.~Monge  UMR-CNRS 8049\\
+      Univ. Marne la Vall{\'e}e\\
+      F-77454 Marne la Vall{\'e}e, Cedex 2, France \\
+      e-mail: \textsf{luque@univ-mlv.fr}
+    \end{minipage} &
+
+
+
+    \begin{minipage}[b]{0.3\textwidth} \large %\center
+
+      $^3$ LPTCM CNRS UMR 7600\\
+      Univ. Marne Pierre et Marie Curie,\\
+       F 75252 Paris Cedex 05, France. \\
+      e-mail: \textsf{penson@lptl.jussieu.fr}
+    \end{minipage}
+  \end{tabular}
+\end{center}
+
+\vspace*{3cm}
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% Content
+%%%%%%%%%%%%%%%%%%%%%
+%%% Begin of Multicols-Enviroment
+%ici 2 colonnes par page
+\begin{multicols}{2}
+
+\Large \titreic{Introduction} Dans un papier relativement récent, Philippe et al. ont souligné l'importance d'indexer les reads afin de résoudre des problèmes de mapping ou de correction, et ont développée un index supportant les requêtes suivantes : \\
+
+\begin{itemize}
+	\item Dans quels reads $f$ apparaît ?
+	\item Dans combien de reads $f$ apparaît ?
+	\item Quelles sont les occurrences de $f$ ?
+	\item Quel est le nombre d'occurrences de $f$ ?
+	\item Dans quels reads $f$ n'apparaît qu'une fois ?
+	\item Dans combien de reads $f$ n'apparaît qu'une fois ?
+	\item Quelles sont les occurrences de $f$ dans les reads où $f$ n'apparaît qu'une fois ? \bigskip
+\end{itemize} 
+
+\titrebleu{Actions of a direct product of permutation groups}
+\sstitre{Direct product actions}
+Two pairs $(G_1,X_1)$ and $(G_2,X_2)$,  each $G_i$ is
+a permutation group acting on $X_i$.\\
+ {\it \color{red} Intransitive action}
+of $G_1\times G_2$ on $X_1\sqcup
+ X_2$ :
+\begin{equation}
+(\sigma_1,\sigma_2)x=\left\{\begin{array}{ll}\sigma_1x&\mbox{ if
+}x\in X_1\\ \sigma_2x&\mbox{ if }x\in X_2
+\end{array}\right. .\nonumber
+\end{equation}
+ $(G_1,X_1)\ia(G_2,X_2):=(G_1\times G_2,X_1\sqcup
+ X_2)$.\\
+  {\it \color{red} Cartesian action} of
+$G_1\times G_2$ on $X_1\times X_2$:
+\begin{equation} (\sigma_1,\sigma_2)(x_1,x_2)=(\sigma_1
+x_1,\sigma_2 x_2).\nonumber
+\end{equation}
+$(G_1,X_1)\ca(G_2,X_2):=(G_1\times G_2,X_1\times X_2)$.\\ \\
+\sstitre{Explicit realization}
+ Denote
+ \begin{enumerate}
+ \item[$\bullet\ \ $] by $\circ_N$ the natural action of $\SG_n$ on $\{0,\dots,n-1\}$,
+\item[$\bullet\ \ $]  by $\circ_I$ the intransitive action of $\SG_n\times \SG_m$ on
+$\{0,\cdots,n+m-1\}$
+\item[$\bullet\ \ $] by $\circ_C$ the cartesian action of $\SG_n\times \SG_m$ on $\{0,\dots,nm-1\}$.
+\end{enumerate}
+  More precisely,
+\begin{equation}
+(\sigma_1,\sigma_2)\circ_Ii=\left\{\begin{array}{ll}
+\sigma_1\circ_Ni&\mbox{if }0\leq i\leq n-1\\
+\sigma_2\circ_N(i-n)+n&\mbox{if }n\leq i\leq
+n+m-1\end{array}\right. \nonumber.
+\end{equation}
+and
+\begin{equation}
+(\sigma_1,\sigma_2)\circ_C(j+nk)=(\sigma_1\circ_Nj)+n(\sigma_2\circ_Nk)\nonumber
+\end{equation}
+for $0\leq i\leq n+m-1$, $0\leq j\leq n-1$ and $0\leq k\leq m-1$.\\
+Let the map
+$\ia:\SG_n\times\SG_m\rightarrow \SG_{n+m}$ defined by
+\begin{equation}
+\sigma_1\ia\sigma_2=\sigma_1\sigma_2[n]\nonumber
+\end{equation}
+\pbox{0.9\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=lblue,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=white,gradmidpoint=1.0,framesep=1em}{
+ $\sigma_1={\color{blue}1320}\in\SG_4$,  $\sigma_2={\color{red}534120}\in\SG_6$.
+\begin{equation}
+\sigma_1\ia\sigma_2={\color{blue}1320}{\color{red}978564}\nonumber,\,
+\sigma_2\ia\sigma_1={\color{red}534120}{\color{blue}7986}\nonumber
+\end{equation}
+}
+\newpage
+{\bf Proposition}\\
+$(\sigma_1\ia\sigma_2)\circ_Ni=(\sigma_1,\sigma_2)\circ_Ii .$\\ \\
+Let the map $\ca:\SG_n\times\SG_m\rightarrow \SG_{nm}$ defined by
+\begin{equation}\label{defcar}
+\sigma_1\ca\sigma_2=\prod_{i,j}c_i\ca c'_j\nonumber
+\end{equation}
+where $\sigma_1=c_1\cdots c_{k}$ and $\sigma_2=c'_1\cdots c'_{k'}$
+are
+ the decompositions of $\sigma_1$ and $\sigma_2$ in a product
+of cycles
+and \begin{equation}\label{cycleintr} c\ca
+c'=\prod_{s=0}^{l\wedge l'-1}(\phi(s,0),\phi(s+1,1)\cdots,
+\phi(s+l\vee l'-1,l\vee l'-1)),\nonumber
+\end{equation}
+($\wedge:=$  gcd,  $\vee:=$  lcm, $c=(i_0,\cdots, i_{l-1})$,
+$c'=(j_0,\cdots,j_{l'-1})$ are two cycles and
+$\phi(k,k')=i_{k\mbox{ mod }l}+nj_{k'\mbox{ mod }l'}$.)\\
+ The cartesian action is
+compatible with the natural action.\\
+{\bf Proposition}\\
+$(\sigma_1\ca\sigma_2)\circ_Ni=(\sigma_1,\sigma_2)\circ_Ci\ .$\\ \\
+\pbox{0.9\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=lblue,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=white,gradmidpoint=1.0,framesep=1em}{ $c_1=(0,2,3,1)$, $c_2=(7,6,5,4,3,2)$.\\
+ $c_1\ca c_2:$\\
+\begin{center}
+\setlength{\unitlength}{2mm}
+\resizebox{25cm}{17cm}{\begin{picture}(45,30)(-5,-5)
+\linethickness{1.5pt}
+%axe vertical
+\put(0,0){\line(0,1){25}} \put(0,0){\line(1,0){35}}
+\put(-1,5){\line(1,0){2}}\put(-1,10){\line(1,0){2}}
+\put(-1,15){\line(1,0){2}}\put(-1,20){\line(1,0){2}}
+%axe horizontal
+\put(5,-1){\line(0,1){2}}\put(10,-1){\line(0,1){2}}
+\put(15,-1){\line(0,1){2}}\put(20,-1){\line(0,1){2}}
+\put(25,-1){\line(0,1){2}}\put(30,-1){\line(0,1){2}}
+%graduation verticale
+\put(-3,-1){\footnotesize 0}\put(-3,4){\footnotesize
+2}\put(-3,9){\footnotesize 3} \put(-3,14){\footnotesize
+1}\put(-3,19){\footnotesize 0}
+%graduation horizontale
+\put(-1,-3){\footnotesize 7}\put(4,-3){\footnotesize
+6}\put(9,-3){\footnotesize 5}\put(14,-3){\footnotesize
+4}\put(19,-3){\footnotesize 3}\put(24,-3){\footnotesize 2}
+\put(29,-3){\footnotesize 7}
+%le cycle 1
+\color{blue}
+\linethickness{1pt}
+\put(0,0){\line(1,1){5}}\put(5,5){\line(1,1){5}}\put(10,10){\line(1,1){5}}
+\put(15,15){\line(1,1){5}}\put(20,0){\line(1,1){5}}\put(25,5){\line(1,1){5}}
+\put(0,10){\line(1,1){5}}\put(5,15){\line(1,1){5}}\put(10,0){\line(1,1){5}}
+\put(15,5){\line(1,1){5}}\put(20,10){\line(1,1){5}}\put(25,15){\line(1,1){5}}
+%vertical et horizontal
+%\setlinestyle{dotted}
+\linethickness{0.25pt} \multiput(20,0)(0,1){20}{\line(0,-1){0.2}}
+\multiput(10,0)(0,1){20}{\line(0,-1){0.2}}
+\multiput(30,0)(0,1){20}{\line(0,-1){0.2}}
+ \multiput(30,10)(-1,0){30}{\line(-1,0){0.2}}
+%flèches
+\put(5,17.5){{\tiny$\nearrow$}} \put(3.8,7){{\tiny$\nearrow$}}
+\put(13.8,7){{\tiny$\nearrow$}} \put(23.8,7){{\tiny$\nearrow$}}
+% \put(9.5,16){{$\downarrow$}}\put(19.6,16){{$\downarrow$}}
+% \put(29.5,16){{$\downarrow$}}
+%  \put(16,9.5){{$\leftarrow$}}
+
+ %croix
+ \multiput(5,5)(5,0){6}{\circle*{0.5}}
+ \multiput(5,10)(5,0){6}{\circle*{0.5}}
+ \multiput(5,15)(5,0){6}{\circle*{0.5}}
+ \multiput(5,20)(5,0){6}{\circle*{0.5}}
+%cycle 2
+\color{red}
+\linethickness{1pt}
+\put(0,5){\line(1,1){15}}\put(15,0){\line(1,1){15}}
+\put(0,15){\line(1,1){5}}\put(5,0){\line(1,1){20}}
+\put(25,0){\line(1,1){5}}
+%lignes
+\linethickness{0.25pt} \multiput(5,0)(0,1){20}{\line(0,-1){0.2}}
+\multiput(15,0)(0,1){20}{\line(0,-1){0.2}}
+\multiput(25,0)(0,1){20}{\line(0,-1){0.2}}
+ \multiput(30,5)(-1,0){30}{\line(-1,0){0.2}}
+  \multiput(30,15)(-1,0){30}{\line(-1,0){0.2}}
+  %fleches
+  \put(0.5,17.5){{\tiny$\nearrow$}}\put(10.5,17.5){{\tiny$\nearrow$}}
+  \put(20.5,17.5){{\tiny$\nearrow$}} \put(20.5,7.5){{\tiny$\nearrow$}}
+  \put(25.5,2.5){{\tiny$\nearrow$}}
+  %\put(4.5,17){{$\downarrow$}}\put(14.6,17){{$\downarrow$}}
+ % \put(24.5,17){{$\downarrow$}}
+  %\put(16,14.5){{$\leftarrow$}} \put(16,4.6){{$\leftarrow$}}
+
+   %croix
+ \multiput(5,5)(5,0){6}{\circle*{0.5}}
+ \multiput(5,10)(5,0){6}{\circle*{0.5}}
+ \multiput(5,15)(5,0){6}{\circle*{0.5}}
+ \multiput(5,20)(5,0){6}{\circle*{0.5}}
+\end{picture}}\nonumber\\
+$\color{blue}(28,26,23,17,12,10,31,25,20,18,15,9)$\\
+$\color{red}(30,27,21,16,14,11,29,24,22,19,13,8).$
+\end{center}}\\ \\
+\sstitre{Algebraic structure} {\bf Proposition}{\it\ \ \
+Associativity}\\ Let $\sigma_1\in \SG_n$, $\sigma_2\in\SG_m$ and
+$\sigma_3\in\SG_p$ be $3$ permutations
+\begin{enumerate}
+\item
+$\sigma_1\ia(\sigma_2\ia\sigma_3)=(\sigma_1\ia\sigma_2)\ia\sigma_3$
+\item $\sigma_1\ca(\sigma_2\ca\sigma_3)=(\sigma_1\ca\sigma_2)\ca\sigma_3$
+\end{enumerate}
+{\bf Proposition}{\it\ \  Semi-distributivity}\\
+ $\sigma_1\in \SG_n$, $\sigma_2\in\SG_m$ and $\sigma_3\in\SG_p$
+\[\sigma_1\ca(\sigma_2\ia\sigma_3)=(\sigma_1\ca\sigma_2)\ia(\sigma_1\ca\sigma_3) \]
+
+\newpage
+
+\end{multicols}
+\end{poster}
+
+\end{document}

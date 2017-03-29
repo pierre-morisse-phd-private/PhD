@@ -1,0 +1,14 @@
+#bibtex poster
+#latex poster.tex
+#latex poster.tex
+
+latex poster_fpsac.tex
+######### Posters A1
+# dvips -T841mm,595mm -x680 poster.dvi -o poster..ps 
+dvips -T595mm,841mm -x680 poster_fpsac.dvi -o poster_fpsac.a1.ps 
+ps2pdf poster_fpsac.a1.ps poster_fpsac.a1.pdf
+#gv poster.ps
+#acroread poster.pdf
+#xpdf poster.pdf
+
+

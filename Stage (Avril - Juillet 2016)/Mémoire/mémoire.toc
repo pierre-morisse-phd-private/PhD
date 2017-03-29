@@ -1,0 +1,41 @@
+\select@language {french}
+\contentsline {chapter}{Introduction}{3}
+\contentsline {chapter}{\numberline {1}D\IeC {\'e}finitions et notations}{5}
+\contentsline {chapter}{\numberline {2}S\IeC {\'e}quenceurs \IeC {\`a} tr\IeC {\`e}s haut d\IeC {\'e}bit}{6}
+\contentsline {section}{\numberline {2.1}S\IeC {\'e}quen\IeC {\c c}age de \emph {reads} courts}{6}
+\contentsline {section}{\numberline {2.2}S\IeC {\'e}quen\IeC {\c c}age de \emph {reads} longs}{7}
+\contentsline {section}{\numberline {2.3}Tableau r\IeC {\'e}capitulatif}{8}
+\contentsline {chapter}{\numberline {3}\'Etat de l'art}{10}
+\contentsline {section}{\numberline {3.1}Structures de donn\IeC {\'e}es classiques}{10}
+\contentsline {subsection}{\numberline {3.1.1}SHREC - HybridSHREC}{10}
+\contentsline {subsection}{\numberline {3.1.2}HiTEC}{11}
+\contentsline {subsection}{\numberline {3.1.3}Fiona}{12}
+\contentsline {section}{\numberline {3.2}Tables de hachage}{12}
+\contentsline {subsection}{\numberline {3.2.1}MAQ}{12}
+\contentsline {subsection}{\numberline {3.2.2}MrsFAST - MrsFAST-Ultra}{13}
+\contentsline {subsection}{\numberline {3.2.3}Coral}{14}
+\contentsline {subsection}{\numberline {3.2.4}RACER}{14}
+\contentsline {subsection}{\numberline {3.2.5}BLESS}{15}
+\contentsline {section}{\numberline {3.3}Structures de donn\IeC {\'e}es \IeC {\'e}volu\IeC {\'e}es}{15}
+\contentsline {subsection}{\numberline {3.3.1}GkA}{15}
+\contentsline {subsection}{\numberline {3.3.2}CGkA}{16}
+\contentsline {subsection}{\numberline {3.3.3}PgSA}{16}
+\contentsline {subsection}{\numberline {3.3.4}LoRDEC}{17}
+\contentsline {section}{\numberline {3.4}Tableaux r\IeC {\'e}capitulatifs}{17}
+\contentsline {subsection}{\numberline {3.4.1}Correction de \emph {reads}}{18}
+\contentsline {subsection}{\numberline {3.4.2}\emph {Mapping} de \emph {reads}}{19}
+\contentsline {subsection}{\numberline {3.4.3}Traitement des 7 requ\IeC {\^e}tes}{20}
+\contentsline {chapter}{\numberline {4}M\IeC {\'e}thode alternative \IeC {\`a} la correction de \emph {reads} longs : Les \emph {reads} NaS}{21}
+\contentsline {section}{\numberline {4.1}Jeu de donn\IeC {\'e}es utilis\IeC {\'e}}{22}
+\contentsline {section}{\numberline {4.2}Premi\IeC {\`e}re m\IeC {\'e}thode}{23}
+\contentsline {subsection}{\numberline {4.2.1}Pr\IeC {\'e}sentation de la m\IeC {\'e}thode}{23}
+\contentsline {subsection}{\numberline {4.2.2}M\IeC {\'e}thode de recrutement des \emph {reads} : Commet}{27}
+\contentsline {subsection}{\numberline {4.2.3}R\IeC {\'e}sultats}{28}
+\contentsline {section}{\numberline {4.3}Notre m\IeC {\'e}thode}{29}
+\contentsline {subsection}{\numberline {4.3.1}Pr\IeC {\'e}sentation de la m\IeC {\'e}thode}{29}
+\contentsline {subsection}{\numberline {4.3.2}Version modifi\IeC {\'e}e de PBLAT}{30}
+\contentsline {subsection}{\numberline {4.3.3}Structure de donn\IeC {\'e}es}{31}
+\contentsline {subsection}{\numberline {4.3.4}Premi\IeC {\`e}re \IeC {\'e}tape : Recrutement de \emph {reads} similaires}{32}
+\contentsline {subsection}{\numberline {4.3.5}Deuxi\IeC {\`e}me \IeC {\'e}tape : Extension des contigs obtenus}{35}
+\contentsline {subsection}{\numberline {4.3.6}R\IeC {\'e}sultats}{38}
+\contentsline {chapter}{Conclusion et perspectives}{41}

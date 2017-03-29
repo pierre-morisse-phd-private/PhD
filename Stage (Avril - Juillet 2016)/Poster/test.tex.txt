@@ -1,0 +1,335 @@
+% Compiler avec latex :
+%----------------------
+% latex testposter
+%
+% Créer le postscript :
+%----------------------
+% dvips -Ppdf -GO testposter
+%
+% Créer le pdf :
+%----------------------
+% ps2pdf testposter.ps
+
+\documentclass{a0poster}
+%-----------------------------------------------------------
+% Ce poster a été fabriqué en prenant des parties dans différents documents 
+% et partiellement traduites en francais
+% dont une grande partie dans :
+% http://www.phys.ufl.edu/~pjh/posters/poster_howto.html
+% ainsi que dans le package a0poster.cls
+
+%%-----------------------------------------------
+%% Load the necessary packages
+%%-----------------------------------------------
+%\usepackage{palatino}
+\usepackage[latin1]{inputenc}
+\usepackage[francais]{babel}
+
+% Pour avoir des fontes correctes en pdf (mode math)
+\usepackage{aeguill,aecompl}
+
+
+% Votre package préféré pour les graphiques
+%\usepackage{epsf}
+\usepackage{graphicx}
+\usepackage{epic,eepic}
+
+% Packages pour les couleurs et gradient de couleur
+\usepackage{color,pstcol}
+\usepackage{pst-grad}
+
+%%-----------------------------------------------
+%% Define the required numbers, lengths and boxes 
+%%-----------------------------------------------
+
+   \def\largeur{841mm}     % A0 PORTRAIT
+   \def\hauteur{1189mm}
+   \def\nombrecolonnes{3}
+
+
+\newsavebox{\dummybox}
+\newsavebox{\colonnes}
+
+%%
+%%
+\newlength{\bgwidth}\newlength{\bgheight}
+\setlength\bgheight{\hauteur} \addtolength\bgheight{-1mm}
+\setlength\bgwidth{\largeur} \addtolength\bgwidth{-1mm}
+
+\newlength{\boitewidth}
+
+%% Set paper format
+\setlength\paperheight{\hauteur}                                             
+\setlength\paperwidth{\largeur}
+\special{papersize=\largeur,\hauteur}
+
+\topmargin -1in
+\marginparsep0mm
+\marginparwidth0mm
+\headheight0mm
+\headsep0mm
+
+
+%% Minimal Margins to Make Correct Bounding Box
+\setlength{\oddsidemargin}{-2.44cm}
+\addtolength{\topmargin}{-3mm}
+\textwidth\paperwidth
+\textheight\paperheight
+
+\parindent0cm
+\parskip1.5ex plus0.5ex minus 0.5ex
+\pagestyle{empty}
+
+%% Definition des environnements boite et colonne
+\newenvironment{boite}{%
+  \begin{lrbox}{\dummybox}%
+    \begin{minipage}{0.96\linewidth}}%
+    {\end{minipage}%
+  \end{lrbox}%
+  \raisebox{-\depth}{\psshadowbox[framesep=1em]{\usebox{\dummybox}}}\\[0.5em]}
+\newenvironment{colonne}{%
+  \setlength\boitewidth{1.2\textwidth}
+  \divide\boitewidth by \nombrecolonnes
+  \begin{minipage}[t]{\boitewidth}}{\end{minipage}\hfill}
+
+
+
+
+
+%%-----------------------------------------------
+%% Définitions personnelles
+%%-----------------------------------------------
+
+
+
+%%-----------------------------------------------
+%% Début du document
+%%-----------------------------------------------
+
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%               Dégradé du fond                %%%             
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{
+  \newrgbcolor{gradbegin}{0.5 0.5 1} % Couleur du début
+  \newrgbcolor{gradend}{1 1 1}       % Couleur de fin
+  \psframe[fillstyle=gradient,
+           gradend=gradend,
+           gradbegin=gradbegin,
+           gradmidpoint=.1	
+          ](\bgwidth,-\bgheight)
+}
+\vfill
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                     Titre                    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hfill
+\psshadowbox{\makebox[0.95\textwidth]{%
+    \hfill
+    \parbox[c]{0.8\linewidth}{%
+      \begin{center}
+        \textbf{\veryHuge 
+{Voici le titre \\[.5cm] 
+de mon poster}}\\[1em]
+        \textsc{\LARGE Premier Auteur$^{\mbox{\normalsize 1}}$ 
+                  $\&$ Deuxième Auteur$^{\mbox{\normalsize 2}}$}\\[0.5em]
+        {\large 
+$^1${\bf Laboratoire d'Astrophysique de l'Observatoire Midi-Pyrénées} ({\sc cnrs~--~ups}), 14 Avenue Édouard Belin, 31 400 Toulouse\\
+$^2${\bf Laboratoire du deuxième auteur,} adresse du laboratoire, Toulouse
+}
+      \end{center}}
+\hfill}}\hfill\mbox{}\\[5.cm]
+\begin{lrbox}{\colonnes}
+  \parbox[t][\textheight]{1.3\textwidth}{%
+    \vspace*{0.2cm}
+    \hfill
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                Première colonne              %%%             
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{colonne}
+
+%-----------------------------------------
+%   Première boite
+%-----------------------------------------
+     \begin{boite}
+
+     \begin{center}
+{\LARGE{\color{red}    \underline{Résumé}  } }
+     \end{center}
+
+{\color{blue}
+\hspace{.5cm}début du résumé\vspace{5cm}
+
+blabla
+\vspace{5cm}
+
+fin du résumé
+ }
+
+      \end{boite}
+
+%-----------------------------------------
+%   Deuxième boite
+%-----------------------------------------
+      \begin{boite}
+\large
+        \section*{\LARGE {\color{red} I \hspace{0.1cm} \underline{section}} }
+
+
+\subsection*{\Large{\color{blue} 1. sous-section}}
+
+\centerline{texte}
+\vspace{5cm}
+
+blabla
+\vspace{5cm}
+
+\subsection*{\Large{\color{blue} 2. sous-section}}
+
+\centerline{texte}
+
+\vspace{5cm}
+
+blabla
+
+      \end{boite}
+
+%-----------------------------------------
+%   Troisième boite
+%-----------------------------------------
+\begin{boite}
+
+        \section*{\LARGE\color{red} II \hspace{0.1cm} \underline{section} }
+\large
+
+\vspace{5cm}
+
+blabla
+
+
+\centerline{Un petit schéma}
+\vspace{1cm}
+
+\centerline{\input schema.tex }
+\vspace{1cm}
+
+\vspace{5cm}
+
+blabla
+
+\centerline{Une petite image}
+\vspace{1cm}
+
+\centerline{\includegraphics[width=24.cm]{image}}
+
+      \end{boite}
+
+
+    \end{colonne}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                Deuxième colonne              %%%             
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{colonne}
+%-----------------------------------------
+%   Première boite
+%-----------------------------------------
+\begin{boite}
+
+        \section*{\LARGE {\color{red}III \hspace{0.1cm} \underline{section}} }
+\large
+
+
+\vspace{5cm}
+
+blabla
+
+\centerline{Une petite formule}
+\vspace{1cm}
+
+
+
+\begin{equation}
+\hat x=\arg \max_{x}{\prod_{n=1}^{N}}p(y_n|x)\times p(x)
+\label{monequation}
+\end{equation}
+
+\vspace{5cm}
+
+\centerline{Une grosse formule}
+\vspace{1cm}
+
+
+{\huge
+\begin{equation}
+\hat x=\arg \max_{x}{\prod_{n=1}^{N}}p(y_n|x)\times p(x)
+\label{monequation2}
+\end{equation}
+}
+
+blabla
+
+
+\centerline{\begin{tabular}{|l|c|c|c|}
+\multicolumn{1}{c|}{} & $\alpha$ & $\beta$ & $\gamma$\\
+\hline
+valeur 1 & 1.54 & 4.53 & 6.43 \\
+\hline
+\end{tabular}}
+
+      \end{boite}
+
+%-----------------------------------------
+%   Deuxième boite
+%-----------------------------------------
+
+\begin{boite}
+
+        \section*{\LARGE {\color{red}IV \hspace{0.1cm} \underline{section}} }
+
+
+\subsection*{\Large{\color{blue} 1. sous-section}}
+\vspace{5cm}
+
+\centerline{texte}
+\vspace{5cm}
+
+\subsubsection*{\large{ 1.1 sous-section}}
+\vspace{5cm}
+
+\centerline{texte}
+\vspace{5cm}
+
+\subsubsection*{\large{ 1.2 sous-section}}
+\vspace{5cm}
+
+\centerline{texte}
+\vspace{5cm}
+
+blabla
+\vspace{5cm}
+
+\subsection*{\Large{\color{blue} 2. sous-section}}
+\vspace{5cm}
+
+
+blabla
+\vspace{5cm}
+
+blabla
+
+
+
+      \end{boite}
+
+    \end{colonne}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%             Fin du documentne                %%%             
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    }
+    \end{lrbox}
+\resizebox*{0.98\textwidth}{!}{%
+  \usebox{\colonnes}}\hfill\mbox{}\vfill
+\end{document}

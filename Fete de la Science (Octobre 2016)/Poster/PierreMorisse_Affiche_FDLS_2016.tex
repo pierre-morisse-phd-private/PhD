@@ -1,0 +1,558 @@
+\documentclass[portrait,a0b,final]{a0poster}
+
+\usepackage{times}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{graphicx}
+\usepackage[usenames]{xcolor}
+\usepackage{pstricks,pst-grad}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{patterns}
+\usetikzlibrary{decorations.pathreplacing}
+\usepackage{widetext}
+\usepackage{background}
+\usepackage{enumitem}
+\thispagestyle{empty}
+
+% Couleurs pour les cadres
+\newrgbcolor{bleu}{0.2 0.4 1}
+\newrgbcolor{LightBlue}{0.68 0.85 0.9}
+\newrgbcolor{lblue}{0.8 0.92 0.95}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definition of some variables and colors
+\setlength{\columnsep}{3cm}
+\setlength{\columnseprule}{2mm}
+\setlength{\parindent}{0.0cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                Poster                        %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{poster}{
+  \begin{center}
+  \begin{minipage}[c]{1\textwidth}
+}{
+  \end{minipage}
+  \end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                pbox                          %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\pbox}[4]{
+\psframebox[#3]{
+\begin{minipage}[c][#2][c]{#1}
+#4
+\end{minipage}
+}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                myfig                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \myfig - replacement for \figure
+% necessary, since in multicol-environment
+% \figure won't work
+\newcommand{\myfig}[1]{
+	\begin{center}
+		\vspace{1cm}
+		#1
+		\vspace{1cm}
+	\end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                figcaption                    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \figcaption - replacement for \caption
+% necessary, since in multicol-environment \figure and
+% therefore \caption won't work
+
+\setcounter{figure}{1}
+\newcommand{\figcaption}[1]{
+  \vspace{0.5cm}
+  \begin{quote}
+    {{\sc Figure} \arabic{figure} : #1}
+  \end{quote}
+  \stepcounter{figure}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                mytab                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \mytab - replacement for \table
+% necessary, since in multicol-environment
+% \table won't work
+\newcommand{\mytab}[1]{
+\begin{center}
+  \vspace{2cm}
+	#1
+  \nobreak\medskip
+\end{center}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                tabcaption                    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \tabcaption - replacement for \caption
+% necessary, since in multicol-environment \table and
+% therefore \caption won't work
+
+\setcounter{table}{1}
+\newcommand{\tabcaption}[1]{
+  \vspace{0.5cm}
+  \begin{quote}
+		\begin{center}
+			{{\sc Table} \arabic{table} : #1}
+		\end{center}
+  \end{quote}
+  \stepcounter{table}
+}
+
+
+% Cadres pour les titres (titre principal et titres des sections)
+\newcommand{\titre}[1]{\begin{center}\pbox{0.6\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=bleu,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=lblue,gradmidpoint=1.0,framesep=1em}{\begin{center}\LARGE #1\end{center}}\end{center}\vspace{1.5cm}}
+
+\newcommand{\titresec}[1]{\begin{center}\pbox{0.6\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=lblue,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=LightBlue,gradmidpoint=1.0,framesep=1em}{\begin{center}\LARGE #1\end{center}}\end{center}\vspace{1.5cm}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% 											Début du document												 %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{poster}
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% 	 En-tête		%%%
+%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+	\vspace*{1cm}
+
+	\titre{\textbf{\huge Bioinformatique \\ Analyse de données issues de séquenceurs à très haut débit}}
+
+	\vspace*{1cm}
+
+	\begin{tabular}{ccc}
+		\begin{minipage}[c]{0.33\textwidth}
+			% Pour aligner les logos aux titres, à gauche
+			\flushleft
+			\vspace*{-9cm}
+			\includegraphics[width=0.33\textwidth]{NU.eps} \\
+			\includegraphics[width=0.33\textwidth]{UR.eps}
+		\end{minipage} &
+		
+		\begin{minipage}[c]{0.275\textwidth}
+			\centering
+			\textsl{\LARGE Pierre Morisse \\ Doctorat en Informatique 1° année}
+		\end{minipage} &
+		
+		\begin{minipage}[c]{0.33\textwidth}
+			% Pour aligner les logos aux titres, à droite
+			\flushright
+			\vspace*{-9.7cm}
+			\includegraphics[width=0.33\textwidth]{UFR.eps} \\
+			\vspace{4.2cm}
+			\includegraphics[width=0.33\textwidth]{Litis.eps}
+		\end{minipage}
+	\end{tabular}
+\end{center}
+
+\vspace*{1.5cm}
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% 	 Contenu		%%%
+%%%%%%%%%%%%%%%%%%%%%
+% 3 colonnes par page
+\begin{multicols}{2}
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% 	Colonne 1		%%%
+%%%%%%%%%%%%%%%%%%%%%
+\titresec{Introduction}
+
+Depuis le milieu des années 2000, les séquenceurs à très haut débit se développent et permettent de séquencer l'ADN
+d'un individu sous forme de courtes séquences appelées \emph{lectures}, utilisées pour résoudre divers problèmes
+de génomique, notamment de \emph{mapping} et d'\emph{assemblage}. \bigskip
+
+Lors de du séquençage de l'ADN, les séquenceurs peuvent introduire des erreurs dans les \emph{lectures} produites. Nous appelons ces
+erreurs des erreurs de séquençage, et il est donc souvent nécessaire de faire subir aux \emph{lectures} une procédure de
+correction avant de les utiliser, afin d'améliorer leur précision. \bigskip
+
+Les séquenceurs produisant des millions de \emph{lectures}, il est nécessaire de développer des outils informatiques
+adaptés au traitement de telles quantités de données, afin de permettre la résolution des différents problèmes. \bigskip
+
+\vspace*{0.75cm}
+
+\pbox{0.97\columnwidth}{}{linewidth=0.5mm,framearc=0.1}{
+	\myfig{
+		\begin{tikzpicture}
+			\node at (-10,2.5) {\'Echantillon d'ADN};
+			
+			\draw [-triangle 45] (-5.5,2.5) -- (-1,2.5);
+			
+			\draw (0,0) rectangle (5,5);
+			\node at (2.5,2.5) {Séquenceur};
+			
+			\draw [-triangle 45] (6,2.5) -- (10.5,2.5);
+			
+			
+			\node at (15,3.75) {\textcolor{green}{TT\textcolor{red}{AG}CTCGT\textcolor{red}{A}}};
+			\node at (15,2.5) {\textcolor{green}{GCTAG\textcolor{red}{C}TAGC}};
+			\node at (15,1.25) {\textcolor{green}{AT\textcolor{red}{C}GAGA\textcolor{red}{T}CG}};
+			
+			\draw [-triangle 45] (15,0.25) -- (15,-3.25);
+			
+			\draw (12.5, -4.25) rectangle (17.5,-9.25);
+			\node at (15,-6.75) {Correction};
+			
+			\draw [-triangle 45] (10.5,-6.75) -- (6.5,-6.75);
+			
+			\node at (2.5,-5.5) {\textcolor{green}{TTAGCTCGTA}};
+			\node at (2.5,-6.75) {\textcolor{green}{GCTAG\textcolor{red}{C}TAGC}};
+			\node at (2.5,-8) {\textcolor{green}{ATCGAGATCG}};
+			
+			\draw [-triangle 45] (-1,-5.75) -- (-5.5,-3.5);
+			\draw [-triangle 45] (-1,-7.75) -- (-5.5,-10);
+			
+			
+			\draw (-12.5,-6) rectangle (-7.5,-1);
+			\node at (-10,-3.5) {\emph{Mapping}};
+			
+			
+			\draw (-12.5,-12.5) rectangle (-7.5,-7.5);
+			\node at (-10,-10) {\emph{Assemblage}};
+		\end{tikzpicture}
+		\figcaption{Illustration du cheminement des données issues de séquenceurs. Les bases en vert dans les \emph{lectures} correspondent aux
+		bases correctes, et les bases en rouge aux erreurs de séquençage.}
+		\label{figrec}
+	}
+}
+
+\vspace*{1cm}
+
+\titresec{\'Evolution des séquenceurs}
+
+Les séquenceurs se développent et évoluent très rapidement. Ils deviennent moins imposants, moins coûteux, et visent 
+ainsi à être plus accessibles au grand public. Ils produisent également des \emph{lectures} de plus en plus longues,
+très utiles pour résoudre des problèmes complexes, bien que peu précises. \bigskip
+
+\begin{center}
+	\begin{tabular}{|c|c|}
+		\hline
+		& \\
+		2007 - Illumina HiSeq & 2015 - Oxford Nanopore MinION \\ 
+		& \\
+		\hline
+		& \\
+		\includegraphics[width=0.2\textwidth]{HiSeq.eps} & \includegraphics[width=0.2\textwidth]{MinION.eps} \\
+		& \\
+		1 milliard de \emph{lectures} & Environ 70 000 \emph{lectures} \\
+		& \\
+		\emph{Lectures} courtes (100 - 150) & \emph{Lectures} longues (> 10 000) \\
+		& \\
+		< 1\% d'erreurs & ~ 30\% d'erreurs \\ 
+		& \\
+		2 - 11 jours & 48 heures \\ 
+		& \\
+		470 000 \$ & 1 000 \$ \\
+		& \\
+		\hline
+	\end{tabular}
+\end{center}
+
+\vspace*{1cm}
+
+\titresec{Principaux objectifs}
+
+\begin{itemize}[label={}]
+	\item \textbf{Côté informatique :} \bigskip
+	\begin{itemize}[label=$\bullet$, leftmargin=1in, labelsep=.2in]
+		\item Développer des structures de données permettant de stocker et de traiter les grandes quantités
+		de données \\ formées par les \emph{lectures} \bigskip
+		\item Développer des outils permettant aux biologistes de manipuler facilement les \emph{lectures} \bigskip
+	\end{itemize}
+	\item \textbf{Côté biologie :} \bigskip
+	\begin{itemize}[label=$\bullet$, leftmargin=1in, labelsep=.2in]
+		\item Analyser les \emph{lectures} afin détecter des mutations dans l'ADN d'un individu, et ainsi d'éventuelles pathologies \bigskip
+		\item Générer de nouveaux génomes de référence à partir des \emph{lectures}, afin de les utiliser par la suite dans d'autres problèmes
+	\end{itemize}
+\end{itemize}
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%
+%%% 	Colonne 2		%%%
+%%%%%%%%%%%%%%%%%%%%%
+\titresec{3 principaux problèmes}
+
+\begin{enumerate}[labelsep=.2in, label=\textbf{\arabic*.}]
+	\item \textbf{Correction :} \bigskip
+	\begin{itemize}[label=$\bullet$, leftmargin=0.75in, labelsep=.2in]
+		\item Présence d'erreurs de séquençage dans les \emph{lectures}, très nombreuses dans les \emph{lectures} longues \bigskip
+		\item Nécessité de réduire le taux d'erreur afin d'améliorer la précision des \emph{lectures}, et de faciliter
+					leur utilisation \bigskip
+		\item Différentes approches (Comparaison des \emph{lectures} entre elles, analyse des \emph{facteurs} des \emph{lectures}, etc) \bigskip
+	\end{itemize}
+
+	\item \textbf{Mapping :} \bigskip
+	\begin{itemize}[label=$\bullet$, leftmargin=0.75in, labelsep=.2in]
+		\item Aligner les \emph{lectures} séquencées sur un génome de référence \bigskip
+		\item Comparer l'ADN d'un individu à l'ADN du génome de référence \bigskip
+		\item Détecter des mutations et d'éventuelles pathologies
+	\end{itemize}
+		
+		\vspace*{0.75cm}
+		
+		\pbox{0.95\columnwidth}{}{linewidth=0.5mm,framearc=0.1}{
+			\myfig{
+			\begin{tabular}{lr}
+				\begin{tikzpicture}
+					% NaS
+					\draw [blue] [|-|] (-6,1) -- (10,1);
+					
+					% Reads courts
+					\draw [|-|] (-6,-0.5) -- (-4.5,-0.5);
+					\draw [|-|] (-5,0.5) -- (-3.5,0.5);
+					\draw [|-|] (-4,0) -- (-2.5,0);
+					\draw [|-|] (-3.5,-1) -- (-2,-1);			
+					\draw [|-|] (-2.75,-0.5) -- (-1.25,-0.5);							
+					\draw [|-|] (-2,0.5) -- (-0.5,0.5);
+					\draw [|-|] (-1.5,0) -- (0,0);
+					
+					% Gap 1
+					\draw [red, dashed] (0.75,1) -- (0.75,-1.2);
+					\draw [red, dashed] (1.75,1) -- (1.75,-1.2);
+					\draw [decorate,decoration={brace, amplitude=5pt, mirror},red]
+					(0.75,-1.45) -- (1.75,-1.45) node [red, midway, yshift=-0.75cm] 
+					{\footnotesize gap};
+
+					\draw [|-|] (-0.75,-1) -- (0.75,-1);
+					\draw [|-|] (1.75,0.5) -- (3.25,0.5);
+					\draw [|-|] (2.25,0) -- (3.75,0);
+					\draw [|-|] (2.5,-1) -- (4,-1);
+					\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+					\draw [|-|] (4.5,0.5) -- (6,0.5);
+					\draw [|-|] (4.25,0) -- (5.75,0);
+					
+					% Gap 2
+					\draw [red, dashed] (6.5,1) -- (6.5,-1.2);
+					\draw [red, dashed] (7.5,1) -- (7.5,-1.2);
+					\draw [decorate,decoration={brace, amplitude=5pt, mirror},red]
+					(6.5,-1.45) -- (7.5,-1.45) node [red, midway, yshift=-0.75cm] 
+					{\footnotesize gap};
+					
+					\draw [|-|] (5,-1) -- (6.5,-1);
+					\draw [|-|] (7.5,0) -- (9,0);
+					\draw [|-|] (7.75,0.5) -- (9.25,0.5);
+					\draw [|-|] (8,-1) -- (9.5,-1);
+					\draw [|-|] (8.5,-0.5) -- (10,-0.5);
+				\end{tikzpicture}
+				& \hspace*{5cm}
+				\begin{tikzpicture}
+					% Génome de référence
+					\draw [blue] [|-|] (-6,2.5) -- (10,2.5);
+					
+					% Reads courts
+					\draw [|-|] (-6,1) -- (-3,1);
+					\draw [|-|] (-5.5,1.5) -- (-2.5,1.5);
+					\draw [|-|] (-4.5,2) -- (-1.5,2);
+					\draw [|-|] (-3.5,0.5) -- (-0.5,0.5);
+					\draw [|-|] (-1.5,1.5) -- (1.5,1.5);
+					\draw [|-|] (0,2) -- (3,2);
+					\draw [|-|] (-1,1) -- (2,1);
+					\draw [|-|] (1.5,0.5) -- (4.5,0.5);
+					\draw [|-|] (2.25,1.5) -- (5.75,1.5);
+					\draw [|-|] (4.5,2) -- (7.5,2);
+					\draw [|-|] (5,0.5) -- (8,0.5);		
+					\draw [|-|] (6.25,1.5) -- (9.25,1.5);
+					\draw [|-|] (7,1) -- (10,1);
+					
+					% Pour remonter le schéma de droite
+					\draw [white, |-|] (8,-1) -- (8,-1);
+				\end{tikzpicture}
+			\end{tabular}
+			\figcaption{Illustration du \emph{mapping} de \emph{lectures} (en noir) sur un génome de référence (en bleu). A gauche,
+			le \emph{mapping} est réalisé avec des \emph{lectures} courtes et met en évidence la présence de \emph{gaps} (parties non
+			couvertes du génome de référence), tandis qu'à droite, le \emph{mapping} est réalisé avec
+			des \emph{lectures} longues, et permet de se débarrasser des \emph{gaps} et de couvrir totalement le génome de référence.}
+			\label{figmapping}
+		}
+	}
+	
+	\vspace*{1cm}
+	
+	\item \textbf{Assemblage :} \bigskip
+	\begin{itemize}[label=$\bullet$, leftmargin=0.75in, labelsep=.2in]
+		\item Aligner les \emph{lectures} entre elles afin de trouver des chevauchements \bigskip
+		\item Assembler les \emph{lectures} se chevauchant afin de créer des \emph{contigs} \bigskip
+		\item Reconstruire ainsi le génome dont les \emph{lectures} sont originalement issues
+	\end{itemize}
+		
+		\vspace*{0.75cm}
+		
+		\pbox{0.95\columnwidth}{}{linewidth=0.5mm,framearc=0.1}{
+			\myfig{
+			\begin{tabular}{lr}
+				\begin{tikzpicture}
+					% Reads courts
+					\draw [|-|] (-6,-1) -- (-4.5,-1);
+					\draw [|-|] (-5,0) -- (-3.5,0);
+					\draw [|-|] (-4,0.5) -- (-2.5,0.5);
+					\draw [|-|] (-4.5,-0.5) -- (-3,-0.5);			
+					\draw [|-|] (-3.25,-1) -- (-1.75,-1);							
+					\draw [|-|] (-2.5,0) -- (-1,0);
+					\draw [|-|] (-1.75,-0.5) -- (-0.25,-0.5);
+					\draw [|-|] (-1,0.5) -- (0.5,0.5);
+					
+					\draw [|-|] (1.75,-0.5) -- (3.25,-0.5);
+					\draw [|-|] (2.25,0) -- (3.75,0);
+					\draw [|-|] (2.5,-1) -- (4,-1);
+					\draw [|-|] (3.5,0.5) -- (5,0.5);
+					\draw [|-|] (4.25,0) -- (5.75,0);
+					\draw [|-|] (4.75,-0.5) -- (6.25,-0.5);
+					\draw [|-|] (5,-1) -- (6.5,-1);
+					
+					%Flèche
+					\draw [-triangle 45] (1.125,-2) -- (1.125,-3.5);
+					
+					%Contigs
+					\draw [|-|] (-6,-4.5) -- (0.5,-4.5);
+					\draw [|-|] (1.75,-4.5) -- (6.5,-4.5);
+					
+				\end{tikzpicture}
+				& \hspace*{5cm}
+				\begin{tikzpicture}
+					% Reads courts
+					\draw [|-|] (-6,-1) -- (-3,-1);
+					\draw [|-|] (-5,0) -- (-2,0);
+					\draw [|-|] (-5.5,0.5) -- (-2.5,0.5);
+					\draw [|-|] (-3.25,-0.5) -- (-0.25,-0.5);
+					\draw [|-|] (-1.25,-1) -- (1.75,-1);
+					\draw [|-|] (-1,0.5) -- (2,0.5);
+					\draw [|-|] (0.75,0) -- (3.75,0);
+					\draw [|-|] (2.75,0.5) -- (5.75,0.5);
+					\draw [|-|] (3.25,-0.5) -- (6.25,-0.5);
+					\draw [|-|] (4.25,-1) -- (7.25,-1);
+					
+					%Flèche
+					\draw [-triangle 45] (1.125,-2) -- (1.125,-3.5);
+					
+					%Contigs
+					\draw [|-|] (-6,-4.5) -- (7.25,-4.5);
+				\end{tikzpicture}
+			\end{tabular}
+			\figcaption{Illustration de l'assemblage de \emph{lectures}. \`A gauche, l'assemblage est réalisé avec des \emph{lectures}
+			courtes, et produit plusieurs \emph{contigs}, tandis qu'à droite, l'assemblage est réalisé avec des \emph{lectures} longues,
+			et permet de ne produire qu'un unique \emph{contig}.}
+			\label{figassemblage}
+		}
+	}
+\end{enumerate}
+
+\vspace*{1cm}
+
+\titresec{Mon travail actuel}
+
+Mon travail actuel porte sur le développement d'une nouvelle méthode de correction de \emph{lectures} longues. Plus précisément, de production de \emph{lectures} longues dites \emph{synthétiques}, car obtenues à partir d'un assemblage de \emph{lectures} courtes. Pour cela, des \emph{lectures} courtes sont alignées sur une \emph{lecture} longue servant de \emph{modèle}. Les \emph{lectures} courtes totalement alignées servent alors de \emph{graines}, et sont étendues à l'aide de \emph{lectures} courtes partiellement alignées. \bigskip
+
+\vspace*{0.75cm}
+
+\pbox{0.97\columnwidth}{}{linewidth=0.5mm,framearc=0.1}{
+	\myfig{
+		\begin{tikzpicture}
+			% Etape 1
+			% Template
+			\fill [pattern=north west lines, pattern color=blue] (-5,1.9) rectangle (-3,2.1);
+			\node [blue] at (-2,2) {.........};
+			\fill [pattern=north west lines, pattern color=blue] (-1,1.9) rectangle (1,2.1);
+			\draw [-, blue] (1,2) -- (5,2);
+			\fill [pattern=north west lines, pattern color=blue] (5,1.9) rectangle (9,2.1);
+			\draw [-, blue] (9,2) -- (13,2);
+			\fill [pattern=north west lines, pattern color=blue] (13,1.9) rectangle (18,2.1);
+			\node [blue] at (19,2) {.........};
+			\fill [pattern=north west lines, pattern color=blue] (20,1.9) rectangle (22,2.1);
+			\node [right] at (22,2) {\textcolor{blue}{\footnotesize \emph{lecture} longue \emph{modèle}}};
+			
+			% Seed 1
+			\fill[fill=black] (2,0.8) rectangle (5,1);
+			\node [right] at (5,1) {\footnotesize \emph{graine}};
+			
+			% Read avec suffixe aligné
+			\draw [green] [|-] (0,0) -- (1,0);
+			\fill [green] (1,-0.1) rectangle (3,0.1);
+			
+			% Read avec préfixe aligné
+			\fill [green] (3.5,-0.1) rectangle (5,0.1);
+			\draw [green] [-|] (5,0) -- (6.5,0);
+			
+			% Lmin
+			\draw [<->] (2,0.6) -- (3,0.6);
+			\node [below] at (2.5,0.8) {\tiny $lmin$};
+			\draw [<->] (4,0.6) -- (5,0.6);
+			\node [below] at (4.5,0.8) {\tiny $lmin$};
+			
+			% Flèche
+			\draw [-triangle 45] (3.25,-1) -- (3.25,-2.5);
+			
+			% Contig obtenu
+			\draw [green] [|-] (0,-3.5) -- (1,-3.5);
+			\fill [green] (1,-3.4) rectangle (2,-3.6);
+			\fill[fill=black] (2,-3.4) rectangle (5,-3.6);
+			\draw [green] [-|] (5,-3.5) -- (6.5,-3.5);
+			\node [right] at (2.25,-4.5) {\footnotesize \emph{contig}$_1$};
+			
+			
+			
+			% Seed 2
+			\fill[fill=black] (10,0.8) rectangle (13,1);
+			\node [right] at (13,1) {\footnotesize \emph{graine}};
+			
+			% Read avec suffixe aligné
+			\draw [green] [|-] (8.5,0) -- (9.5,0);
+			\fill [green] (9.5,-0.1) rectangle (11.5,0.1);
+			
+			% Read avec préfixe aligné
+			\fill [green] (12.5,-0.1) rectangle (13,0.1);
+			\draw [green] [-|] (13,0) -- (15.5,0);
+			
+			% Lmin
+			\draw [<->] (10,0.6) -- (11,0.6);
+			\node [below] at (10.5,0.8) {\tiny $lmin$};
+			\draw [<->] (12,0.6) -- (13,0.6);
+			\node [below] at (12.5,0.8) {\tiny $lmin$};
+			
+			% Flèche
+			\draw [-triangle 45] (11.25,-1) -- (11.25,-2.5);
+			
+			% Contig obtenu
+			\draw [green] [|-] (8.5,-3.5) -- (9.5,-3.5);
+			\fill [green] (9.5,-3.4) rectangle (11.5,-3.6);
+			\fill[fill=black] (10,-3.4) rectangle (13,-3.6);
+			\node [right] at (10,-4.5) {\footnotesize \emph{contig}$_2$};
+			
+			% Gap
+			\draw [decorate,decoration={brace, amplitude=10pt, mirror},red]
+			(6.5,-3.75) -- (8.5,-3.75) node [red, midway, yshift=-1cm] 
+			{\footnotesize gap};			
+		\end{tikzpicture}
+		\figcaption{Illustration de la méthode d'extension des \emph{graines}. Les parties en gras des \emph{lectures} courtes (en noir et
+		en vert) correspondent aux parties de ces \emph{lectures} correctement alignées sur le \emph{modèle}. Les parties hachurées du
+		\emph{modèle} (en bleu) correspondent aux zones à fort taux d'erreurs de séquençage de celui-ci. \bigskip
+		
+		Les \emph{graines} (en noir) sont étendues à l'aide de \emph{lectures} courtes (en vert) dont seul un \emph{préfixe}, ou seul un 
+		\emph{suffixe}, s'est correctement aligné sur le modèle. Ces \emph{lectures} partiellement alignées étendent alors effectivement 
+		la \emph{graine} si elles la chevauchent sur un longueur au moins $lmin$, et un \emph{contig} est alors obtenu.}
+		\label{figcor}
+	}
+}
+
+\vspace*{1.5cm}
+
+Une fois ces \emph{contigs} obtenus, le problème restant est alors le remplissage des \emph{gaps}. Il existe pour cela une première méthode nécessitant d'aligner toutes les \emph{lectures} courtes entre elles afin de les comparer et de les assembler et ainsi produire de nouveaux \emph{contigs}. Cette méthode se montre cependant très coûteuse en terme de temps, et au vu du grand nombre de \emph{lectures} longues à corriger, nous cherchons actuellement une autre solution permettant de combler ces \emph{gaps} plus rapidement, sans nécessiter l'alignement de toutes les \emph{lectures} courtes entre elles.
+\end{multicols}
+\end{poster}
+
+\end{document}

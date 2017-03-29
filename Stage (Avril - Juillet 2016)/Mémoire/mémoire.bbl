@@ -1,0 +1,181 @@
+\begin{thebibliography}{10}
+
+\bibitem{Philippe2011}
+N.~Philippe, M.~Salson, T.~Lecroq, M.~Leonard, T.~Commes, and E.~Rivals.
+\newblock {Querying large read collections in main memory: a versatile data
+  structure}.
+\newblock {\em BMC bioinformatics}, 12(1):242, 2011.
+
+\bibitem{Schroder2009}
+J.~Schr{\"{o}}der, H.~Schr{\"{o}}der, S.~J. Puglisi, R.~Sinha, and B.~Schmidt.
+\newblock {SHREC: A short-read error correction method}.
+\newblock {\em Bioinformatics}, 25(17):2157--2163, 2009.
+
+\bibitem{Weiner1973}
+P.~Weiner.
+\newblock {Linear pattern matching algorithms}.
+\newblock {\em Switching and Automata Theory, 1973. SWAT '08. IEEE Conference
+  Record of 14th Annual Symposium on}, pages 1--11, 1973.
+
+\bibitem{Salmela2010}
+L.~Salmela.
+\newblock {Correction of sequencing errors in a mixed set of reads}.
+\newblock {\em Bioinformatics}, 26(10):1284--1290, 2010.
+
+\bibitem{Ilie2011}
+L.~Ilie, F.~Fazayeli, and S.~Ilie.
+\newblock {HiTEC: Accurate error correction in high-throughput sequencing
+  data}.
+\newblock {\em Bioinformatics}, 27(3):295--302, 2011.
+
+\bibitem{Manber1991}
+U.~Manber and G.~Myers.
+\newblock {Suffix Arrays: A New Method for On-line String Searches}.
+\newblock {\em Proceedings of the First Annual ACM-SIAM Symposium on Discrete
+  Algorithms}, SODA '90:319--327, 1990.
+
+\bibitem{Schulz2014}
+M.~H. Schulz, D.~Weese, M.~Holtgrewe, V.~Dimitrova, S.~Niu, K.~Reinert, and
+  H.~Richard.
+\newblock {Fiona: A parallel and automatic strategy for read error correction}.
+\newblock {\em Bioinformatics}, 30(17):356--363, 2014.
+
+\bibitem{Li2008a}
+H.~Li, J.~Ruan, R.~Durbin, H.~Li, J.~Ruan, and R.~Durbin.
+\newblock {Mapping short DNA sequencing reads and calling variants using
+  mapping quality scores Mapping short DNA sequencing reads and calling
+  variants using mapping quality scores}.
+\newblock {\em Genome Research}, pages 1851--1858, 2008.
+
+\bibitem{Hach2010}
+F.~Hach, F.~Hormozdiari, C.~Alkan, F.~Hormozdiari, I.~Birol, E.~E. Eichler, and
+  S.~C. Sahinalp.
+\newblock {mrsFAST: a cache-oblivious algorithm for short-read mapping}.
+\newblock {\em Nature Methods}, 7(8):576--577, 2010.
+
+\bibitem{Hach2014}
+F.~Hach, I.~Sarrafi, F.~Hormozdiari, C.~Alkan, E.~E. Eichler, and S.~C.
+  Sahinalp.
+\newblock {MrsFAST-Ultra: A compact, SNP-aware mapper for high performance
+  sequencing applications}.
+\newblock {\em Nucleic Acids Research}, 42(W1):494--500, 2014.
+
+\bibitem{Salmela2011}
+L.~Salmela and J.~Schr{\"{o}}der.
+\newblock {Correcting errors in short reads by multiple alignments}.
+\newblock {\em Bioinformatics}, 27(11):1455--1461, 2011.
+
+\bibitem{Ilie2013}
+L.~Ilie and M.~Molnar.
+\newblock {RACER: Rapid and accurate correction of errors in reads}.
+\newblock {\em Bioinformatics}, 29(19):2490--2493, 2013.
+
+\bibitem{Heo2014}
+Y.~Heo, X.~L. Wu, D.~Chen, J.~Ma, and W.~M. Hwu.
+\newblock {BLESS: Bloom filter-based error correction solution for
+  high-throughput sequencing reads}.
+\newblock {\em Bioinformatics}, 30(10):1354--1362, 2014.
+
+\bibitem{Bloom1970}
+B.~H. Bloom.
+\newblock {Space/time trade-offs in hash coding with allowable errors}.
+\newblock {\em Communications of the ACM}, 13(7):422--426, 1970.
+
+\bibitem{Niko2013}
+N.~V{\"{a}}lim{\"{a}}ki.
+\newblock {Scalable and Versatile k -mer Indexing for High-Throughput
+  Sequencing Data}.
+\newblock {\em Proceedings of the 9th International Symposium on Bioinformatics
+  Research and Applications}, pages 237--248, 2013.
+
+\bibitem{Kowalski2015}
+T.~Kowalski, S.~Grabowski, and S.~Deorowicz.
+\newblock {Indexing arbitrary-length k-mers in sequencing reads}.
+\newblock {\em PLoS ONE}, 10(7):1--14, 2015.
+
+\bibitem{Salmela2014}
+L.~Salmela and E.~Rivals.
+\newblock {LoRDEC: Accurate and efficient long read error correction}.
+\newblock {\em Bioinformatics}, 30(24):3506--3514, 2014.
+
+\bibitem{deBruijn1946}
+{N.G. de Bruijn}.
+\newblock {A combinatorial problem}.
+\newblock {\em Proceedings of the Section of Sciences of the Koninklijke
+  Nederlandse Akademie van Wetenschappen te Amsterdam}, 49(1946)(7):758--764,
+  1946.
+
+\bibitem{Li2008}
+R.~Li, Y.~Li, K.~Kristiansen, and J.~Wang.
+\newblock {SOAP: Short oligonucleotide alignment program}.
+\newblock {\em Bioinformatics}, 24(5):713--714, 2008.
+
+\bibitem{Li2009}
+R.~Li, C.~Yu, Y.~Li, T.~W. Lam, S.~M. Yiu, K.~Kristiansen, and J.~Wang.
+\newblock {SOAP2: An improved ultrafast tool for short read alignment}.
+\newblock {\em Bioinformatics}, 25(15):1966--1967, 2009.
+
+\bibitem{Burrows1994}
+M.~Burrows and D.~Wheeler.
+\newblock {A block-sorting lossless data compression algorithm}.
+\newblock {\em Research report}, 1994.
+
+\bibitem{Langmead2009}
+B.~Langmead, C.~Trapnell, M.~Pop, and S.~L. Salzberg.
+\newblock {Ultrafast and memory-efficient alignment of short DNA sequences to
+  the human genome}.
+\newblock {\em Genome biology}, 10(3):R25, 2009.
+
+\bibitem{Ferragina2000a}
+P.~Ferragina and G.~Manzini.
+\newblock {Opportunistic data structures with applications}.
+\newblock {\em Proceedings of the 41st Annual Symposium on Foundations of
+  Computer Science}, FOCS '00:390--398, 2000.
+
+\bibitem{Langmead2012}
+B.~Langmead and S.~L. Salzberg.
+\newblock {Fast gapped-read alignment with Bowtie 2}.
+\newblock {\em Nat Methods}, 9(4):357--359, 2012.
+
+\bibitem{Madoui2015}
+M.-A. Madoui, S.~Engelen, C.~Cruaud, C.~Belser, L.~Bertrand, A.~Alberti,
+  A.~Lemainque, P.~Wincker, and J.-M. Aury.
+\newblock {Genome assembly using Nanopore-guided long and error-free DNA
+  reads}.
+\newblock {\em BMC Genomics}, 16:327, 2015.
+
+\bibitem{Kielbasa2011}
+S.~M. Kielbasa, R.~Wan, K.~Sato, S.~M. Kiebasa, P.~Horton, and M.~C. Frith.
+\newblock {Adaptive seeds tame genomic sequence comparison}.
+\newblock {\em Genome Research}, pages 487--493, 2011.
+
+\bibitem{Maillet2014}
+N.~Maillet, G.~Collet, T.~Vannier, D.~Lavenier, and P.~Peterlongo.
+\newblock {Commet: Comparing and combining multiple metagenomic datasets}.
+\newblock {\em Proceedings - 2014 IEEE International Conference on
+  Bioinformatics and Biomedicine}, IEEE BIBM(November):94--98, 2014.
+
+\bibitem{Holley2015}
+G.~Holley, R.~Wittler, and J.~Stoye.
+\newblock {Bloom Filter Trie – A Data Structure for Pan-Genome Storage}.
+\newblock {\em Algorithms in Bioinformatics: 15th International Workshop, WABI
+  2015}, pages 217--230, 2015.
+
+\bibitem{Li2009a}
+H.~Li and R.~Durbin.
+\newblock {Fast and accurate short read alignment with Burrows-Wheeler
+  transform}.
+\newblock {\em Bioinformatics}, 25(14):1754--1760, 2009.
+
+\bibitem{Hackl2014}
+T.~Hackl, R.~Hedrich, J.~Schultz, and F.~F{\"{o}}rster.
+\newblock {Proovread: Large-scale high-accuracy PacBio correction through
+  iterative short read consensus}.
+\newblock {\em Bioinformatics}, 30(21):3004--3011, 2014.
+
+\bibitem{Kent2002}
+W.~J. Kent.
+\newblock {BLAT — The BLAST -Like Alignment Tool}.
+\newblock {\em Genome research}, 12:656--664, 2002.
+
+\end{thebibliography}

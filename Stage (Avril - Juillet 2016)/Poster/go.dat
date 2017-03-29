@@ -1,0 +1,11 @@
+#bibtex poster
+#latex poster.tex
+#latex poster.tex
+
+latex poster.tex
+dvips -Ppdf -G0 poster.dvi -o poster.ps
+ps2pdf poster.ps poster.pdf
+
+#gv poster.ps
+#acroread poster.pdf
+#xpdf poster.pdf

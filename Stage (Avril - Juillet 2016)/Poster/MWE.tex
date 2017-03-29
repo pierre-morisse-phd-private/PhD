@@ -1,0 +1,124 @@
+\documentclass[portrait,a0b,final]{a0poster}
+
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage[usenames]{xcolor}
+\usepackage{multicol}
+\usepackage{pstricks,pst-grad}
+\usepackage{amsmath,amssymb}
+\usepackage{amscd}
+\usepackage{color}
+\usepackage{multirow}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{tikz}
+\usepackage{widetext}
+\thispagestyle{empty}
+\usepackage{lipsum}
+
+%Columns spacing and separation
+\setlength{\columnsep}{3cm}
+\setlength{\columnseprule}{1mm}
+\setlength{\parindent}{0.0cm}
+
+%Poster environment
+\newenvironment{poster}{
+  \begin{center}
+  \begin{minipage}[c]{0.90\textwidth}
+}{
+  \end{minipage}
+  \end{center}
+}
+
+%Pbox
+\newcommand{\pbox}[4]{
+\psshadowbox[#3]{
+\begin{minipage}[t][#2][t]{#1}
+#4
+\end{minipage}
+}}
+
+%Title box
+\newrgbcolor{lblue}{0.8 0.92 0.95}
+\newcommand{\titlebox}[1]{\begin{center}\pbox{0.6\columnwidth}{}{linewidth=2mm,framearc=0.1,linecolor=blue,fillstyle=gradient,gradangle=0,gradbegin=white,gradend=lblue,gradmidpoint=1.0,framesep=1em}{\begin{center}\LARGE #1\end{center}}\end{center}\vspace{1.5cm}}
+
+
+\begin{document}
+\begin{poster}
+
+%%%%%%%%%%%%%%%%%%%%%
+%%%    TITLE  		%%%
+%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+	\titlebox{\textbf{\huge Some title}}
+
+	\vspace*{1cm}
+
+	\textsl{\LARGE Author1, Author2, Author3}
+
+	\vspace*{1cm}
+
+	\begin{minipage}[b]{0.3\textwidth}
+		\large
+		\center
+		Location \\
+		And \\
+		Contact \\
+	\end{minipage}
+\end{center}
+
+\vspace*{3cm}
+
+%%%%%%%%%%%%%%%%%%%%%
+%%%    CONTENT		%%%
+%%%%%%%%%%%%%%%%%%%%%
+\begin{multicols}{3}
+
+%COLUMN 1
+\titlebox{Intro}
+
+\lipsum[1]
+
+\vspace*{2cm}
+
+\titlebox{State of the art}
+
+\lipsum[1-6]
+
+
+\newpage
+
+
+%BLOCK I WANT TO SPAN 2 COLUMNS
+\begin{minipage}{2\columnwidth}
+
+\titlebox{Problem we're gonna study}
+
+\lipsum[1]
+
+\end{minipage}
+
+
+\vspace*{2cm}
+
+
+%COLUMN 2
+\titlebox{Existing solution (not good enough)}
+
+\lipsum[1-7]
+
+
+\newpage
+
+
+%COLUMN 3
+\vspace*{14cm}
+\titlebox{Our solution (better than the previous one (we hope))}
+
+\lipsum[1-6] 
+
+\end{multicols}
+\end{poster}
+
+\end{document}

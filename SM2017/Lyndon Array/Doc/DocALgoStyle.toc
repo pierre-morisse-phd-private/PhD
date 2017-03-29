@@ -1,0 +1,9 @@
+\contentsline {section}{\numberline {1}First algorithm}{2}
+\contentsline {section}{\numberline {2}All the commands}{2}
+\contentsline {subsection}{\numberline {2.1}Preliminary commands}{2}
+\contentsline {subsection}{\numberline {2.2}Simple commands}{3}
+\contentsline {subsection}{\numberline {2.3}Loops and conditions}{3}
+\contentsline {section}{\numberline {3}All the options}{4}
+\contentsline {section}{\numberline {4}The configuration file}{6}
+\contentsline {section}{\numberline {5}Examples}{6}
+\contentsline {section}{\numberline {6}Annexe: example of ALgo.cfg file}{6}

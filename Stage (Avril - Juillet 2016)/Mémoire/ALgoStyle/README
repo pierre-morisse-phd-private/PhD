@@ -1,0 +1,14 @@
+This is the ALgo LaTeX style.
+
+Developed by Arnaud Lefebvre:
+	ABISS -- Université de Rouen
+	Nouveau Batiment de Biologie
+	76821 Mont-Saint-Aignan CEDEX FRANCE
+
+	Arnaud.Lefebvre@univ-rouen.fr
+
+How to use it:
+	Read the doc file (Doc/DocALgoStyle.ps).
+	Just put the ALgo.sty and ALgo.cfg files in 
+	a path known by your LaTeX compiler.
+	Then compile your document as usual.

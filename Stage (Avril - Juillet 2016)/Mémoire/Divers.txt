@@ -1,0 +1,49 @@
+
+Plus précisément, ce format se compose d'une ligne par $read$ court traité, précisant pour ce $read$ le type d'alignement produit par BWA (total, partiel, ou nul), représenté par un drapeau, suivi, si l'alignement n'est pas nul, du nom du $read$ long MinION associé, de la position de début de l'alignement sur ce $read$, de sa longueur, de sa séquence associé, et de la qualité de l'alignement, séparés par des tabulations. Si l'alignement est nul, le drapeau est alors simplement suivi d'une suite de 0, eux aussi séparés par des tabulations. \par
+
+
+
+NaS =>
+
+. \par
+Une illustration du fonctionnement de la méthode est donnée Figure \ref{fignasm1}. \bigskip
+
+\begin{figure}[H]
+	\center
+	\resizebox{\textwidth}{!}{
+	\begin{tikzpicture}
+		\node [above] at (3,3) {\textbf{\'Etape 1 : Détection des $seeds$}};
+		%TEMPLATES
+		\draw [blue] [|-|] (-4,2) -- (8,2);
+		\node [right] at (8,2) {\textcolor{blue}{$read$ long $template$}};
+		%SEEDS
+		\draw [|-|] (-3,1) -- (-1,1);
+		\draw [|-|] (2,1) -- (4,1);
+		\draw [|-|] (5.5,1) -- (7.5,1);
+	\end{tikzpicture}
+	}
+	\vspace*{5cm}
+	\resizebox{\textwidth}{!}{
+	\begin{tikzpicture}
+		\node [above] at (3,1) {\textbf{\'Etape 2 : Recrutement de $reads$}};
+		%SEEDS
+		\draw [|-|] (-3,-1) -- (-1,-1);
+		\draw [|-|] (2,-1) -- (4,-1);
+		\draw [|-|] (5.5,-1) -- (7.5,-1);
+		%RECRUES
+		\draw [red] [|-|] (10,-1) -- (12,-1);
+		\draw [red] [|-|] (14,-1) -- (16,-1);
+		\draw [red] [|-|] (11,0) -- (13,0);
+		\draw [red] [|-|] (15,0) -- (17,0);
+		\draw [red] [|-|] (16,-2) -- (18,-2);
+		\draw [red] [|-|] (12.5,-2) -- (14.5,-2);
+		\draw [red] [|-|] (13,1) -- (15,1);
+		\draw [red] [|-|] (9,-2) -- (11,-2);
+		\draw [red] [|-|] (16.5,1) -- (18.5,1);
+		\draw [red] [|-|] (10,1) -- (12,1);
+	\end{tikzpicture}
+	}
+	
+	\caption{Illustration de la méthode permettant de synthétiser des $reads$ $NaS$.}
+	\label{fignasm1}
+\end{figure}

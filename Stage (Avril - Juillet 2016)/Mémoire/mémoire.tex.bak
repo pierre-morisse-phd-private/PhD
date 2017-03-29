@@ -1,0 +1,1098 @@
+\documentclass[12pt]{report}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{color}
+\usepackage{txfonts}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{pdfpages}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows} 
+\usepackage{ALgo}
+\usepackage{enumitem}
+\usepackage{rotating}
+
+
+\begin{document}
+
+\title {Mémoire de stage \\
+				\hfill
+				\\
+				Méthodes de \emph{mapping} de \emph{reads} avec indexation des \emph{reads} \\
+				\hfill
+				\\
+				\vspace{0.25cm}
+				Master IGIS spécialité ITA, 2$^{\text{\textbf{ème}}}$ année}
+\author {{\large Pierre Morisse} \\ \hfill \\ Encadrants : M. Thierry Lecroq et M. Arnaud Lefebvre}
+
+\makeatletter
+  \begin{titlepage}
+  \centering
+			\includegraphics[width=0.25\textwidth]{logo.png}
+			\hspace{7em}
+			\includegraphics[width=0.25\textwidth]{UFR.png} \\
+			\vspace{1.5cm}
+			\includegraphics[width=0.25\textwidth]{NU.jpg}
+			\hspace{7em}
+			\includegraphics[width=0.25\textwidth]{logol.png} \\
+			\vspace{3cm}
+      {\Large \textbf{\@title}} \\
+			\vspace{3em}
+			{\large \textbf{\@date}} \\
+			\vfill
+			\vspace{9em}
+      {\large \@author} \\
+  \end{titlepage}
+\makeatother
+
+\newpage
+\pagenumbering{gobble}
+\hfill
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+\newpage
+
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+\label{intro}
+
+\section*{Cadre}
+
+Ce mémoire a été rédigé dans le cadre d'un stage visant à conclure ma seconde année de Master, ainsi qu'à constituer une amorce à mon sujet de thèse. Ce stage s'est déroulé du 4 avril au $1^{er}$ juillet 2016, au sein de l'équipe TIBS du laboratoire LITIS, et plus précisément dans le bâtiment Théodore Monod, situé à Mont-Saint-Aignan. Les travaux de cette équipe portent principalement sur la recherche, l'indexation et l'extraction d'informations pertinentes dans des données biologiques et des systèmes d'information en santé, et offrent donc de nombreuses applications dans ces domaines. Ce stage a été financé par le LITIS, grâce à des fonds alloués par l'Université de Rouen, destinés à permettre l'accueil de stagiaires de seconde année de Master Recherche.
+
+\section*{Contexte}
+
+Depuis le milieu des années 2000 et le développement des séquenceurs à très haut débit (\emph{Next Generation Sequencing}), la biologie doit faire face au traitement d'énormes quantités de données, formées par des millions de très courtes séquences appelées \emph{reads}. Ces \emph{reads} sont notamment utilisés pour résoudre des problèmes de \emph{mapping} ou d'assemblage, et doivent souvent subir une procédure de correction avant utilisation, afin de diminuer le taux d'erreurs de séquençage qu'ils présentent. La nécessité d'indexer les \emph{reads} afin de résoudre ces problèmes a été identifiée dans \cite{Philippe2011}, où les 7 requêtes suivantes, donnant lieu à de nombreuses potentielles applications, et un index les supportant ont également été introduits, pour une séquence $f$ de longueur $k$ donnée : \smallskip
+
+\begin{enumerate}
+	\item Dans quels \emph{reads} $f$ apparaît ?
+	\item Dans combien de \emph{reads} $f$ apparaît ?
+	\item Quelles sont les occurrences de $f$ ?
+	\item Quel est le nombre d'occurrences de $f$ ?
+	\item Dans quels \emph{reads} $f$ n'apparaît qu'une fois ?
+	\item Dans combien de \emph{reads} $f$ n'apparaît qu'une fois ?
+	\item Quelles sont les occurrences de $f$ dans les \emph{reads} où $f$ n'apparaît qu'une fois ? \bigskip
+\end{enumerate}
+
+De nombreuses méthodes permettant l'indexation des \emph{reads}, que cela soit à l'aide de structures de données classiques, de tables de hachage, ou de structures de données plus évoluées, existent et sont utilisées pour résoudre les différents problèmes de \emph{mapping} et de correction de \emph{reads}, ainsi que pour traiter les 7 requêtes précédemment décrites. Ces différentes méthodes sont décrites dans l'état de l'art, en Section \ref{eda}.
+
+\chapter{Définitions et notations}
+\label{defs}
+
+Afin de rendre claire la lecture du reste de ce document, nous introduisons ici quelques définitions et notations, qui seront valables tout au long de celui-ci. \bigskip
+
+\noindent L'alphabet utilisé est l'alphabet ADN, $\Sigma =$ \{A, C, G, T\}. \bigskip
+
+\begin{description}[style=multiline,leftmargin=3cm,font=\normalfont]
+	\item [Assemblage :] Problème consistant à aligner et à fusionner des \emph{reads} entre eux afin de reconstituer la longue séquence dont ils sont originalement issus \bigskip
+
+	\item [Contig :] Séquence générée par l'assemblage de plus courtes séquences se chevauchant \bigskip
+	
+	\item [Gb :] Gigabases \bigskip
+
+	\item [Indels. :] Insertions et suppressions \bigskip
+
+	\item [$k$-mer :] Facteur de longueur $k$ d'une séquence \bigskip
+
+	\item [\emph{Mapping} :] Problème consistant à aligner des \emph{reads} sur une séquence de référence \bigskip
+
+	\item [Polymorphisme :] Concept désignant la coexistence de plusieurs allèles, non pathogènes, pour un même gène \bigskip
+
+	\item [\emph{Read} :] Séquence produite par un séquenceur à très haut débit. Un bref descriptif de ces séquenceurs est donné en Section \ref{NGS} \bigskip
+
+	\item [Séquence :] Mot sur l'alphabet $\Sigma^*$ \bigskip
+	
+	\item [Subs. :] Substitutions \bigskip
+
+\end{description}
+
+\chapter{Séquenceurs à très haut débit}
+\label{NGS}
+
+Différentes technologies et plateformes sont disponibles pour le séquençage de \emph{reads}. Elles se différencient principalement par la longueur des \emph{reads} qu'elles produisent, par leur débit, ainsi que par le taux et le type d'erreurs qu'elles introduisent le plus fréquemment. Nous dressons, dans cette section, un bref descriptif de ces technologies et plateformes.
+
+\section{Séquençage de \emph{reads} courts}
+
+La technologie Illumina repose sur le séquençage par synthèse basé sur des ADN polymérases. Elle propose diverses plateformes, produisant des \emph{reads} de longueur différentes, avec un débit et un coût différents, en fonction des projets à réaliser. Par exemple, elle permet de produire 3 milliards de \emph{reads} de longueur comprise entre 36 et 100, avec une précision supérieure à 99\%, en 2 à 11 jours, soit un débit d'environ 600 Gb par \emph{run}, avec sa plateforme HiSeq 2500/1500, pour un coût de \mbox{740 000\$}. Sa plateforme MiSeq, d'un coût de 125 000\$, quant à elle, permet de produire 17 millions de \emph{reads} de longueur comprise en 25 et 250, avec une précision supérieure à 99\%, en 4 à 27 heures, soit un débit d'environ 8,5 Gb par \emph{run}. Quelle que soit la plateforme utilisée, les erreurs les plus fréquentes dans les \emph{reads} séquencés par cette technologie sont des erreurs de substitutions, et elle sont, le plus souvent, situées à la fin des \emph{reads}. \bigskip
+
+La technologie Roche repose sur le pyroséquençage, et propose, elle aussi, différentes plateformes. Par exemple, elle permet de produire un million de \emph{reads} de longueur 700, avec une précision de 99,997\%, en 23 heures, soit un débit de 0,7 Gb par \emph{run}, avec sa plateforme 454 GS FLX+, d'un coût de 450 000\$. Sa plateforme 454 GS Junior, d'un coût de 108 000\$, quant à elle, permet de produire un million de \emph{reads} de longueur 400, avec une précision supérieure à 99\%, en 10 heures, soit un débit de 0,4 Gb par \emph{run}. Quelle que soit la plateforme utilisée, les erreurs les plus fréquentes dans les \emph{reads} séquencés par cette technologie sont des erreurs d'insertions et de suppressions. \bigskip
+
+La technologie ABI Life Technologies propose différentes méthodes de séquençage des \emph{reads}. Par exemple, sa plateforme 5500xl SOLiD, d'un coût de 595 000\$, repose sur le séquençage par ligature. Elle permet ainsi de produire 2,8 millions de \emph{reads} de longueur 75, avec une précision de 99,99\%, en 7 jours, soit un débit de 180 Gb par \emph{run}. Sa plateforme Ion Proton Chip I/II, d'un coût de 243 000\$, quant à elle, repose sur le séquençage par détection de protons. Elle permet ainsi de produire 60 à 80 millions de \emph{reads} de longueur jusqu'à 200, avec une précision supérieure à 99\%, en 2 heures, soit un débit d'environ 10 à 100 Gb par \emph{run}. Quelle que soit la plateforme utilisée, les erreurs les plus fréquentes dans les \emph{reads} séquencés par cette technologie sont des erreurs d'insertions et de suppressions.
+
+\section{Séquençage de \emph{reads} longs}
+\label{NGSL}
+
+Depuis peu, de nouvelles technologies se développent et permettent de séquencer des \emph{reads} de plus en plus longs, ouvrant ainsi les portes à de nombreuses potentielles applications jusqu'ici impossibles, mais engendrent cependant un taux d'erreurs de séquençage bien plus important. \bigskip
+
+La technologie Pacific Bioscience repose sur le séquençage de simple molécule en temps réel. Sa plateforme PacBio RS, d'un coût de 750 000\$, permet de produire environ 50 000 \emph{reads} de longueur moyenne 3 000, avec une faible précision de seulement 85\%, en 2 heures, soit un débit d'environ 0,135 Gb par \emph{run}. Les erreurs les plus fréquentes dans les \emph{reads} séquencés par cette technologie sont des erreurs d'insertions et de suppressions. \bigskip
+
+La technologie Oxford Nanopore reposait sur le séquençage par exonucléase par nanopore lors de l'étude des différents documents, mais une nouvelle version a cependant été développée récemment, et le séquençage repose désormais sur une translocation par nanopore. Cette technologie permet, par exemple, avec sa plateforme GridION, de produire 4 à 10 millions de \emph{reads} de quelques dizaines de milliers de bases de longueur, avec une précision atteignant les 96\%, en un temps variable en fonction de l'expérience, mais offrant cependant un débit de quelques dizaines de Gb par \emph{run}, pour un coût également variable en fonction de l'expérience. Sa plateforme MinION, d'un coût inférieur à 1 000\$, et pouvant être utilisée en la connectant simplement via USB à un ordinateur classique, quant à elle, permet de produire en moyenne 70 000 \emph{reads} de quelques dizaines de milliers de bases de longueur, avec une très faible précision, de seulement environ 70\% en 48 heures, soit un débit d'environ 0,132 Gb par \emph{run}. Les erreurs les plus fréquentes dans les \emph{reads} séquencés par cette technologie sont des erreurs d'insertions et de suppressions, et ce quelle que soit la plateforme utilisée. De plus, cette technologie permet de séquencer deux différents types de \emph{reads}. En effet, lorsque les deux brins de la molécule sont correctement lus, un consensus est construit pour obtenir un \emph{read} plus long et plus précis, appelé \emph{read} 2D. Dans le cas contraire, lorsque seul un brin est correctement lu, le \emph{read} séquencé est alors plus court, moins précis, et est appelé \emph{read} 1D.
+
+\section{Tableau récapitulatif}
+
+Un récapitulatif des différentes technologies de séquençage, de leurs différentes plateformes, de leurs coûts, et de leurs propriétés est donné Table \ref{tablengs}. \bigskip
+
+\begin{sidewaystable}[ht]
+	\resizebox{\textheight}{!}{
+		\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+			\hline
+			Technologie & Technique de séquençage & Plateforme & Nombre de \emph{reads} & Longueur & Précision &
+			Temps & Débit & Coût & Erreurs \\
+			\hline
+			\multirow{2}{*}{Illumina} & \multirow{2}{*}{Synthèse, basé sur ADN polymérases} & HiSeq 2500/1500 & 
+			3 milliards & 36 - 100 & 99 & 2 - 11 jours & 600 & 740 000 & \multirow{2}{*}{Subs.} \\
+			& & MiSeq & 17 millions &	25 - 250 & >99 & 4 - 27 heures & 8,5 & 125 000 & \\
+			\hline
+			\multirow{2}{*}{Roche} & \multirow{2}{*}{Pyroséquençage} & 454 GS FLX+ & 1 million & 700 & 
+			99,997 & 23 heures & 0,7 & 450 000 & \multirow{2}{*}{Indels.} \\
+			& & 454 GS Junior & 1 million & 400 & >99 & 10 heures & 0,4 & 108 000 & \\
+			\hline
+			\multirow{2}{*}{ABI Life Technologies} & Ligature & 5500xl SOLiD & 2,8 millions & 75 & 99,99 & 
+			7 jours & 180 & 595 000 & \multirow{2}{*}{Indels.} \\
+			& Détection de protons & Ion Proton Chip I/II & 60 - 80 millions & jusqu'à 200 & >99 & 
+			2 heures & 10 - 100 & 243 000 & \\
+			\hline
+			Pacific Bioscience & Simple molécule en temps réel & PacBio RS & 50 000 & 3 000 en moyenne &
+			85 & 2 heures & 13 & 750 000 & Indels. \\
+			\hline
+			\multirow{2}{*}{Oxford Nanopore} & \multirow{2}{*}{Exonucléase par Nanopore} & GridION & 
+			4 - 10 millions & > 10 000 & 96 & variable & quelques dizaines & variable & \multirow{2}{*}{Indels.} \\
+			& & MinION & 70 000 & > 10 000 & 70 & 48 heures & 0,132 & 1 000 & \\
+			\hline
+		\end{tabular}
+	}
+	\caption{Récapitulatif des différentes technologies de séquençage. La précision est donnée en \%, le débit en Gb (Gigabases) 
+	par \emph{run}, et le coût en \$.}
+	\label{tablengs}
+\end{sidewaystable}
+
+On remarque, sur ce tableau, que de nombreuses plateformes de séquençage sont disponibles, et que chacune d'elle offre des propriétés différentes, permettant ainsi de traiter différents types de problèmes de génomique. On remarque également que, au prix du débit, le coût de ces séquenceurs a considérablement diminué, l'exemple le plus flagrant étant la plateforme MinION, proposant un séquençage accessible à tous, puisque pouvant fonctionner par simple connexion à un ordinateur classique, le tout pour un prix inférieur à \mbox{1 000\$}.
+
+\chapter{\'Etat de l'art}
+\label{eda}
+
+Au vu des nombreuses différences entre les diverses technologies et plateformes de séquençage, de multiples méthodes permettant d'indexer un ensemble de \emph{reads} ont été développées, aussi bien pour permettre le traitement des 7 requêtes, que pour résoudre des problèmes de \emph{mapping} ou de correction, la diversité de ces structures prenant auquel cas tout son sens, les erreurs de séquençage n'étant pas les mêmes en fonction de la technologie utilisée.
+
+\section{Structures de données classiques}
+
+Il est possible d'utiliser des structures de données classiques généralisées afin d'indexer un ensemble de \emph{reads}. Nous décrivons ci-dessous diverses méthodes adoptant cette approche.
+
+\subsection{SHREC - HybridSHREC}
+
+SHREC (\emph{SHort-Read Error Correction method}), développé en 2009 dans \cite{Schroder2009}, et utilisé pour la correction de \emph{reads} courts, repose sur un arbre des suffixes \cite{Weiner1973} généralisé, construit pour le texte obtenu par concaténation de tous les \emph{reads} de l'ensemble, séparés par des caractères spéciaux n'appartenant pas à l'alphabet, et permet d'indexer un ensemble de \mbox{1 090 946} \emph{reads} de longueur 70 sur une machine classique, en utilisant 1,5 Go de mémoire. Les ressources demandées par une telle structure sont cependant tellement importantes, et augmentent tellement rapidement en fonction du nombre et de la longueur des \emph{reads} qu'il est impossible d'indexer un ensemble de \emph{reads} provenant d'un génome humain, même sur une machine disposant de très importantes ressources. \par
+SHREC ne permet de traiter que des erreurs de substitutions. Pour corriger les \emph{reads}, il réalise un parcours en profondeur de l'arbre des suffixes et, pour chaque nœud $v$, vérifie si l'un de ses fils $w$ a un poids, calculé en fonction du nombre de fils du nœud, plus faible qu'un seuil fixé. Si c'est le cas, il tente alors d'identifier $w$ à l'un de ses frères, afin de les fusionner, et de corriger les \emph{reads} erronés décrits par $w$. \par
+Ainsi, SHREC permet de corriger, en moyenne, 88,56\% des \emph{reads} erronés, et traite la correction de 1 090 946 \emph{reads} de longueur 70 en 108 à 264 minutes, en fonction du taux d'erreurs présenté par les \emph{reads}. \par
+Une version améliorée de SHREC, nommée HybridSHREC, a été développée en 2010 dans \cite{Salmela2010}, et permet de corriger également les erreurs liées à des insertions ou à des suppressions, en suivant la même méthode que SHREC. De par la prise en compte des insertions et des suppressions, les résultats offerts sont bien meilleurs, et HybridSHREC permet ainsi de corriger, en moyenne, 98,39\% des \emph{reads} erronés. De plus, HybridSHREC se montre également plus rapide que SHREC, et traite la correction de 1 120 000 \emph{reads} de longueur comprise entre 75 et 125, et disposant d'un taux d'erreurs de 3\%, en 40 minutes.
+
+\subsection{HiTEC}
+
+HiTEC  (\emph{High Throughput Error Correction}), développé en 2011 dans \cite{Ilie2011}, également utilisé pour la correction de \emph{reads} courts, repose sur une table des suffixes \cite{Manber1991} permettant de simuler l'arbre des suffixes généralisé, tout en réduisant la consommation en mémoire. Il est ainsi possible d'indexer un ensemble de 1 090 946 \emph{reads} de longueur 70 sur une machine classique, en utilisant cette fois seulement 754 Mo de mémoire. Cette réduction de consommation en mémoire s'atténue cependant à mesure que le nombre et que la longueur des \emph{reads} à indexer augmente, et la solution présentée ici ne permet donc toujours pas d'indexer un ensemble de \emph{reads} provenant d'un génome humain, même avec d'importantes ressources. \par
+HiTEC ne permet de traiter que des erreurs de substitutions. Pour corriger les \emph{reads}, il se sert de séquences témoins, qui sont des séquences d'une longueur fixée, ne contenant pas de caractère spécial. De cette façon, si par exemple, dans l'ensemble de \emph{reads}, la séquence témoin $u$ est le plus souvent suivie d'un $A$, et que, dans un certain \emph{read} de l'ensemble, la séquence $u$ est suivie d'un $B$, ce $B$ sera considéré comme une erreur, et le \emph{read} pourra être corrigé, en remplaçant le $B$ par un $A$. \par
+Ainsi, HiTEC permet de corriger, en moyenne, 94,43\% des \emph{reads} erronés, et traite la correction de 1 090 946 \emph{reads} de longueur 70 en 18 à 40 minutes, en fonction du taux d'erreurs présenté par les \emph{reads}.
+
+\subsection{Fiona}
+
+Fiona, développé en 2014 dans \cite{Schulz2014}, lui aussi utilisé pour la correction de \emph{reads} courts, utilise une table des suffixes partielle pour réduire encore davantage l'espace nécessaire à l'indexation. Il est alors possible d'indexer des ensembles de \emph{reads} plus importants, provenant de génomes plus conséquents. Par exemple, il est possible d'indexer intégralement un ensemble de 186 millions de \emph{reads} de longueur 177 provenant d'un génome humain à l'aide de cette structure, mais bien que la complexité en espace des solutions précédentes soit nettement réduite, une telle indexation demande tout de même encore 244 Go de mémoire. \par
+Fiona permet de traiter des erreurs de substitutions, d'insertions, et de suppressions. Pour cela, il parcourt l'arbre simulé par la table des suffixes, et lorsqu'un nœud $v$ a un fils $w$ ayant un poids plus faible qu'un seuil fixé, ce dernier est considéré comme erroné. Chaque nœud du sous arbre de racine $w$ est alors comparé aux nœuds des autres fils, corrects, de $v$, et un vote majoritaire est appliqué, afin de déterminer quelle correction appliquer à $w$ et à ces fils, et donc aux \emph{reads} décrits par ces nœuds. \par
+Ainsi, Fiona permet de corriger, en moyenne, 66,76\% des \emph{reads} erronés, et traite la correction d'un million de \emph{reads} de longueur 178 en environ 15 minutes.
+
+\section{Tables de hachage}
+
+Il est également possible d'utiliser des tables de hachage afin d'indexer un ensemble de \emph{reads}. Nous décrivons ci-dessous diverses méthodes adoptant cette approche.
+
+\subsection{MAQ}
+
+MAQ (\emph{Mapping and Assembly with Quality}), développé en 2008 dans \cite{Li2008a} permet de résoudre des problèmes de \emph{mapping} de \emph{reads} courts. Pour cela, il utilise des \emph{templates}, qui sont des mots sur l'alphabet binaire, de la même longueur que les \emph{reads}. Les \emph{reads} sont comparés aux \emph{templates}, et les nucléotides ayant une position à 1 dans ces \emph{templates} sont hachés en un entier de 24 bits, qui est ajouté à une liste, avec l'identifiant du \emph{read}. La liste est ensuite triée selon les valeurs de hachage, afin de grouper en mémoire les \emph{reads} partageant cette valeur, puis chaque entier, ainsi que l'ensemble de \emph{reads} correspondant, sont stockés dans une table de hachage, avec l'entier pour clé. Une table de hachage différente est utilisée pour chaque \emph{template}, et un \emph{template} possède toujours un complémentaire, qui est traité en parallèle lors de l'indexation. Par défaut, MAQ utilise 6 \emph{templates}, et donc 6 tables de hachage. Une fois le processus d'indexation pour une paire de \emph{templates} terminé, celui-ci est alors répété avec la paire suivante, jusqu'à ce que tous les \emph{templates} aient été traités. Il est ainsi possible d'indexer un ensemble d'un million de \emph{reads} de longueur 44, en utilisant 1,2 Go de mémoire.\par
+Le génome de référence est ensuite scanné en avant et en arrière, et chaque facteur de la longueur des \emph{reads} est recherché, après conversion en un entier de 24 bits, fonction des différents \emph{templates}, dans les tables de hachage correspondantes, afin de trouver les potentiels alignements, cette phase de conversion et de recherche étant effectuée pour l'ensemble de tous les \emph{templates}. \par
+MAQ prend en compte les erreurs de substitutions, d'insertions et de suppressions lors du \emph{mapping}, et permet, par exemple, de traiter un ensemble d'un million de \emph{reads} de longueur 35, en mappant effectivement 93,2\% de ces \emph{reads}, en 331 minutes.
+
+\subsection{MrsFAST - MrsFAST-Ultra}
+
+MrsFAST (\emph{Micro-Read (Substitutions only) Fast Alignment and Search Tool}), développé en 2010 dans \cite{Hach2010}, permet de résoudre des problèmes de \emph{mapping} de \emph{reads} courts à l'aide d'une table de hachage. Pour cela, il indexe l'ensemble des $k$-mers des \emph{reads}, ainsi que du génome de référence sur lequel ceux-ci doivent être \emph{mappés}, dans une table de hachage, afin de permettre un traitement rapide. L'indexation d'un ensemble de \emph{reads} provenant d'un génome humain, et du génome de référence, par cette méthode, demande alors 20 Go de mémoire et est effectuée en 26 minutes. Une version améliorée de cette structure, nommée MrsFAST-Ultra, a été développée en 2014 dans \cite{Hach2014}, et permet l'indexation d'un ensemble de \emph{reads} provenant d'un génome humain, et du génome de référence, en seulement 8 minutes, en n'utilisant cette fois plus que 2 Go de mémoire. De plus, cette version peut également prendre en compte le polymorphisme lors du \emph{mapping} des \emph{reads} sur le génome de référence, afin de produire de meilleurs résultats. Comme leurs noms l'indiquent, ces deux outils ne prennent pas en compte les erreurs d'insertions et de suppressions lors du \emph{mapping}. \par
+Ainsi, MrsFAST permet de mapper 87,27\% des \emph{reads} d'un ensemble d'un million de \emph{reads} de longueur 100 sur un génome de référence, en tolérant un maximum de 6 erreurs de substitutions, en 169 minutes. MrsFAST-Ultra, de son côté, permet de mapper jusqu'à 90,55\% des \emph{reads} d'un ensemble de 2 millions de \emph{reads} de longueur 100 sur un génome de référence, avec le même nombre maximum d'erreurs de substitutions, en seulement 57 minutes. De plus, MrsFAST-Ultra permet de reporter jusqu'à 100 occurrences de chaque \emph{read} de cet ensemble dans le génome de référence en 58 minutes.
+
+\subsection{Coral}
+
+Coral (\emph{CORrection with ALignments}), développé en 2011 dans \cite{Salmela2011}, utilise l'alignement multiple de \emph{reads} courts afin de résoudre des problèmes de correction de \emph{reads} courts. Pour ce faire, il indexe l'ensemble des $k$-mers de tous les \emph{reads} à l'aide d'une table de hachage, associant à chaque $k$-mer la liste des \emph{reads} dans lesquels il apparait. Ainsi, il permet l'indexation d'un ensemble de 3,4 millions de \emph{reads} de longueur 47 en utilisant 2,6 Go de mémoire. \par
+Coral permet de corriger des erreurs de substitutions, d'insertions, et de suppressions. Pour cela, un \emph{read} dit de base est choisi, et tous les \emph{reads} partageant un $k$-mer commun avec celui-ci sont alignés dessus. Une séquence consensus est ensuite déduite de l'alignement des tous les \emph{reads}, et ceux ayant des positions ne s'accordant pas avec la séquence consensus sont corrigés en fonction de celle-ci. L'opération est ensuite répétée, jusqu'à ce que chaque \emph{read} ait été choisi comme \emph{read} de base. \par
+Ainsi, Coral permet de corriger, en moyenne, 92,88\% des \emph{reads} erronés, et traite la correction d'un ensemble d'un million de \emph{reads} de longueur 178 en environ 5 minutes.
+
+\subsection{RACER}
+
+RACER (\emph{Rapid and Accurate Correction of Errors in Reads}), développé en 2013 dans \cite{Ilie2013} permet également de résoudre des problèmes de correction de \emph{reads} courts. Pour cela, il stocke l'ensemble des $k$-mers des \emph{reads}, chacun représenté comme un entier de 64 bits, dans une table de hachage, et associe à chacun de ces $k$-mers un ensemble de 8 compteurs. Ainsi, il se montre compétitif aux structures disponibles à l'époque, en termes de mémoire, et permet l'indexation d'un ensemble de 2 119 404 \emph{reads} de longueur 47, en utilisant  1,437 Go de mémoire. \par
+RACER ne permet de traiter que des erreurs de substitutions, bien que la prise en compte des insertions et suppressions soit prévue pour de futures versions. Pour corriger les \emph{reads}, il compte dénombre les différents $k$-mers de l'ensemble de \emph{reads}, et ceux au dessous d'un certain seuil sont corrigés, par une méthode non détaillée, ni dans l'article, ni dans le matériel supplémentaire. \par
+Ainsi, RACER permet de corriger, en moyenne, 76,65\% des \emph{reads} erronés, et traite la correction de 2 119 404 \emph{reads} de longueur 75 en environ 23 minutes. RACER a également été testé un ensemble de 101 548 652 \emph{reads} Illumina de longueur 457 595 provenant d'un génome de mouche, et a pu corriger 42,95\% des \emph{reads} erronées de cet ensemble, en 104 minutes en exécution multithreads, le tout en utilisant environ 41,7 Go de mémoire.
+
+\subsection{BLESS}
+
+BLESS (\emph{BLoom-filter-based Error correction Solution for high-throughput Sequencing reads}), développé en 2014 dans \cite{Heo2014}, permet lui aussi de résoudre des problèmes de correction de \emph{reads} courts. Pour cela, il se sert de différents fichiers, dans lesquels il stocke les $k$-mers de tous les \emph{reads} en fonction d'une valeur de hachage. Les différents $k$-mers sont ensuite comptés à l'aide d'une table de hachage, et ceux apparaissant plus souvent qu'un seul fixé sont considérés comme corrects, et sont ajoutés à un filtre de Bloom \cite{Bloom1970}, consommant peu de mémoire, et permettant un test d'appartenance rapide. Ainsi, BLESS se montre extrêmement efficace concernant la complexité en espace, et ne consomme en moyenne que 2,5\% de la mémoire utilisée par les autres méthodes. De ce fait, il est par exemple possible d'indexer un ensemble de 20 millions de \emph{reads} de longueur 36 en utilisant seulement 14 Mo de mémoire. \par
+BLESS permet de traiter des erreurs de substitutions, d'insertions, et de suppressions. Pour cela, il compare les $k$-mers erronés, apparaissant moins souvent qu'un seuil fixé, à un ensemble de $k$-mers corrects voisins, à l'aide du filtre de Bloom, et corrige les $k$-mers erronés en fonction de ces derniers. Les $k$-mers erronés produits à cause des faux positifs du filtre de Bloom sont, quant à eux, restaurés à leur valeur initiale en fin de traitement, en les comptant, et en comparant le nombre obtenu au seuil précédemment fixé. \par
+Ainsi, BLESS permet de corriger, en moyenne, 84,38\% des \emph{reads} erronés, et traite la correction d'un million de \emph{reads} de longueur 101, et disposant d'un taux d'erreurs de 2,1\%, en environ 6 minutes.
+
+\section{Structures de données évoluées}
+
+Au vu de l'incapacité des solutions présentées précédemment à traiter les \emph{reads} longs et l'ensemble des 7 requêtes, le besoin de trouver des structures de données et des méthodes plus adaptées, et donc plus efficaces, s'est vite révélé urgent. Des solutions plus évoluées ont alors été développées, et permettent de traiter ces \emph{reads} longs, ou de répondre à la liste de requêtes, tout en indexant les \emph{reads} aussi ou plus efficacement que les méthodes précédentes. Nous décrivons ces diverses structures et méthodes ci-dessous.
+
+\subsection{GkA}
+
+La première de ces structures a été développée en 2011 dans \cite{Philippe2011}, et se nomme GkA (\emph{Gk Arrays}). Elle repose sur le tri selon l'ordre lexicographique de tous les $k$-mers des \emph{reads}, et sur trois tableaux. Le premier est une table des suffixes modifiée, et permet de stocker la position de début de chaque $k$-mer, le second est un tableau inverse, donnant le rang lexicographique d'un $k$-mer à partir de sa position de début dans un \emph{read}, et le dernier est un tableau associant un $k$-mer à son nombre d'occurrences. Cette structure s'est montrée plus efficace en termes de mémoire et plus rapide que l'indexation par tables de hachage ou par tables des suffixes, comparée aux méthodes disponibles à l'époque. Elle permet l'indexation de 42,4 millions de \emph{reads} de longueur 75 provenant d'un génome humain en utilisant 20 Go de mémoire, et le traitement de la liste des 7 requêtes, pour une longueur $k$ de $f$ fixée.
+
+\subsection{CGkA}
+
+Une version compressée de la structure précédente, nommée CGkA (\emph{Compressed Gk Arrays}), a été développée en 2013 dans \cite{Niko2013}. Elle repose sur une table des suffixes échantillonnée, construite pour le texte obtenu par la concaténation de tous les \emph{reads} de l'ensemble de départ, séparés par des caractères spéciaux n'appartenant pas à l'alphabet, et sur trois vecteurs de bits. Elle permet ainsi de réduire de 40 à 90\% la taille des GkA classiques, tout en répondant à l'ensemble des requêtes, avec une complexité en temps cependant plus importante. \`A l'aide de cette structure, il est donc possible d'indexer 42,4 millions de \emph{reads} de longueur 75 provenant d'un génome humain, en n'utilisant plus qu'entre 3 et 7 Go de mémoire, en fonction du degré d'échantillonnage choisi, et de répondre aux 7 requêtes, pour différentes longueurs $k$ de $f$.
+
+\subsection{PgSA}
+
+Une autre structure, nommée PgSA (\emph{Pseudogenomic Suffix Array}), a été développée en 2015 dans \cite{Kowalski2015}, et repose également sur une table des suffixes échantillonnée, cette fois construite pour le pseudogénome obtenu à partir des \emph{reads} de l'ensemble de départ, concaténés et imbriqués en prenant en compte les chevauchements, afin de réduire la longueur de la séquence à indexer, et donc la taille de la table. En complément de la table des suffixes échantillonnée, PgSA repose également sur une table auxiliaire, apportant des informations sur les indices et les \emph{offsets} des \emph{reads} dans le pseudogénome, et sur les occurrences des $k$-mers. Cette structure se montre compétitive aux deux précédentes en termes de mémoire. En effet, elle permet d'indexer 42,4 millions de \emph{reads} de longueur 75 provenant d'un génome humain, en utilisant seulement entre 1 et 4 Go de mémoire, en fonction du degré d'échantillonnage choisi, tout en supportant le traitement des 7 requêtes, pour différentes longueurs $k$ de $f$. \par
+Avec cette structure, la complexité en temps du traitement des requêtes 1 et 3 s'est montrée nettement plus faible que celle des CGkA de \cite{Niko2013}, et celle des requêtes 2 et 4, légèrement plus importante. Comparée aux GkA de \cite{Philippe2011}, cette complexité s'est montrée légèrement plus importante, et ce pour l'ensemble des requêtes 1 à 4. Cependant, la complexité en temps des requêtes 5 à 7 n'a pas pu être comparée, celles-ci n'ayant pas été implémentées dans les versions de GkA et de CGkA utilisées lors de la rédaction de l'article introduisant PgSA.
+
+\subsection{LoRDEC}
+
+LoRDEC (\emph{Long Read DBG Error Correction}), développé en 2014 dans \cite{Salmela2014}, est un outil utilisé pour résoudre des problèmes de correction de \emph{reads} longs. Principalement conçu pour une utilisation sur des \emph{reads} de la technologie Pacific Bioscience, disposant donc d'un taux d'erreurs d'environ 15\%, il permet la correction à l'aide d'un ensemble de \emph{reads} courts, disposant d'un plus faible taux d'erreurs, pour lequel est construit un graphe de de Bruijn \cite{deBruijn1946}. Prenant en compte les récents développements pour la représentation compacte des graphes de de Bruijn, il est ainsi possible d'indexer un ensemble de \mbox{2 316 613} \emph{reads} courts de longueur 100 sous forme de graphe, en utilisant 960 Mo de mémoire. \par
+LoRDEC permet de traiter des erreurs de substitutions, d'insertions, et de suppressions. Pour cela, il construit le graphe de de Bruijn des $k$-mers corrects, apparaissant plus souvent qu'un seuil fixé, des \emph{reads} courts. Il corrige alors les régions erronées des \emph{reads} longs en cherchant un chemin optimal dans le graphe de de Bruijn, partant d'un $k$-mer source, situé à gauche d'une région erronée, vers un $k$-mer cible, situé à droite d'une région erronée. La séquence des $k$-mers se chevauchant le long du chemin fournit alors une correction. Si la région erronée se situe à une extrémité du \emph{read} long, LoRDEC tente de construire une extension, allant de la région erronée jusqu'à la fin (respectivement jusqu'au début) du \emph{read}, et aligne la séquence associée au chemin construit sur la région erronée, par programmation dynamique, pour déduire le suffixe (respectivement le préfixe) optimal à utiliser en tant que correction. \par
+Ainsi, LoRDEC permet de corriger, en moyenne, 85,783\% des \emph{reads} erronés, et traite la correction de 33 360 \emph{reads} de longueur moyenne 2 938, et de longueur maximale \mbox{14 949}, en environ 10 minutes.
+
+\section{Tableaux récapitulatifs}
+
+Nous dressons ici différents tableaux récapitulatifs, permettant de comparer les performances des différentes méthodes et structures de données présentées précédemment, en regroupant ces dernières en fonction du type de problème qu'elles permettent de résoudre.
+
+\subsection{Correction de \emph{reads}}
+
+Un récapitulatif des différentes méthodes de correction de \emph{reads}, des structures de données sur lesquelles elles reposent, et de leur efficacité est donné Table \ref{tablecorr}.
+
+\begin{table}[H]
+	\resizebox{\textwidth}{!}{  
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline
+			Outil & Structure de données & Erreurs corrigées & Nombre de \emph{reads} (longueur) & Espace mémoire & Temps & \emph{Reads} corrigés \\
+			\hline
+			SHREC & Arbre des suffixes & subs. & 1 090 946 (70) & 1 500 & 183 & 88,56 \\
+			\hline
+			HybridSHREC & Arbre des suffixes & subs. + indels & 977 971 (178) & 15 000 & 28 & 98,39 \\
+			\hline
+			\multirow{2}{*}{HiTEC} & \multirow{2}{*}{Table des suffixes} & \multirow{2}{*}{subs.} & 1 090 946 (70) & 757 & 28 & \multirow{2}{*}{94,43} \\
+			& & & 4 639 675 (70) & 3 210 & 125 & \\
+			\hline
+			\multirow{2}{*}{Fiona} & \multirow{2}{*}{Table des suffixes partielle} & \multirow{2}{*}{subs. + indels} & 977 971 (178) & 2 000 & 15 & \multirow{2}{*}{66,76} \\
+			& & & 2 464 690 (142) & 3 000 & 32 & \\
+			\hline
+			Coral & Table de hachage & subs. + indels & 977 971 (178) & 8 000 & 5 & 92,88 \\
+			\hline
+			\multirow{2}{*}{RACER} & \multirow{2}{*}{Table de hachage} & \multirow{2}{*}{subs.} & 2 119 404 (75) & 1 437 & 23 & 76,65 \\
+			& & & 101 548 652 (457 595) & 41 700 & 104 & 42,95 \\
+			\hline
+			BLESS & Filtres de Bloom & subs. + indels & 1 096 140 (101) & 11 & 6 & 84,38 \\
+			\hline
+			\multirow{2}{*}{LoRDEC} & \multirow{2}{*}{Graphe de de Bruijn} & \multirow{2}{*}{subs. + indels} & 33 360 \emph{reads} longs (2 938) &
+			\multirow{2}{*}{960} & \multirow{2}{*}{10} & \multirow{2}{*}{85,78} \\
+			& & & et 2 316 613 \emph{reads} courts (100) & & & \\
+			\hline
+		\end{tabular}
+	}
+	\caption{Récapitulatif des différentes méthodes de correction des \emph{reads}. L'espace mémoire est
+	donnée en Mo. Le temps est donné en minutes. Les \emph{reads} corrigés sont donnés en \%, et la valeur
+	indiquée est une moyenne obtenue à partir de différents ensembles de données.} 
+	\label{tablecorr}
+\end{table}
+
+On remarque que l'espace mémoire occupé par SHREC / HybridSHREC et HiTEC augmente très rapidement en fonction du nombre et de la longueur des \emph{reads} à indexer, bien que celui occupé par HiTEC reste relativement raisonnable, mais que ces outils produisent de bons résultats. HiTEC se montre également plus rapide que les deux méthodes susmentionnées, bien que son temps d'exécution augmente rapidement en fonction de la taille des données. Fiona occupe un espace mémoire plus raisonnable, n'augmentant pas trop rapidement en fonction du nombre et de la longueur des \emph{reads}, et se montre plus rapide que les solutions précédentes, mais produit des résultats très peu satisfaisants. Coral, au contraire, se montre assez gourmand en mémoire, mais produit de bons résultats, en un temps encore plus faible que Fiona. RACER se montre légèrement plus efficace que Fiona, aussi bien en termes d'efficacité de la correction que d'espace mémoire occupé, au prix d'une complexité en temps légèrement plus importante, mais produit toujours des résultats assez peu satisfaisants. BLESS s'impose aisément comme l'outil le plus efficace en terme d'espace mémoire occupé, se montre également compétitif aux autres solutions en termes de temps d'exécution, et produit des résultats acceptables. LoRDEC, quant à lui, est le seul outil permettant de corriger des \emph{reads} longs en utilisant une structure d'index sur les \emph{reads} étudié, et ne peut donc pas être comparé à d'autres solutions.
+
+\subsection{\emph{Mapping} de \emph{reads}} 
+
+Un récapitulatif des différentes méthodes de \emph{mapping} de \emph{reads}, et de leur efficacité est donné Table \ref{tablemap}.
+
+\begin{table}[H]
+	\resizebox{\textwidth}{!}{
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline
+			Outil & Structure de données & Erreurs prises en compte & Nombre de \emph{reads} (longueur) & Espace mémoire & Temps & 
+			\emph{Reads} \emph{mappés} \\
+			\hline
+			MAQ & Table de hachage & subs. + indels & 1 000 000 (44) & 1 200 & 331 & 92,53 \\
+			\hline
+			MrsFAST & Table de hachage & subs. & 1 000 000 (100) & 20 000 & 169 & 90,70 \\
+			\hline
+			MrsFAST-Ultra & Table de hachage & subs. & 2 000 000 (100) & 2 000 & 57 & 91,41 \\
+			\hline 
+		\end{tabular}
+	}
+	\caption{Récapitulatif des différentes méthodes de \emph{mapping} de \emph{reads}. L'espace mémoire est
+	donnée en Mo. Le temps est donné en minutes. Les \emph{reads} \emph{mappés} sont donnés en \%, et la valeur
+	indiquée est une moyenne obtenue à partir de différents ensembles de données.}
+	\label{tablemap}
+\end{table}
+
+On remarque que MAQ demeure l'outil le plus efficace en termes de \emph{reads} effectivement \emph{mappés}, mais que son temps d'exécution est bien trop important pour être utilisé en pratique. MrsFAST réduit nettement le temps d'exécution, permettant de traiter des \emph{reads} plus de 2 fois plus longs en presque 2 fois moins de temps, mais souffre d'une consommation de mémoire bien trop importante, presque 16 fois plus grande que celle de MAQ. MrsFAST-Ultra, quant à lui, réduit encore davantage le temps d'exécution, mappant 2 fois plus de \emph{reads} que son prédécesseur, en presque 3 fois moins de temps, et produit de très bons résultats, mappant en moyenne seulement 1\% de \emph{reads} de moins que MAQ, en utilisant un espace mémoire seulement légèrement supérieur à ce dernier. MrsFAST-Ultra semble donc s'imposer comme l'outil le plus efficace parmi les trois présentés. \bigskip
+
+Peu d'outils sont présentés ici, mais de nombreuses méthodes de \emph{mapping} de \emph{reads}, indexant le génome de référence plutôt que les \emph{reads}, existent cependant et produisent de bons résultats, aussi bien en espace et en temps, qu'en qualité de \emph{mapping}. Nous présentons brièvement quelques uns de ces outils ci-dessous. \bigskip
+
+SOAP, développé en 2008 dans \cite{Li2008}, indexe le génome de référence à l'aide d'une table de hachage, utilisant par exemple 14,7 Go de mémoire pour l'indexation d'un génome humain, et permet de mapper 93,6\% des \emph{reads} d'un ensemble d'un million de \emph{reads} de longueur 44 sur le génome de référence, en environ 280 minutes, et en prenant en compte les erreurs de substitutions, d'insertions, et de suppressions lors du \emph{mapping}. Sa version améliorée, SOAP2, développée en 2009 dans \cite{Li2009}, utilise la transformée de Burrows-Wheeler \cite{Burrows1994} pour indexer le génome de référence, et réduit alors l'espace nécessaire à l'indexation d'un génome humain à 5,4 Go, tout en conservant la même qualité de \emph{mapping} et en pouvant traiter des \emph{reads} de longueur jusqu'à 1024. De plus, le \emph{mapping} de l'ensemble d'un million de \emph{reads} de longueur 44 ne demande plus qu'environ 11 minutes, soit environ 25 fois moins de temps qu'avec SOAP. \bigskip
+
+Bowtie, développé en 2009 dans \cite{Langmead2009}, utilise un FM-index \cite{Ferragina2000a}, basé sur la transformée de Burrows-Wheeler, pour indexer le génome de référence, utilisant par exemple 1,3 Go de mémoire pour l'indexation d'un génome humain, et permet de traiter environ 29,5 millions de \emph{reads} par heure, en mappant effectivement, en moyenne, 71,9\% de ces \emph{reads} sur le génome de référence, et en ne prenant en compte que les erreurs de substitutions lors du \emph{mapping}. Sa version améliorée, Bowtie2, développée en 2012 dans \cite{Langmead2012}, étend Bowtie afin de permettre la prise en compte des erreurs d'insertions et de suppressions lors du \emph{mapping}, à l'aide de programmation dynamique. L'espace mémoire est alors affecté, et l'alignement de \emph{reads} sur un génome humain provoque un pic de mémoire à 3,24 Go durant l'exécution. Cependant, Bowtie2 se montre bien plus efficace que Bowtie, en alignant, en moyenne, 95\% des \emph{reads} sur le génome de référence, tout en étant légèrement plus rapide, malgré l'utilisation de programmation dynamique en complément.
+
+\subsection{Traitement des 7 requêtes}
+
+Un récapitulatif des différentes méthodes permettant de répondre aux 7 requêtes, des structures de données sur lesquelles elles reposent, et de leur efficacité est donné Table \ref{tablereq}.
+
+\begin{table}[H]
+	\resizebox{\textwidth}{!}{ 
+		\begin{tabular}{|c|c|c|c|c|c|c|c|}
+			\hline
+			Outil & Structure de données & Nombre de \emph{reads} (longueur) & Espace mémoire & Temps R1 & Temps R2 &
+			Temps R3 & Temps R4 \\
+			\hline
+			\multirow{5}{*}{GkA} & Table des suffixes modifiée & \multirow{5}{*}{42 400 000 (75)} & 
+			\multirow{5}{*}{20} & \multirow{5}{*}{16} & \multirow{5}{*}{25} & \multirow{5}{*}{25} & 
+			\multirow{5}{*}{0,1} \\
+			& + & & & & & & \\
+			& Table des suffixes modifiée inverse & & & & & & \\
+			& + & & & & & & \\
+			& Table associant $k$-mer - nombre d'occurrences & & & & & & \\
+			\hline
+			\multirow{3}{*}{CGkA} & Table de suffixes échantillonnée & \multirow{3}{*}{42 400 000 (75)} &
+			\multirow{3}{*}{3 - 7} & \multirow{3}{*}{1203} & \multirow{3}{*}{28} & \multirow{3}{*}{1278} & 
+			\multirow{3}{*}{28} \\
+			& + & & & & & & \\
+			& 3 vecteurs de bits & & & & & & \\
+			\hline
+			\multirow{3}{*}{PgSA} & Table des suffixes échantillonnée & \multirow{3}{*}{42 400 000 (75)} & 
+			\multirow{3}{*}{1 - 4} & \multirow{3}{*}{70} & \multirow{3}{*}{58} & \multirow{3}{*}{70} & 
+			\multirow{3}{*}{58} \\
+			& + & & & & & & \\
+			& Table auxiliaire d'information sur les \emph{reads} et $k$-mers & & & & & & \\
+			\hline
+		\end{tabular}
+	}
+	\caption{Récapitulatif des différentes méthodes permettant de traiter les 7 requêtes. L'espace
+	mémoire est donné en Go. Le temps est donné en millisecondes. Les requêtes 5-7 sont exclues du
+	comparatif, car non implémentées dans GkA et CGkA lors des tests réalisés dans \cite{Kowalski2015}.}
+	\label{tablereq}
+\end{table}
+
+On remarque que, concernant la complexité en temps, GkA se montre plus efficace que les deux autres solutions, mais demande cependant un espace mémoire beaucoup plus important. CGkA réduit nettement l'espace mémoire, en offrant une complexité en temps similaire pour la requête 2, mais beaucoup plus importante pour les requêtes 1, 3 et 4. PgSA offre, quant à lui, une complexité en temps similaire pour le traitement des 4 requêtes, bien qu'environ trois fois plus importante que celle de GkA, en compressant cependant de 5 à 20 fois la taille de l'index utilisé par ce dernier. Ainsi, PgSA semble donc offrir le meilleur compromis temps / mémoire pour le traitement des 7 requêtes.
+
+\chapter{Méthode alternative à la correction de \emph{reads} longs : Les \emph{reads} NaS}
+
+Les \emph{reads} longs permettent de résoudre des problèmes d'assemblage longs et complexes, qu'il aurait été impossible de résoudre à l'aide de \emph{reads} courts. De plus, comme nous l'avons vu dans la Section \ref{NGS}, séquencer de tels \emph{reads} est devenu relativement rapide et peu coûteux, et des outils tels que MinION, disponible pour moins de 1 000\$, permettent de séquencer facilement ces \emph{reads} longs. Cependant, utiliser ces \emph{reads}, en particulier dans le cas de problèmes d'assemblage, est difficile, car ils disposent d'un important taux d'erreurs, avoisinant notamment les 30\% dans le cas des \emph{reads} séquencés par MinION. De plus, la correction de ces \emph{reads} par des solutions classiques n'est pas aussi efficace que la correction de \emph{reads} courts, comme le montre la Table \ref{tablecorr}, et il s'est donc révélé urgent de proposer une méthode alternative permettant d'appliquer un traitement correctif aux \emph{reads} longs avant leur utilisation. \bigskip
+
+Ainsi, une solution envisagée a été la création de \emph{reads} longs dits synthétiques, générés à partir d'une approche hybride utilisant des \emph{reads} longs, disposant donc de forts taux d'erreurs, comme \emph{templates} et des \emph{reads} courts, étant eux bien plus précis, sans pour autant tenter d'apporter une réelle correction aux \emph{reads} longs. Ces nouveaux \emph{reads} ainsi obtenus, appelés \emph{reads} NaS (Nanopore \emph{Synthetic-long}), car synthétisés à partir de \emph{reads} longs de la technologie Nanopore, ont été introduits en 2015 dans \cite{Madoui2015}. Ils peuvent atteindre une longueur de 60 000, disposent d'une précision de 99,99\%, et peuvent donc s'aligner intégralement et sans erreurs. Ils représentent ainsi la première solution efficace permettant d'apporter un traitement correctif aux \emph{reads} longs, afin de pouvoir plus facilement utiliser ces derniers dans divers problèmes de \emph{mapping} ou d'assemblage. \bigskip
+
+Nous présentons ici deux méthodes permettant d'obtenir de tels \emph{reads}. La première nécessite d'aligner les \emph{reads} courts sur les \emph{templates}, mais également entre eux, tandis que la deuxième tente de déduire le maximum d'informations à partir de l'alignement des \emph{reads} courts sur les \emph{templates} uniquement.
+
+\section{Jeu de données utilisé}
+\label{jdd}
+
+Pour illustrer la pertinence de la synthèse de \emph{reads} NaS, nous avons utilisé un jeu de données composé de cinq ensembles de \emph{reads} longs de la bactérie \emph{Acinetobacter baylyi ADP1}, séquencés par MinION. Ces cinq ensembles totalisent 66 492 \emph{reads} dont 13\% de \emph{reads} 2D, représentant 42\% de la taille totale des données, et indiquant donc une importante différence entre la longueur des \emph{reads} 1D et des \emph{reads} 2D. En effet, les \emph{reads} 1D présentent une longueur moyenne de 2 052 tandis que les \emph{reads} 2D affichent une longueur moyenne atteignant 10 033. Une description des cinq ensembles de \emph{reads} longs utilisés, du pourcentage de \emph{reads} 2D qu'ils contiennent et de la taille totale des données que ceux-ci représentent est donnée Table \ref{tabmin}. \bigskip
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		Ensemble & Nombre de \emph{reads} & \% \emph{reads} 2D & \% taille totale \\
+		\hline
+		1 & 9 241 & 6,5 & 14,6 \\
+		\hline
+		2 & 3 990 & 13,6 & 27,1 \\
+		\hline
+		3 & 6 052 & 43,3 & 57,1 \\
+		\hline 
+		4 & 11 957 & 11,6 & 42,7 \\
+		\hline 
+		5 & 35 252 & 9,7 & 44,6 \\
+		\hline
+	\end{tabular}
+	\caption{Description des ensembles de \emph{reads} MinION du jeu de donnée utilisée. La dernière colonne indique la taille totale des données
+	représentée par les \emph{reads} 2D.}
+	\label{tabmin}
+\end{table}
+
+Pour obtenir une valeur témoin, ces \emph{reads} longs ont été alignés sur le génome de référence avant traitement, à l'aide de LAST \cite{Kielbasa2011}. 83,2\% des \emph{reads} 2D, et seulement 16,6\% des \emph{reads} 1D, soit un total de 25\% de l'ensemble de tous les \emph{reads}, ont ainsi été effectivement alignés, avec une identité moyenne de 56,5\% pour les \emph{reads} 1D, et de 74,5\% pour les \emph{reads} 2D. Comme indiqué dans la description des séquenceurs Nanopore, Section \ref{NGSL}, ces résultats montrent que les \emph{reads} 2D du jeu de données utilisé ici disposent en effet d'un taux d'erreurs de 25,5\%, moins important que le taux d'erreurs des \emph{reads} 1D, atteignant 43,5\%. \bigskip
+
+Le jeu de données se compose également de deux ensembles de \emph{reads} courts provenant, quant à eux, d'une bibliothèque Illumina. Ces ensembles sont tous deux composés de \mbox{5 984 858} \emph{reads}, mais en ne conservant que les \emph{reads} d'une longueur supérieure ou égal à 250, ces deux ensembles ne présentent plus que 5 915 778 et 5 542 347 \emph{reads}, respectivement, après filtrage.
+
+\section{Première méthode}
+
+Une première méthode permettant d'obtenir de tels \emph{reads} a donc été développée en 2015 dans \cite{Madoui2015}, au côté de l'introduction de la notion de \emph{reads} NaS. Elle nécessite l'alignement des \emph{reads} courts sur les \emph{reads} longs, mais également l'alignement des \emph{reads} courts entre eux. Nous décrivons ci-dessous cette méthode, ainsi que le principal outil sur lequel elle repose.
+
+\subsection{Présentation de la méthode}
+
+Les \emph{reads} courts sont tout d'abord alignés sur les \emph{reads} longs \emph{templates}, afin de trouver les \emph{reads} s'alignant totalement, et pouvant ainsi servir de \emph{seeds}. De nouveaux \emph{reads}, similaires aux \emph{seeds}, et n'ayant pas été alignés précédemment, sont ensuite recrutés en alignant les \emph{reads} courts entre eux, ce processus de recrutement étant itéré jusqu'à obtention d'une couverture suffisante des \emph{templates}, afin de produire des assemblages locaux par la suite, et ainsi, obtenir des \emph{reads} synthétiques de haute qualité. Le processus de recrutement de \emph{reads}, et donc de synthèse de \emph{reads} NaS, étant engendré par les \emph{seeds}, il est clairement nécessaire qu'au moins un \emph{seed} soit aligné sur un \emph{read} long \emph{template} donné pour que celui-ci puisse produire un \emph{read} NaS. Une illustration des quatre étapes nécessaires à la synthèse d'un \emph{read} NaS est donnée Figure \ref{fignas1}.
+
+\begin{figure}[H]
+	\begin{enumerate}
+		\item Alignement des \emph{reads} courts sur le \emph{read} long \emph{template}, afin de trouver les \emph{seeds} \bigskip
+		
+		\resizebox{0.9\textwidth}{!}{
+			\centering
+			\begin{tikzpicture}
+				%TEMPLATE
+				\draw [blue] [|-|] (-6,1) -- (6,1);
+				\node [right] at (6,1) {\textcolor{blue}{\emph{template}}};
+				%SEEDS
+				\draw [|-|] (-5,0) -- (-4,0);
+				\draw [|-|] (0,0) -- (1,0);
+				\draw [|-|] (3.5,0) -- (4.5,0);
+				\node [right] at (6.25,0) {\emph{seeds}};
+			\end{tikzpicture}
+		}
+		
+		\bigskip
+		
+		\item Recrutement de nouveaux \emph{reads} similaires aux \emph{seeds}, en alignant les \emph{reads} courts entre eux \bigskip
+		
+		\resizebox{0.9\textwidth}{!}{
+			\centering
+			\begin{tikzpicture}[>=triangle 45]
+				%SEEDS
+				\draw [|-|] (-5,-0.5) -- (-3.5,-0.5);
+				\draw [|-|] (0,-0.5) -- (1.5,-0.5);
+				\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+				\node at (0.25,-4) {\LARGE \emph{seeds}};
+				\draw (0,-0.5) ellipse (6cm and 2cm);
+				%RECRUES
+				\draw [red] [|-|] (8,0) -- (9.5,0);
+				\draw [red] [|-|] (9,-2) -- (10.5,-2);
+				\draw [red] [|-|] (10,-1) -- (11.5,-1);
+				\draw [red] [|-|] (10,1) -- (11.5,1);
+				\draw [red] [|-|] (11,0) -- (12.5,0);
+				\draw [red] [|-|] (12.5,-2) -- (14,-2);
+				\draw [red] [|-|] (13,1) -- (14.5,1);
+				\draw [red] [|-|] (14,-1) -- (15.5,-1);
+				\draw [red] [|-|] (15,0) -- (16.5,0);
+				\draw [red] [|-|] (16,-2) -- (17.5,-2);
+				\draw [red] [|-|] (16.5,1) -- (18,1);
+				\draw [red] [|-|] (11.5,2) -- (13,2);
+				\draw [red] [|-|] (17,-1) -- (18.5,-1);
+				\node at (13.75,-4) {\textcolor{red}{\LARGE \emph{reads} similaires aux \emph{seeds}}};
+				\draw (13.4,-0.5) ellipse (6cm and 3cm);
+				% FLECHE ENTRE LES 2 ENSEMBLES
+				\draw [thick] [<->] (6,-0.5) -- (7.425,-0.5);
+			\end{tikzpicture}
+		}
+		
+		\bigskip
+		
+		\item Micro-assemblage de l'ensemble de \emph{reads} obtenu \bigskip
+		
+		\resizebox{0.8\textwidth}{!}{
+		\centering
+		\begin{tikzpicture}
+			\draw [|-|] (-5,-0.5) -- (-3.5,-0.5);
+			\draw [|-|, red] (-4,0.5) -- (-2.5,0.5);
+			\draw [|-|, red] (-2.75,-1) -- (-1.25,-1);
+			\draw [|-|, red] (-1.5,0) -- (0,0);
+			\draw [|-|] (0,-0.5) -- (1.5,-0.5);
+			\draw [|-|, red] (1,0.5) -- (2.5,0.5);
+			\draw [|-|, red] (2.5,-1) -- (4,-1);
+			\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+			\draw [|-|, red] (4.5,0.5) -- (6,0.5);
+			\draw [|-|, red] (2,0) -- (3.5,0);
+			\draw [|-|, red] (6,-1) -- (7.5,-1);
+			\draw [|-|, red] (7,0.5) -- (8.5,0.5);
+			\draw [|-|, red] (8,-0.5) -- (9.5,-0.5);
+			\draw [|-|, red] (5,0) -- (6.5,0);
+			\draw [|-|, red] (-3.5,0) -- (-2,0);
+			\draw [|-|, red] (-0.5,-1) -- (1,-1);
+		\end{tikzpicture}
+		}
+		
+		\bigskip
+		
+		\item Obtention d'un contig \bigskip
+		
+		\resizebox{0.9\textwidth}{!}{
+			\centering
+			\begin{tikzpicture}
+				\draw [|-|] (-6,1) -- (6,1);
+				\node [right] at (6,1) {contig};
+			\end{tikzpicture}
+		}
+	\end{enumerate}
+	\caption{Procédure de synthèse d'un \emph{read} NaS. Le contig obtenu en fin de traitement est considéré comme un \emph{read} NaS 
+	s'il est unique.}
+	\label{fignas1}
+\end{figure}
+
+Le point 2. est le plus crucial de cette méthode, car il permet de retrouver des \emph{reads} courts correspondant à des régions de faible qualité du \emph{read} long utilisé comme \emph{template}. Nous décrivons la relation de similarité entre les \emph{seeds} et les autres \emph{reads} courts et détaillons la méthode de recrutement utilisée en Section \ref{reccom}. \bigskip
+
+En général, un seul contig est produit par cette méthode, mais dans les régions répétitives, quelques \emph{reads} ne venant pas de régions correctes peuvent être recrutés, et ainsi produire des contigs erronés ne devant pas être associés au \emph{template}. Pour résoudre ce problème et ne produire qu'un seul contig en sortie, et donc un \emph{read} NaS, il suffit, à la fin du traitement, de construire explicitement le graphe des contigs, pondéré par le degré de couverture des contigs par les \emph{seeds}. Une fois le graphe construit, il suffit alors de choisir le chemin passant par les contigs ayant le plus haut degré de couverture par les \emph{seeds}, par exemple à l'aide de l'algorithme de Floyd-Warshall. Le contig ainsi produit est ensuite vérifié par alignement des \emph{reads} courts, et est considéré comme correct, et donc comme un \emph{read} NaS, si la couverture est suffisante. Une illustration d'un tel cas est donnée Figure \ref{fignas2}.
+
+\begin{figure}[H]
+	\begin{enumerate}
+		\item Obtention de plusieurs contigs \bigskip
+		
+		\resizebox{0.9\textwidth}{!}{
+			\centering
+			\begin{tikzpicture}
+				\draw [blue] [|-|] (-10,0) -- (-5,0);
+				\node [below] at (-7.5,0) {\huge contig 1};
+				\draw [green] [|-|] (-4,0) -- (0,0);
+				\node [below] at (-2,0) {\huge contig 2};
+				\draw [red] [|-|] (1,0) -- (4,0);
+				\node [below] at (2.5,0) {\huge contig 3};
+				\draw [red] [|-|] (7,0) -- (10,0);
+				\node [below] at (8.5,0) {\huge contig 4};
+				\draw [green] [|-|] (11,0) -- (15,0);
+				\node [below] at (13,0) {\huge contig 2};
+				\draw [blue] [|-|] (16,0) -- (23,0);
+				\node [below] at (19.5,0) {\huge contig 5};
+			\end{tikzpicture}
+		}
+		
+		\bigskip
+		
+		\item Construction du graphe des contigs, pondéré par le degré de couverture des contigs par les \emph{seeds} \bigskip
+		
+		\resizebox{0.9\textwidth}{!}{
+			\centering
+			\begin{tikzpicture}[>=triangle 45]
+				% Contigs
+				\draw [blue] [|-|] (-10,2) -- (-5,2);
+				\node [below] at (-7.5,2) {\huge contig 1};
+				\node [above] at (-7.5,2) {\huge 1};
+				\draw [red] [|-|] (11,2) -- (14,2);
+				\node [below] at (12.5,2) {\huge contig 3};
+				\node [above] at (12.5,2) {\huge 0};
+				\draw [green] [|-|] (1,0) -- (5,0);
+				\node [below] at (3,0) {\huge contig 2};
+				\node [above] at (3,0) {\huge 1};
+				\draw [red] [|-|] (-8,-2) -- (-5,-2);
+				\node [below] at (-6.5,-2) {\huge contig 4};
+				\node [above] at (-6.5,-2) {\huge 0};
+				\draw [blue] [|-|] (11,-2) -- (18,-2);
+				\node [below] at (14.5,-2) {\huge contig 5};
+				\node [above] at (14.5,-2) {\huge 2};
+				
+				% Transitions
+				\draw [->] (-4.5,2) -- (0.5,0.25);
+				\draw [->] (-4.5,-2) -- (0.5,-0.25);
+				\draw [->] (5.5,0.25) -- (10.5,2);
+				\draw [->] (5.5,-0.25) -- (10.5,-2);
+			\end{tikzpicture}
+		}
+		
+		\bigskip
+		
+		\item Sélection du chemin optimal, passant par les contigs ayant le plus haut degré de couverture par les \emph{seeds} \bigskip
+		
+		\resizebox{0.9\textwidth}{!}{
+			\centering
+			% Graphe
+			\begin{tikzpicture}[>=triangle 45]
+				% Contigs
+				\draw [blue] [|-|] (-10,2) -- (-5,2);
+				\node [below] at (-7.5,2) {\huge contig 1};
+				\node [above] at (-7.5,2) {\huge 1};
+				\draw [red, opacity=0.3] [|-|] (11,2) -- (14,2);
+				\node [below, opacity=0.3] at (12.5,2) {\huge contig 3};
+				\node [above, opacity=0.3] at (12.5,2) {\huge 0};
+				\draw [green] [|-|] (1,0) -- (5,0);
+				\node [below] at (3,0) {\huge contig 2};
+				\node [above] at (3,0) {\huge 1};
+				\draw [red, opacity=0.3] [|-|] (-8,-2) -- (-5,-2);
+				\node [below, opacity=0.3] at (-6.5,-2) {\huge contig 4};
+				\node [above, opacity=0.3] at (-6.5,-2) {\huge 0};
+				\draw [blue] [|-|] (11,-2) -- (18,-2);
+				\node [below] at (14.5,-2) {\huge contig 5};
+				\node [above] at (14.5,-2) {\huge 2};
+				
+				% Transitions
+				\draw [->] (-4.5,2) -- (0.5,0.25);
+				\draw [->, opacity=0.3] (-4.5,-2) -- (0.5,-0.25);
+				\draw [->, opacity=0.3] (5.5,0.25) -- (10.5,2);
+				\draw [->] (5.5,-0.25) -- (10.5,-2);
+			\end{tikzpicture}
+		}
+		
+		\bigskip
+		
+		\item Vérification du contig produit par alignement des \emph{reads} courts, et acceptation si la couverture est suffisante \bigskip
+		
+		\resizebox{0.9\textwidth}{!}{
+			\centering
+			\begin{tikzpicture}
+				%NAS
+				\draw [blue] [|-|] (-6,1) -- (-1,1);
+				\draw [green] [|-|] (-1,1) -- (3,1);
+				\draw [blue] [|-|] (3,1) -- (10,1);
+				\node [right] at (10,1) {\textcolor{blue}{\large contig}};
+				%READS COURTS
+				\draw [|-|] (-6,-0.5) -- (-4.5,-0.5);
+				\draw [|-|] (-5,0.5) -- (-3.5,0.5);
+				\draw [|-|] (-3,-1) -- (-1.5,-1);
+				\draw [|-|] (-1.5,0) -- (0,0);
+				\draw [|-|] (0,-0.5) -- (1.5,-0.5);
+				\draw [|-|] (1,0.5) -- (2.5,0.5);
+				\draw [|-|] (2.5,-1) -- (4,-1);
+				\draw [|-|] (3.5,-0.5) -- (5,-0.5);
+				\draw [|-|] (4.5,0.5) -- (6,0.5);
+				\draw [|-|] (2,0) -- (3.5,0);
+				\draw [|-|] (6,-1) -- (7.5,-1);
+				\draw [|-|] (7.25,0.5) -- (8.75,0.5);
+				\draw [|-|] (8.5,-0.5) -- (10,-0.5);
+				\draw [|-|] (5,0) -- (6.5,0);
+				\draw [|-|] (-4,0) -- (-2.5,0);
+				\draw [|-|] (-0.5,-1) -- (1,-1);
+			\end{tikzpicture}
+		}
+	\end{enumerate}
+	\caption{Procédure de production d'un unique contig, dans le cas où le micro-assemblage a généré de multiples contigs.}
+	\label{fignas2}
+\end{figure}
+
+\subsection{Méthode de recrutement des \emph{reads} : Commet}
+\label{reccom}
+
+Comme indiqué précédemment, l'étape la plus cruciale, mais aussi la plus longue de la méthode, étant en moyenne responsable de 70\% du temps de traitement, est le recrutement de \emph{reads}. Cette étape nécessite l'alignement de l'ensemble des \emph{reads} courts entre eux, et utilise à ces fins Commet (\emph{COmpare Multiple METagenomes}), un outil introduit en 2014 dans \cite{Maillet2014}. \bigskip
+
+Commet permet de comparer un ensemble de \emph{reads} non assemblés les uns aux autres, à l'aide d'une stratégie d'indexation efficace. Pour cela, les résultats sont stockés sous la forme de vecteurs de bits, une représentation bien plus compacte des fichiers de \emph{reads}, qui permet également de filtrer les \emph{reads} mais aussi de combiner les différents sous-ensembles de \emph{reads} facilement, à l'aide des opérations logiques. Les \emph{reads} sont comparés en fonction de leur similarité, deux \emph{reads} étant considérés comme similaires s'ils partagent au moins $t$ $k$-mers distincts, ne se chevauchant pas. La méthode permettant de comparer deux ensembles de \emph{reads} $A$ et $B$ consiste alors à trouver tous les \emph{reads} de $A$ étant similaires à au moins un \emph{read} de $B$ (ou inversement). Elle repose sur une opération dirigée, notée $A$ $\overset{\leadsto}{\cap}$ $B$, et fournissant donc les \emph{reads} de $A$ similaires à des \emph{reads} de $B$, mais pas l'inverse. Cette opération est une heuristique, et se calcule comme suit : \smallskip
+
+\begin{enumerate}
+	\item Les $k$-mers de $B$ sont indexés dans un Bloom Filter Trie (BFT) \cite{Holley2015}
+	\item Les $k$-mers des \emph{reads} de $A$ ne se chevauchant pas sont recherchés dans le BFT \medskip
+\end{enumerate}
+
+L'étape 2. ne vérifie cependant pas si les $k$-mers des \emph{reads} de $A$ apparaissent dans un seul et même \emph{read} de B, et peut donc produire de faux positifs. Ainsi, pour comparer deux ensembles de \emph{reads} $A$ et $B$, tout en limitant les faux positifs, mais également la taille de l'index, les opérations suivantes sont réalisées : \smallskip
+
+\begin{enumerate}
+	\item Calcul de $A$ $\overset{\leadsto}{\cap}$ $B$
+	\item Calcul de $B$ $\overset{\leadsto}{\cap}$ ($A$ $\overset{\leadsto}{\cap}$ $B$)
+	\item Calcul de $A$ $\overset{\leadsto}{\cap}$ ($B$ $\overset{\leadsto}{\cap}$ 
+	($A$ $\overset{\leadsto}{\cap}$ $B$)) (Noté $A$ ${\overset{\leadsto}{\doublecap}}$ $B$) \medskip
+\end{enumerate}
+
+Comparer les ensembles $A$ et $B$ à l'aide de trois opérations $\overset{\leadsto}{\cap}$ successives permet en effet de limiter l'effort d'indexation, seul le premier calcul indexant l'ensemble $B$ complet, et les suivant n'indexant que des sous-ensembles de $A$ et de $B$. Le résultat intéressant de ces calculs est alors $A$ ${\overset{\leadsto}{\doublecap}}$ $B$, indiquant les \emph{reads} de $A$ similaires à des \emph{reads} de $B$. De façon similaire, il est possible d'obtenir les \emph{reads} de $B$ similaires à des \emph{reads} de $A$, en réalisant l'opération symétrique $B$ ${\overset{\leadsto}{\doublecap}}$ $A$. Il est également possible de comparer plusieurs ensembles de \emph{reads} aisément, en généralisant cette méthode. Sur un jeu de données composé de 28 ensembles de 10 000 \emph{reads}, avec $t$ = 2, et des $k$-mers de longueur 35, Commet a permis de calculer l'ensemble des 756 intersections en 35 minutes. Cependant, bien qu'efficace, cet outil se montre trop lent pour l'usage désiré dans la synthèse de \emph{reads} NaS.
+
+\subsection{Résultats}
+
+La synthèse de \emph{reads} NaS a été testée sur les 66 492 \emph{reads} MinION du génome de la bactérie \emph{Acinetobacter baylyi ADP1} du jeu de données précédemment décrit, à l'aide de plusieurs sous-ensembles de \emph{reads} Illumina de longueur 250. \`A partir de ces données, 11 275 \emph{reads} NaS, d'une longueur maximale de 59 863, ont été produits, 50 \emph{reads} de cet ensemble ayant une longueur supérieure à 50 000. Certains \emph{reads} produits sont plus longs que leur \emph{template} de référence, notamment à cause de l'étape de recrutement, retrouvant des \emph{reads} situés en dehors du \emph{template}, et à la longueur des \emph{reads} sélectionnés de la bibliothèque Illumina. On remarque donc que seulement 17\% des \emph{templates} MinION ont produit un \emph{read} NaS, ce qui est dû au fort taux d'erreurs des \emph{reads} MinION, et en accord avec les 25\% de \emph{reads} MinION non traités, \emph{\emph{mappés}} sur le génome de référence lors du test préliminaire. Plus précisément, 76,4\% des \emph{templates} 2D ont produit un \emph{read} NaS, contre seulement 8,1\% des \emph{templates} 1D, ce qui est également en accord avec le plus fort taux d'erreurs observé dans les \emph{reads} 1D lors du test d'alignement préliminaire. \bigskip
+
+Le temps de traitement d'un \emph{read} MinION, et donc la production d'un \emph{read} NaS, est de moins d'une minute en moyenne, soit un temps total d'environ 7 jours pour la synthèse des 11 275 \emph{reads} NaS obtenus en fin de traitement, la majorité de ce temps étant due à la méthode peu efficace de recrutement des \emph{reads}. \bigskip
+
+Après la production des \emph{reads} NaS, leur qualité a été inspectée en les alignant sur le génome de référence avec BWA, un aligneur reposant sur la transformée de Burrows-Wheeler, introduit en 2009 dans \cite{Li2009a}. Les \emph{reads} NaS ainsi alignés couvrent 99,96\% du génome, avec une identité moyenne de 99,99\%, 97\% de ces \emph{reads} s'alignant sans aucune erreur, et 99,2\% s'alignant avec seulement une erreur, les 50 \emph{reads} d'une longueur supérieure à 50 000 produits s'alignant notamment parfaitement. \`A titre de comparaison, après correction des \emph{reads} MinION à l'aide de Proovread, un outil développé en 2014 dans \cite{Hackl2014}, et destiné à la correction de \emph{reads} longs séquencés par la technologie Pacific Bioscience, disposant donc d'un plus faible taux d'erreurs, seulement 63,35\% des \emph{reads} corrigés ont été effectivement \emph{mappés} avec BWA, avec une identité moyenne de 71,6\%. \bigskip
+
+Ainsi, la production de \emph{reads} NaS se montre en effet très efficace, semble offrir une excellente alternative à la correction de \emph{reads} MinION par des méthodes plus classiques, et pourrait se révéler extrêmement utile, notamment en permettant de traiter plus aisément des problèmes concernant de larges génomes répétitifs.
+
+\section{Notre méthode}
+
+Le travail réalisé durant la rédaction de ce mémoire s'est donc principalement porté sur le développement d'une nouvelle méthode de production de \emph{reads} synthétiques. Notre méthode conserve le principe de base de la solution précédente, et repose toujours sur une approche hybride, utilisant des \emph{reads} longs et bruités comme \emph{templates}, sur lesquels des \emph{reads} courts, plus précis, sont alignés. Cependant, notre méthode vise à ne déduire des informations qu'à partir de cet alignement des \emph{reads} courts sur les \emph{reads} longs, et ne nécessite donc pas l'alignement des \emph{reads} courts entre eux.
+
+\subsection{Présentation de la méthode}
+
+Comme pour la méthode précédente, nous alignons tout d'abord les \emph{reads} courts sur les \emph{reads} longs \emph{templates}, afin de trouver les \emph{reads} courts s'alignant totalement, et pouvant servir de \emph{seeds}. Cependant nous désirons aussi, pour cette méthode, récupérer les \emph{reads} courts dont seulement un préfixe ou un suffixe, d'au moins une longueur fixée $lmin$, s'est aligné. Ici, les \emph{reads} courts sont alignés sur les \emph{reads} longs \emph{templates} à l'aide d'une version modifiée de BLAT \cite{Kent2002}, un outil permettant le \emph{mapping} de \emph{reads} en indexant le génome de référence, et donc dans notre cas les \emph{reads} longs, s'étant révélé plus efficace que les autres outils pour cette utilisation. Plus exactement, nous utilisons une version modifiée de PBLAT, une version de BLAT permettant l'exécution en multithreads. Le fonctionnement de BLAT et les modifications apportées sont brièvement décrites en Section \ref{pblat}. Cette procédure d'alignement nous permet donc de récupérer les différents ensembles de \emph{reads} courts désirés, en différenciant les \emph{reads} : \bigskip
+
+\begin{itemize}[style=standard,itemsep=0pt,parsep=0pt]
+	\item Totalement alignés
+	\item Avec un préfixe aligné
+	\item Avec un suffixe aligné \bigskip
+\end{itemize}
+
+Pour chaque \emph{read} long, les différents ensembles de \emph{reads} courts, obtenus par l'alignement et par le classement précédent, sont ajoutés à trois différentes listes, qui sont ensuite triées en fonction des positions de début d'alignement préalablement calculées. La liste des \emph{reads} totalement alignés représente ainsi les \emph{seeds}, et les listes des \emph{reads} avec seulement un préfixe ou seulement un suffixe aligné, les recrues potentielles. La structure de données nécessaire au stockage des \emph{reads} courts dans les listes est décrite en Section \ref{sdd}. \bigskip
+
+Une fois les listes crées et triées, notre méthode se décompose en deux différentes étapes : \bigskip
+
+\begin{itemize}[style=standard,itemsep=0pt,parsep=0pt]
+	\item La première parcourt les trois listes en parallèle, afin de recruter de nouveaux \emph{reads} similaires aux \emph{seeds}, et met à
+	jour la liste des \emph{seeds} en fonction des recrutements effectués, afin d'étendre ces derniers, et ainsi obtenir des contigs couvrant
+	davantage le \emph{read} long \emph{template} considéré. Nous décrivons la relation de similarité entre les \emph{seeds} et les \emph{reads} 
+	courts partiellement alignés, ainsi que la méthode de recrutement des \emph{reads} similaires en Section \ref{recsim}. \smallskip
+	
+	\item La seconde étape, quant à elle, parcourt à nouveau les trois listes en parallèle afin d'étendre de nouveau les contigs obtenus par la
+	mise à jour des \emph{seeds} à l'étape précédente, et de couvrir davantage le \emph{read} long \emph{template} considéré, en recrutant de 
+	nouveaux \emph{reads} partiellement alignés, mais en s'affranchissant cette fois de la relation de similarité. Nous décrivons la méthode de 
+	recrutement des \emph{reads}, pour cette seconde étape, en Section \ref{extpt2}.
+\end{itemize} 
+
+\subsection{Version modifiée de PBLAT}
+\label{pblat}
+
+Nous présentons tout d'abord brièvement le fonctionnement de BLAT, le programme sur lequel PBLAT est basé, et n'ajoute qu'une surcouche permettant l'exécution en multithreads. \bigskip
+
+BLAT commence par construire un index de tous les $k$-mers du génome de référence ne se chevauchant pas, et de leurs positions, en excluant ceux apparaissant plus souvent qu'un certain seuil fixé. La taille de l'index construit est relativement faible et permet son stockage en RAM sur des machines classiques, l'indexation d'un génome humain demandant par exemple seulement 0,9 Go de mémoire. Les \emph{reads} à aligner sont ensuite parcourus, et pour chaque \emph{read}, l'ensemble de ses $k$-mers, se chevauchant sur une certaine longueur, est recherché dans l'index. Une liste des \emph{hits} ainsi découverts, contenant les positions de ces \emph{hits} dans le génome de référence et dans le \emph{read} est alors construite et triée, afin de déterminer les régions du génome de référence homologues au \emph{read}. Une fois ces régions détectées, une phase d'alignement est réalisée, et la liste préalablement créée est alors parcourue afin d'étendre le plus possibles les \emph{hits} précédemment obtenus, en les fusionnant s'ils se chevauchent, dans le but de produire l'alignement final du \emph{read} sur le génome de référence, s'il existe. BLAT se montre très efficace en termes de temps, et permet, par exemple, de \emph{mapper} 1 000 \emph{reads} provenant d'un génome de souris sur un génome de référence en seulement 37 secondes. \bigskip
+
+Comme indiqué précédemment, nous indexons ici un ensemble de \emph{reads} longs et non un génome, et avons besoin de récupérer non seulement les \emph{reads} courts complètement alignés sur les \emph{reads} longs, mais également les \emph{reads} courts dont seulement un préfixe ou un suffixe, de longueur suffisante, s'est aligné. \bigskip 
+
+PBLAT ne permettant pas de produire de tels résultats nativement, nous avons été amenés à étudier et à modifier son code source, afin de lui permettre de fournir l'ensemble des alignements désirés. En particulier, nous avons modifié la fonction permettant de filtrer et d'enregistrer les alignements. Nous y avons notamment ajouté des filtres supplémentaires, permettant, si l'alignement trouvé pour un \emph{read} donné n'est pas total, de vérifier si un préfixe ou un suffixe de ce \emph{read} s'aligne sur une longueur supérieure ou égale au seuil $lmin$ préalablement fixé, et le cas échéant, d'enregistrer l'alignement. Nous avons également modifié le format de sortie de PBLAT, afin d'obtenir en fin de traitement un fichier plus concis, permettant un traitement des données d'alignement plus aisé en aval. \bigskip
+
+Ce format se compose d'une ligne par alignement d'un \emph{read} court sur un \emph{read} long découvert, et chacune de ces lignes comporte les informations suivantes, séparées par des tabulations : type d'alignement (total, préfixe, ou suffixe), longueur du \emph{read} court, longueur de l'alignement, position de début de l'alignement, ID du \emph{read} long, longueur du \emph{read} long, et séquence ADN du \emph{read} court.
+
+\subsection{Structure de données}
+\label{sdd}
+
+Comme décrit précédemment, le traitement des données par notre méthode nécessite l'ajout des différents ensembles de \emph{reads}, totalement ou partiellement alignés, dans des listes. Pour cela, il s'est révélé nécessaire de développer une structure de données permettant de stocker les informations concernant les alignements des \emph{reads} courts sur les \emph{reads} longs, fournies en sortie par notre version de PBLAT. Pour un alignement d'un \emph{read} court sur un \emph{read} long donné, les différentes informations le concernant sont donc stockées dans la structure suivante :
+
+\begin{verbatim}
+	struct alignement {
+	  int rlen;
+	  int mlen;
+	  int pos;
+	  char* seq;
+	}
+\end{verbatim}
+
+Où \texttt{rlen} représente la longueur du \emph{read} court, \texttt{mlen} la longueur de la partie du \emph{read} court effectivement alignée sur le \emph{read} long, \texttt{pos}, la position de début d'alignement sur le \emph{read} long, et \texttt{seq}, la séquence ADN du \emph{read} court dont l'alignement est décrit.
+
+\subsection{Première étape : Recrutement de \emph{reads} similaires}
+\label{recsim} 
+
+Nous considérons ici qu'un \emph{seed} et qu'un \emph{read} court, dont seul un préfixe, de longueur au moins $lmin$, s'est aligné sont similaires si le préfixe correctement aligné du \emph{read} court chevauche le suffixe du \emph{seed} sur une longueur supérieure ou égale au seuil défini par $lmin$. Symétriquement, un \emph{seed} et un \emph{read} court, dont seul un suffixe, de longueur au moins $lmin$, s'est aligné sont similaires si le suffixe correctement aligné du \emph{read} court chevauche le préfixe du \emph{seed} sur une longueur supérieure ou égale à ce même seuil $lmin$. Une illustration de la similarité entre \emph{seeds} et \emph{reads} courts partiellement alignés est donnée Figure \ref{figsim}. \bigskip
+
+\begin{figure}[H]
+	\resizebox{\textwidth}{!}{
+		\begin{tikzpicture}
+			%TEMPLATE
+			\draw [blue] [|-|] (-4,2) -- (14,2);
+			\node [right] at (14,2) {\textcolor{blue}{\emph{template}}};
+			%SEED
+			\draw [|-|] (1,1) -- (4,1);
+			\node [right] at (4,1) {seed};
+			%SUFFS
+			\draw [red] [|-|] (-1.5,0) -- (-0.5,0);
+			\draw [red] [|-|] (-0.5,0) -- (1.5,0);
+			\node [left] at (-1.5,0) {\textcolor{red}{$r_1$}};
+			\draw [red] [<->] (-0.5,-0.5) -- (1.5,-0.5);
+			\node [below] at (0.5,-0.5) {\textcolor{red}{suffixe aligné}};
+			%PREF
+			\draw [green] [|-|] (2.5,0) -- (4,0);
+			\draw [green] [|-|] (4,0) -- (5.5,0);
+			\node [right] at (5.5,0) {\textcolor{green}{$r_2$}};
+			\draw [green] [<->] (2.5,-0.5) -- (4,-0.5);
+			\node [below] at (3.225,-0.5) {\textcolor{green}{préfixe aligné}};
+			%LMINS
+			\draw [<->] (1,0.5) -- (2,0.5);
+			\node [above] at (1.5,0.5) {$lmin$};
+			\draw [<->] (2.5,0.5) -- (3.5,0.5);
+			\node [above] at (3,0.5) {$lmin$};
+		\end{tikzpicture}
+	}
+	\caption{Illustration de la similarité entre \emph{seeds} et \emph{reads} courts partiellement alignés. $lmin$ représente le seuil
+	permettant de déterminer cette similarité. Ici, le suffixe aligné du \emph{read} $r_1$ ne chevauche pas le préfixe du \emph{seed} sur 
+	une longueur suffisante, puisque bien inférieure au seuil $lmin$ fixé, le \emph{read} $r_1$ et le \emph{seed} ne sont donc pas similaires. 
+	En revanche, le préfixe aligné du 
+	\emph{read} $r_2$  chevauche le suffixe du \emph{seed} sur une longueur légèrement supérieure au seuil $lmin$ fixé, et $r_2$ et le \emph{seed} 
+	sont donc bien similaires.}
+	\label{figsim}
+\end{figure}
+
+Parmi ces \emph{reads} similaires aux \emph{seeds}, nous ne recrutons cependant un \emph{read} que s'il permet d'étendre le \emph{seed} auquel il est similaire. De plus, s'il est possible de recruter plusieurs \emph{reads} pour un même \emph{seed}, nous choisirons toujours le \emph{read} permettant d'étendre au maximum le \emph{seed}. Ainsi, s'il est possible de recruter plusieurs \emph{reads} dont un suffixe s'est correctement aligné, nous choisirons toujours celui ayant la position de début d'alignement la plus petite, car il permettra d'étendre le \emph{seed} au maximum, à gauche. Symétriquement, s'il est possible de recruter plusieurs \emph{reads} dont un préfixe s'est correctement aligné, nous choisirons toujours celui ayant la position de début d'alignement la plus grande, car il permettra d'étendre le \emph{seed} au maximum, à droite. Lors d'un recrutement, le \emph{seed} considéré est alors mis à jour afin de prendre en compte l'extension provoquée par le recrutement et un contig est ainsi obtenu. Une illustration de la procédure de recrutement de \emph{reads} similaires, est donnée Figure \ref{figrec1}.
+
+\begin{figure}[H]
+	\resizebox{\textwidth}{!}{
+		\begin{tikzpicture}
+			%RECRUTEMENT
+			%TEMPLATE
+			\draw [blue] [|-|] (-4,2) -- (14,2);
+			\node [right] at (14,2) {\textcolor{blue}{\emph{template}}};
+			
+			%SEED
+			\draw [|-|] (6,1) -- (11,1);
+			\node [right] at (11,1) {seed};
+			
+			%SUFFS
+			\draw [red] [|-|] (5,0.5) -- (6,0.5);
+			\draw [red] [|-|] (6,0.5) -- (8,0.5);
+			\node [left] at (5,0.5) {\textcolor{red}{$s_1$}};
+			
+			\draw [red] [|-|] (4.5,0) -- (6,0);
+			\draw [red] [|-|] (6,0) -- (7.5,0);
+			\node [left] at (4.5,0) {\textcolor{red}{$s_2$}};
+			
+			\draw [red] [|-|] (4,-0.5) -- (6,-0.5);
+			\draw [red] [|-|] (6,-0.5) -- (7,-0.5);
+			\node [left] at (4,-0.5) {\textcolor{red}{$s_3$}};
+			
+			%PREF
+			\draw [green] [|-|] (8.5,0.5) -- (11,0.5);
+			\draw [green] [|-|] (11,0.5) -- (11.5,0.5);
+			\node [right] at (11.5,0.5) {\textcolor{green}{$p_1$}};
+			
+			\draw [green] [|-|] (9,0) -- (11,0);
+			\draw [green] [|-|] (11,0) -- (12,0);
+			\node [right] at (12,0) {\textcolor{green}{$p_2$}};
+			
+			\draw [green] [|-|] (9.5,-0.5) -- (11,-0.5);
+			\draw [green] [|-|] (11,-0.5) -- (12.5,-0.5);
+			\node [right] at (12.5,-0.5) {\textcolor{green}{$p_3$}};
+			
+			%LMINS
+			\draw [<->] (6,-1) -- (7,-1);
+			\node [above] at (6.5,-1) {$lmin$};
+			\draw [<->] (10,-1) -- (11,-1);
+			\node [above] at (10.5,-1) {$lmin$};
+			
+			%FLECHE
+			\draw [-triangle 45] (8.25,-2) -- (8.25,-3.5);
+			
+			%MISE A JOUR
+			%SEED
+			\draw [red] [|-|] (4,-4.5) -- (6,-4.5);
+			\draw [|-|] (6,-4.5) -- (11,-4.5);
+			\draw [green] [|-|] (11,-4.5) -- (12.5,-4.5);
+			\node [right] at (12.5,-4.5) {contig obtenu};		
+		\end{tikzpicture}
+	}
+	\caption{Illustration du processus de recrutement de \emph{reads} similaires pour un \emph{seed} donné. Tous les \emph{reads} partiellement 
+	alignés sont ici similaires au \emph{seed}, et peuvent être recrutés. Les \emph{reads} $s_3$ et $p_3$ permettent d'étendre le \emph{seed} 
+	au maximum, à gauche et à droite respectivement, et sont donc effectivement recrutés. Le \emph{seed} est alors mis à jour avec 
+	les parties ne le chevauchant pas des \emph{reads} recrutés, et un contig est obtenu.}
+	\label{figrec1}
+\end{figure}
+
+L'algorithme détaillé du parcours parallèle des listes, pour le recrutement des \emph{reads} similaires, pour le traitement d'un \emph{read} long \emph{template} fixé, est donné Figure \ref{figalg1}.
+
+\begin{figure}[H]
+	%\resizebox{\textwidth}{!}{ 
+		\begin{algo}[french,rules,ends]{Recrutement}{\mathit{seeds[]}, \mathit{n}, \mathit{suffs[]}, \mathit{m}, \mathit{suffs[]}, \mathit{p},
+		\mathit{lmin}}
+			\IN{\emph{seeds[]} : liste des \emph{seeds},
+					\emph{n} : taille de \emph{seeds[]}, \CUT 
+					\emph{suffs[]} : liste des \emph{reads} avec un suffixe aligné,
+					\emph{m} : taille de \emph{suffs[]}, \CUT 
+					\emph{prefs[]} : liste des \emph{reads} avec un préfixe aligné,
+					\emph{p} : taille de \emph{prefs[]}, \CUT 
+					\emph{lmin} : seuil déterminant la similarité
+					}
+			\CALL{QSORT}{\mathit{seeds[]}}\LABEL{tb}
+			\CALL{QSORT}{\mathit{prefs[]}}
+			\CALL{QSORT}{\mathit{suffs[]}}\LABEL{te}
+			\CALL{Fusion}{\mathit{seeds[]}}\LABEL{f1}
+			\SET{k}{0}
+			\SET{j}{1}
+			\DOFORI{i}{0}{n}\LABEL{b0}
+				\DOWHILE{k < m\, \textbf{et} \,\mathit{suffs}[k].\mathit{pos} + \mathit{suffs}[k].rlen 
+				< \mathit{seeds}[i].\mathit{pos} + lmin}\LABEL{b11}
+					 \INCR{k}
+				\OD\LABEL{b12}
+				\IF{k < m\, \textbf{et}\, \mathit{suffs}[k].\mathit{pos} < \mathit{\mathit{seeds}}[i].\mathit{pos}}\LABEL{c1}
+					\SET{\mathit{seeds}[i].seq}{\CALL{Concatenation}{\mathit{suffs}[k].seq[0\, ..\, 
+					\mathit{seeds}[i].\mathit{pos} - \mathit{suffs}[k].\mathit{pos}], \CUT \mathit{seeds}[i].seq}}\LABEL{m11}
+					\SET{\mathit{seeds}[i].rlen}{\mathit{\mathit{seeds}}[i].\mathit{pos} 
+					+ \mathit{seeds}[i].rlen - \mathit{suffs}[k].\mathit{pos}}
+					\SET{\mathit{seeds}[i].\mathit{pos}}{\mathit{suffs}[k].\mathit{pos}}\LABEL{m12}
+					\INCR{k}
+				\FI
+				\DOWHILE{j < p\, \textbf{et} \,
+				\mathit{prefs}[j].\mathit{pos} \le \mathit{seeds}[i].\mathit{pos} + \mathit{seeds}[i].rlen - lmin}\LABEL{b21}
+					\INCR{j}
+				\OD\LABEL{b22}
+				\IF{\mathit{prefs}[j-1].\mathit{pos} > \mathit{seeds}[i].\mathit{pos} \CUT \textbf{et} \,\mathit{prefs}[j-1].\mathit{pos} \le 
+				\mathit{seeds}[i].\mathit{pos} + \mathit{seeds}[i].rlen - lmin \CUT \textbf{et}\, \mathit{prefs}[j-1].\mathit{pos} 
+				+ \mathit{prefs}[j-1].rlen > \mathit{seeds}[i].\mathit{pos} + \mathit{seeds}[i].rlen}\LABEL{c2}
+					\SET{\mathit{seeds}[i].seq}{\CALL{Concatenation}{\mathit{seeds}[i].seq, \CUT \mathit{prefs}[j-1].seq[\mathit{seeds}[i].\mathit{pos} 
+					+ \mathit{seeds}[i].rlen - \mathit{prefs}[j-1].\mathit{pos}\, ..\, \mathit{prefs}[j-1].rlen]}}\LABEL{m21}
+					\SET{\mathit{seeds}[i].rlen}{\mathit{prefs}[j-1].\mathit{pos} + \mathit{prefs}[j-1].rlen - \mathit{seeds}[i].\mathit{pos}}\LABEL{m22}
+				\FI
+			\OD
+			\CALL{Fusion}{\mathit{seeds}[]}\LABEL{f2}
+		\end{algo}
+	%}
+	\caption{Algorithme de recrutement de \emph{reads} similaires, pour le traitement d'un \emph{read} long \emph{template} donné.}
+	\label{figalg1}
+\end{figure}
+
+Les lignes \ref{tb} - \ref{te} trient des listes contenant les \emph{seeds} et les \emph{reads} partiellement alignés, selon la position de début d'alignement. La ligne \ref{f1} fusionne les \emph{seeds} se chevauchant déjà avant traitement. La boucle à la ligne \ref{b0} permet d'itérer le processus de recrutement pour tous les \emph{seeds}. La boucle aux lignes \ref{b11} - \ref{b12} permet de rechercher le \emph{read} avec un suffixe aligné, similaire au \emph{seed} en cours de traitement, permettant de maximiser, à gauche, l'extension du \emph{seed}. La condition à la ligne \ref{c1} permet de vérifier si un tel \emph{read} a été trouvé, et les lignes \ref{m11} - \ref{m12} recrutent effectivement ce \emph{read} et mettent à jour les informations du \emph{seed} pour prendre en compte l'extension le cas échéant. La boucle aux lignes \mbox{\ref{b21} - \ref{b22}} permet de rechercher le \emph{read} avec un préfixe aligné, similaire au \emph{seed} en cours de traitement, permettant de maximiser, à droite, l'extension du \emph{seed}. La condition à la ligne \ref{c2} permet de vérifier si un tel \emph{read} a été trouvé, et les lignes \ref{m21} - \ref{m22} recrutent effectivement ce \emph{read} et mettent à jour les informations du \emph{seed} pour prendre en compte l'extension le cas échéant. Enfin, la ligne \ref{f2} fusionne les contigs se chevauchant, une fois le traitement terminé.
+
+\subsection{Deuxième étape : Extension des contigs obtenus}
+\label{extpt2}
+
+Comme indiqué précédemment, pour cette deuxième étape de recrutement, visant à étendre les contigs produits par la première étape, nous nous affranchissons de la relation de similarité entre les \emph{seeds} et les \emph{reads} partiellement alignés. \`A la place, nous définissons un seuil $lmax$, et recrutons un \emph{read} partiellement aligné afin d'étendre un contig donné si le préfixe (respectivement le suffixe) correctement aligné de ce \emph{read} chevauche le contig sur une longueur inférieure ou égale au seuil $lmax$ fixé. De plus, comme précédemment, s'il est possible de recruter plusieurs \emph{reads} pour un même contig, nous choisirons toujours le \emph{read} permettant d'étendre au maximum le contig. Ainsi, s'il est possible de recruter plusieurs \emph{reads} dont un suffixe s'est correctement aligné, nous choisirons toujours celui ayant la position de début d'alignement la plus petite, car il permettra d'étendre le contig au maximum, à gauche. Symétriquement, s'il est possible de recruter plusieurs \emph{reads} dont un préfixe s'est correctement aligné, nous choisirons toujours celui ayant la position de début d'alignement la plus grande, car il permettra d'étendre le contig au maximum, à droite. Lors d'un recrutement, le contig considéré est alors mis à jour afin de prendre en compte l'extension provoquée par le recrutement. Une illustration de la procédure d'extension des contigs, par recrutement de \emph{reads}, est donnée Figure \ref{figrec2}.
+
+\begin{figure}[H]
+	\resizebox{\textwidth}{!}{
+		\begin{tikzpicture}
+			%RECRUTEMENT
+			%TEMPLATE
+			\draw [blue] [|-|] (-4,2) -- (14,2);
+			\node [right] at (14,2) {\textcolor{blue}{\emph{template}}};
+			
+			%SEED
+			\draw [|-|] (0,1) -- (7,1);
+			\node [right] at (7,1) {contig};
+			
+			%LMAX
+			\draw [<->] (0,1.5) -- (0.5,1.5);
+			\node [above] at (0.25,1.5) {$lmax$};
+			\draw [<->] (6.5,1.5) -- (7,1.5);
+			\node [above] at (6.75,1.5) {$lmax$};
+			
+			%SUFF
+			\draw [red] [|-|] (-2,0.5) -- (-0.3,0.5);
+			\draw [red] [|-|] (-0.3,0.5) -- (1,0.5);
+			\node [left] at (-2,0.5) {\textcolor{red}{$s_1$}};
+			
+			%PREF
+			\draw [green] [|-|] (6.60,0.5) -- (8.1,0.5);
+			\draw [green] [|-|] (8.1,0.5) -- (9,0.5);
+			\node [right] at (9,0.5) {\textcolor{green}{$p_1$}};
+			
+			\draw [green] [|-|] (6.85,0) -- (8.25,0);
+			\draw [green] [|-|] (8.25,0) -- (9.85,0);
+			\node [right] at (9.85,0) {\textcolor{green}{$p_2$}};
+			
+			%FLECHE
+			\draw [-triangle 45] (4.925,-1) -- (4.925,-2.5);
+			
+			%MISE A JOUR
+			%CONTIG
+			\draw [|-|] (0,-3) -- (7,-3);
+			\draw [green] [|-|] (7,-3) -- (9.85,-3);
+			\node [right] at (9.85,-3) {contig mis à jour};		
+		\end{tikzpicture}
+	}
+	\caption{Illustration du processus d'extension pour un contig donné. Le \emph{read} $s_1$ chevauche le contig sur un longueur 
+	supérieure à $lmax$ et par conséquent, ne peut pas être recruté. Les \emph{reads} $p_1$ et $p_2$ chevauchent tous les deux le contig sur une 
+	longueur inférieure ou égale à $lmax$ et peuvent donc être recrutés. Cependant, le \emph{read} $p_2$ permet d'étendre le 
+	contig, à 
+	droite, sur une longueur plus importante que le \emph{read} $p_1$, et $p_2$ est donc recruté. Le contig est alors mis à jour avec 
+	la partie ne le chevauchant pas du \emph{read} recruté, afin d'étendre sa longueur.}
+	\label{figrec2}
+\end{figure}
+
+L'algorithme détaillé du parcours parallèle des listes, pour l'extension des contigs, pour le traitement d'un \emph{read} long \emph{template} fixé, est donné Figure \ref{figalg2}.
+
+\begin{figure}[H]
+		\begin{algo}[french,rules,ends]{Recrutement}{\mathit{contigs[]}, \mathit{n}, \mathit{suffs[]}, \mathit{m}, \mathit{prefs[]}, \mathit{p},
+		\mathit{lmax}, \mathit{nb}}
+			\IN{\emph{contigs[]} : liste des contigs obtenus à l'étape précédente, \CUT
+					\emph{n} : taille de \emph{contigs[]}, \CUT 
+					\emph{suffs[]} : liste des \emph{reads} avec un suffixe aligné,
+				  \emph{m} : taille de \emph{suffs[]}, \CUT 
+					\emph{prefs[]} : liste des \emph{reads} avec un préfixe aligné,
+				  \emph{p} : taille de \emph{prefs[]}, \CUT 
+				  \emph{lmax} : seuil utilisé pour le recrutement, \CUT
+				  \emph{nb} : nombre d'itérations souhaitées}
+			\DOFORI{e}{0}{nb}\LABEL{2bit}
+				\SET{k}{0}
+				\SET{j}{1}
+				\DOFORI{i}{0}{n}\LABEL{2b0}
+					\DOWHILE{k < m\, \textbf{et} \,\mathit{suffs}[k].\mathit{pos} + \mathit{suffs}[k].rlen < \mathit{contigs}[i].\mathit{pos}}\LABEL{2b11}
+						 \INCR{k}
+					\OD\LABEL{2b12}
+					\IF{k < m\, \textbf{et}\, \mathit{suffs}[k].\mathit{pos} + \mathit{suffs}[k].rlen \le contigs[i].\mathit{pos} + lmax}\LABEL{2c1}
+						\SET{\mathit{contigs}[i].seq}{\CALL{Concatenation}{\mathit{suffs}[k].seq[0\, ..\, 
+						\mathit{contigs}[i].\mathit{pos} - \mathit{suffs}[k].\mathit{pos}], \CUT \mathit{contigs}[i].seq}}\LABEL{2m11}
+						\SET{\mathit{contigs}[i].rlen}{\mathit{\mathit{contigs}}[i].\mathit{pos} 
+						+ \mathit{contigs}[i].rlen - \mathit{suffs}[k].\mathit{pos}}
+						\SET{\mathit{contigs}[i].\mathit{pos}}{\mathit{suffs}[k].\mathit{pos}}\LABEL{2m12}
+						\INCR{k}
+					\FI
+					\DOWHILE{j < p\, \textbf{et} \, \mathit{prefs}[j].\mathit{pos} \le contigs[i].\mathit{pos} + contigs[i].rlen}\LABEL{2b21}
+						\INCR{j}
+					\OD\LABEL{2b22}
+					\IF{\mathit{prefs}[j-1].\mathit{pos} \ge contigs[i].\mathit{pos} + contigs[i].rlen - lmax \CUT \textbf{et}\, \mathit{prefs}[j-1].\mathit{pos} 
+					\le contigs[i].\mathit{pos} + contigs[i].rlen}\LABEL{2c2}
+						\SET{\mathit{contigs}[i].seq}{\CALL{Concatenation}{\mathit{contigs}[i].seq, \CUT \mathit{prefs}[j-1].seq[\mathit{contigs}[i].\mathit{pos} 
+					+ \mathit{contigs}[i].rlen - \mathit{prefs}[j-1].\mathit{pos}\, ..\, \mathit{prefs}[j-1].rlen]}}\LABEL{2m21}
+					\SET{\mathit{contigs}[i].rlen}{\mathit{prefs}[j-1].\mathit{pos} + \mathit{prefs}[j-1].rlen - \mathit{contigs}[i].\mathit{pos}}\LABEL{2m22}
+					\FI
+				\OD
+				\CALL{Fusion}{\mathit{contigs}[]}\LABEL{2f2}
+			\OD
+		\end{algo}
+	\caption{Algorithme d'extension des contigs, pour le traitement d'un \emph{read} long \emph{template} donné.}
+	\label{figalg2}
+\end{figure}
+
+Les listes ayant déjà été triées, et les contigs se chevauchant ayant déjà été fusionnés lors de l'étape précédente, il n'est pas nécessaire de réaliser à nouveau ces deux opérations en début de traitement. La boucle à la ligne \ref{2bit} permet d'itérer le processus d'extension le nombre de fois désiré. La boucle à la ligne \ref{2b0} permet d'appliquer le processus d'extension à tous les contigs. La boucle aux lignes \ref{2b11} - \ref{2b12} permet de rechercher le \emph{read} avec un suffixe aligné, permettant de maximiser, à gauche, l'extension du contig en cours de traitement. La condition à la ligne \ref{2c1} permet de vérifier si un tel \emph{read} a été trouvé, et les lignes \ref{2m11} - \ref{2m12} recrutent effectivement ce \emph{read} et mettent à jour les informations du contig pour prendre en compte l'extension le cas échéant. La boucle aux lignes \ref{2b21} - \ref{2b22} permet de rechercher le \emph{read} avec un préfixe aligné, permettant de maximiser, à droite, l'extension du contig en cours de traitement. La condition à la ligne \ref{2c2} permet de vérifier si un tel \emph{read} a été trouvé, et les lignes \ref{2m21} - \ref{2m22} recrutent effectivement ce \emph{read} et mettent à jour les informations du contig pour prendre en compte l'extension le cas échéant. Enfin, la ligne \ref{2f2} fusionne les contigs se chevauchant, une fois le traitement d'une itération terminé.
+
+\subsection{Résultats}
+
+Nous présentons ici les différents résultats obtenus lors des tests notre méthode sur le jeu de donné présenté en Section \ref{jdd}. \bigskip
+
+Pour enclencher le processus de recrutement de \emph{reads}, et donc de synthèse d'un \emph{read} NaS, pour un \emph{read} long donné, il est nécessaire qu'au moins un \emph{seed} s'aligne sur celui-ci. Nous présentons, Table \ref{tabnbseeds}, les statistiques concernant le nombre de \emph{reads} long 1D et 2D des différents ensembles de notre jeu de données, sur lesquels au moins un \emph{seed} a pu être aligné.
+
+\begin{table}[H]
+	\resizebox{\textwidth}{!}{
+		\begin{tabular}{|c|c|c|c|c|}
+			\hline
+			Ensemble & \emph{reads} 1D & \emph{reads} 1D avec au moins un \emph{seed} & \emph{reads} 2D & \emph{reads} 2D avec au moins un \emph{seed} \\
+			\hline
+			1 & 8 639 & 508 (5,88\%) & 602 & 401 (66,61\%) \\
+			\hline
+			2 & 3 447 & 463 (13,43\%) & 543 & 322 (59,30\%) \\
+			\hline
+			3 & 3 433 & 312 (9,09\%) & 2 619 & 1 616 (61,70\%) \\
+			\hline
+			4 & 10 567 & 492 (4,66\%) & 1 390 & 943 (67,84\%) \\
+			\hline
+			5 & 31 825 & 1 713 (5,38\%) & 3 427 & 2 871 (87,78\%) \\
+			\hline
+		\end{tabular}
+	}
+	\caption{Répartition des \emph{seeds} pour les différents ensembles du jeu de données utilisé.}
+	\label{tabnbseeds}
+\end{table}
+
+Ces résultats montrent que 6\% des \emph{reads} 1D et 71,7\% des \emph{reads} 2D, soit au total 9 641 \emph{reads} de l'ensemble des \emph{reads} longs du jeu de données, peuvent potentiellement produire un \emph{read} NaS à l'aide de notre méthode, ce qui est légèrement plus faible que les 11 275 \emph{reads} NaS produits par la première méthode. Cette différence s'explique par l'ajout de filtres à notre version de PBLAT, permettant de différencier les alignements totaux des alignements locaux de préfixes ou de suffixes, et tolérant un plus faible nombre d'erreurs lors du \emph{mapping}, produisant ainsi moins de \emph{seeds}. \bigskip
+
+Les résultats obtenus, après exécution de notre méthode sur les différents ensembles de \emph{reads} longs précédents, sur lesquels au moins un \emph{seed} a pu être aligné, sont décrits Table \ref{tabresm2}. \bigskip
+
+\begin{table}[H]
+	\resizebox{\textwidth}{!}{
+		\begin{tabular}{|c|c|c|c|c|c|c|}
+			\hline
+			Ensemble & \emph{reads} & Contigs / \emph{read} & Longueur moyenne & Précision moyenne & Plus long contig (précision) & Temps \\
+			\hline
+			\multirow{2}{*}{1} & 1D & 1,52 & 604 & 89,60 & 7 791 (94\%) & 54 s \\
+			& 2D & 2,23 & 1 407 & 88,14 & 10 806 (94\%) & 3 min 06 s \\
+			\hline
+			\multirow{2}{*}{2} & 1D & 2,42 & 623 & 87,90 & 3 728 (95\%) & 1 min 20 s \\
+			& 2D & 3,17 & 1 495 & 87,79 & 17 797 (94\%) & 4 min 32 s \\
+			\hline
+			\multirow{2}{*}{3} & 1D & 1,97 & 589 & 89,09 & 5 506 (94\%) & 37 s \\
+			& 2D & 3,03 & 2 139 & 87,91 & 22 305 (94\%) & 1 h 57 min \\
+			\hline
+			\multirow{2}{*}{4} & 1D & 2,68 & 665 & 88,65 & 7 372 (92\%) & 1 min 26 s \\
+			& 2D & 2,82 & 2 717 & 88,06 & 28 059 (93\%) & 1 h 01 min 50 s \\
+			\hline
+			\multirow{2}{*}{5} & 1D & 2,89 & 742 & 87,94 & 15 223 (91\%) & 15 min 35 s \\
+			& 2D & 2,41 & 4 349 & 88,83 & 33 317 (91\%) & 11 h \\
+			\hline
+		\end{tabular}
+	}
+	\caption{Résultats obtenus après exécution de notre méthode et alignement des contigs produits 
+	à l'aide de BWA. Les paramètres de notre méthode ont été fixés comme suit : \mbox{$lmin$ = 100}, $lmax$ = 10, et 10 itérations pour la deuxième
+	phase d'extension. Les paramètres de BWA ont été fixés aux valeurs par défaut. La deuxième colonne représente le nombre moyen 
+	de contigs obtenus par \emph{read} long \emph{template}.}
+	\label{tabresm2}
+\end{table}
+
+
+Notre méthode permet donc de produire rapidement des contigs relativement longs, et plus précis que leurs \emph{templates} d'origine. Le temps de traitement d'un \emph{read} long est en effet de moins de dix secondes en moyenne, et l'ensemble des 9 641 \emph{reads} sur lesquels au moins un \emph{seed} a pu être aligné a été traité en un peu moins de 14 h 30 min au total. Ainsi, notre méthode se montre environ 11,6 fois plus rapide que la méthode précédente. \bigskip
+
+Nous obtenons, en moyenne, 2,296 contigs de longueur 645 et de précision 88,636\% à partir d'un \emph{read} 1D, tandis que les \emph{reads} 1D initiaux affichent une longueur moyenne de 2 052 et une précision de 56,5\%. Concaténés, les contigs produits couvrent donc en moyenne 72,17\% de leur \emph{template} 1D d'origine. De même, à partir d'un \emph{read} 2D, nous obtenons en moyenne, 2,732 contigs de longueur 2 421 et de précision 88,186\%, tandis que les \emph{reads} 2D initiaux affichent une longueur moyenne de 10 033, et une précision de 74,5\%. Concaténés, les contigs produits couvrent donc en moyenne seulement 65,93\% de leur \emph{template} 2D d'origine. Nous remarquons cependant que, concaténés, les contigs produits à partir des \emph{reads} 1D de l'ensemble 5 atteignent, en moyenne, une longueur plus importante que leur \emph{template} d'origine. Cela s'explique par le fait que notre méthode, comme la précédente, peut recruter des \emph{reads} courts pour étendre les \emph{seeds} ou les contigs, même si ces \emph{reads} se situent en dehors du \emph{template}. \bigskip
+
+L'application de notre méthode a donc permis de réduire le taux d'erreurs des contigs produits à moins de 12\% en moyenne, aussi bien pour les contigs obtenus à partir de \emph{reads} 2D, qui présentaient à la base un taux d'erreurs de 25,5\%, que pour les contigs obtenus à partir de \emph{reads} 1D, qui eux, présentaient à la base un taux d'erreurs de 43,5\%. \bigskip
+
+Le faible taux de couverture des \emph{templates} d'origine observé, quant à lui, peut notamment être expliqué par la synthèse de contigs courts, produisant une nette diminution de ce taux. Ces contigs courts sont en fait, dans la plupart des cas, des \emph{seeds} qu'il a été impossible d'étendre, aussi bien par la première que par la deuxième étape de notre méthode. Ainsi, il serait intéressant de réaliser de nouveaux tests, en ajustant les paramètres $lmin$ et $lmax$, afin observer s'ils permettent d'étendre d'avantage les \emph{seeds}, et donc d'obtenir une meilleure couverture des \emph{templates}. \bigskip
+
+Ainsi, l'application de notre méthode semble déjà constituer un prétraitement efficace pour la production de \emph{reads} NaS. Il serait maintenant nécessaire, en plus d'ajuster les paramètres, d'étudier plus en détails les contigs produits, afin d'observer d'éventuels chevauchements permettant de les fusionner, et de produire, pour chaque \emph{read} long, un unique contig de longueur plus importante, et donc un éventuel \emph{read} NaS. \bigskip
+
+\chapter*{Conclusion et perspectives}
+\addcontentsline{toc}{chapter}{Conclusion et perspectives}
+
+Ce mémoire a donc permis de dresser l'état de l'art concernant les différentes technologies et plateformes de séquençage, et les solutions, utilisant une structure d'index sur les \emph{reads}, permettant de résoudre des problèmes de \emph{mapping}, de correction, ou de traitement des 7 requêtes définies dans l'introduction. Nous avons ainsi pu observer l'évolution rapide des plateformes de séquençage, notamment concernant leur prix et la longueur des \emph{reads} qu'elles permettent de produire, mais également l'intérêt d'utiliser des structures de données évoluées plutôt que des structures de données classiques lors de l'indexation des \emph{reads}, particulièrement lorsque les études se portent sur des génomes de taille importante. \bigskip
+
+Nous avons plus particulièrement étudié les \emph{reads} longs, se développant depuis peu, et se montrant très utiles, permettant notamment le traitement de problèmes d'assemblage longs et complexes, jusqu'ici impossible à résoudre à l'aide des \emph{reads} courts. Ces \emph{reads} longs sont cependant très bruités, affichant un taux d'erreurs de séquençage pouvant atteindre 30\%, et sont donc difficiles à utiliser. Nous avons pu voir que les techniques de corrections classiques ne sont que très peu efficaces sur de tels \emph{reads}, et avons de ce fait introduit une méthode alternative permettant d'appliquer un traitement correctif à ces \emph{reads} avant utilisation, à travers les \emph{reads} NaS. \bigskip
+
+Nous avons décrit une première méthode de synthèse de tels \emph{reads}, produisant des contigs longs et uniques, et étant très efficace en termes de précision, mais très peu en termes de temps. Celle-ci a permis d'ouvrir la porte au développement de notre méthode, quant à elle bien plus efficace en termes de temps, mais produisant plusieurs contigs au lieu d'un unique \emph{read} synthétique de longueur plus importante, et donc des résultats moins satisfaisants, que nous n'avons cependant pas eu le temps d'étudier en détails. Bien que moins satisfaisants, les résultats obtenus par notre méthode semblent tout de même indiquer que celle-ci constitue un prétraitement efficace à la production de \emph{reads} NaS. \bigskip
+
+Il serait donc nécessaire, dans un premier temps, de réaliser de nouveaux tests, en ajustant les paramètres de notre méthode, pour tenter d'obtenir de meilleurs résultats. Par la suite, une analyse en profondeur des résultats fournis pourrait permettre d'en déduire d'avantage d'informations, et ainsi éventuellement rendre possible la production d'uniques contigs, de longueur plus importante, pour chaque \emph{read} long, par exemple en assemblant les multiples contigs actuellement produits, s'ils se chevauchent. \bigskip
+
+Bien que sortant du cadre du sujet de ce mémoire, il serait également intéressant de dresser l'état de l'art des méthodes d'assemblage de \emph{reads} utilisant une structure d'index sur ces \emph{reads}, afin de réaliser un tour d'horizon complet des solutions aux principaux problèmes concernant les \emph{reads}, et utilisant une structure d'index sur ces derniers.
+
+\newpage 
+
+\bibliographystyle{unsrtabbrv}
+\bibliography{../../../Bibliographies/reads_mapping}
+%\printbibliography
+
+\end{document}

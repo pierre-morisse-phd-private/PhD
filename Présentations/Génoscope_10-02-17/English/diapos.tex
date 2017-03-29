@@ -1,0 +1,874 @@
+\documentclass[t,12pt]{beamer}
+\usepackage[T1]{fontenc} 
+\usepackage[latin1]{inputenc}
+\usepackage[british,frenchb]{babel}
+\usepackage{pslatex}
+\usetheme[secheader]{Boadilla}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{patterns}
+\usetikzlibrary{decorations.pathreplacing}
+\usepackage{multirow}
+
+\def\sl{{\par\leavevmode\par}}
+
+\title{Correction and assembly of long reads}
+\date{\today}
+\author[Pierre Morisse]{Pierre Morisse}
+%
+\begin{document}
+
+	\AtBeginSection{
+		\begin{frame}
+			\tableofcontents[currentsection]
+		\end{frame}
+	}
+	
+	\frame{\titlepage}
+	
+	\begin{frame}[c]{Plan}
+		\tableofcontents[hideallsubsections]
+	\end{frame}
+	
+	\section{First correction approach}
+	
+	\begin{frame}[c]{Idea}
+		\begin{itemize}			
+			\item Like NaS, produce synthetic long reads from an assembly of short reads \sl
+			
+			\item Get rid of the alignment of short reads against each other \sl
+			
+			\item Deduce information only from the mapping of short reads on long reads \sl
+		\end{itemize}				
+	\end{frame}
+	
+	\begin{frame}[c]{Workflow}		
+		We present the method for the correction of one long read \sl
+		
+		\onslide<2->{
+		\begin{block}{Principle}
+				Mapping of the short reads and the template long read, and definition of a
+				$lmin$ threshold, to retrieve reads that: \sl
+				
+				\begin{itemize}
+					\onslide<3->{
+					\item Are fully aligned, and used as seeds 
+					}
+					\onslide<4->{
+					\item Have an aligned prefix of length at least $lmin$
+					}
+					\onslide<5->{
+					\item Have an aligned suffix of length at least $lmin$
+					}
+				\end{itemize}
+		\end{block}
+		}
+	\end{frame}
+	
+	\begin{frame}[c]{Workflow}
+		\begin{block}{Two extension steps:}
+				\begin{enumerate}
+					\onslide<2->{
+					\item Recruitment of partially aligned reads, similar to the seeds \sl
+					\begin{center}
+						\resizebox{0.4\textwidth}{!}{
+							\begin{tikzpicture}
+								%SEED
+								\draw [|-|] (1,1) -- (4,1);
+								\node [right] at (4,1) {seed};
+								%SUFFS
+								\draw [red] [|-|] (-1.5,0) -- (-0.5,0);
+								\draw [red] [|-|] (-0.5,0) -- (1.5,0);
+								\node [left] at (-1.5,0) {\textcolor{red}{$r_1$}};
+								\draw [red] [<->] (-0.5,-0.5) -- (1.5,-0.5);
+								\node [below] at (0.5,-0.5) {\textcolor{red}{aligned suffix}};
+								%PREF
+								\draw [green] [|-|] (2.5,0) -- (4,0);
+								\draw [green] [|-|] (4,0) -- (5.5,0);
+								\node [right] at (5.5,0) {\textcolor{green}{$r_2$}};
+								\draw [green] [<->] (2.5,-0.5) -- (4,-0.5);
+								\node [below] at (3.225,-0.5) {\textcolor{green}{aligned prefix}};
+								%LMINS
+								\draw [<->] (1,0.5) -- (2,0.5);
+								\node [above] at (1.5,0.5) {$lmin$};
+								\draw [<->] (3,0.5) -- (4,0.5);
+								\node [above] at (3.5,0.5) {$lmin$};
+							\end{tikzpicture}
+						}
+					\end{center}
+					}
+					
+					\onslide<3->{
+					\item Recruiting of new partially aligned reads, without similarity relation, by fixing
+					a new threshold $lmax$ \sl
+					\begin{center}
+						\resizebox{0.6\textwidth}{!}{
+							\begin{tikzpicture}
+								%SEED
+								\draw [|-|] (0,1) -- (7,1);
+								\node [right] at (7,1) {contig};
+								
+								%LMAX
+								\draw [<->] (0,1.5) -- (0.5,1.5);
+								\node [above] at (0.25,1.5) {$lmax$};
+								\draw [<->] (6.5,1.5) -- (7,1.5);
+								\node [above] at (6.75,1.5) {$lmax$};
+								
+								%SUFF
+								\draw [red] [|-|] (-2,0.5) -- (-0.3,0.5);
+								\draw [red] [|-|] (-0.3,0.5) -- (1,0.5);
+								\node [left] at (-2,0.5) {\textcolor{red}{$s_1$}};
+								
+								%PREF								
+								\draw [green] [|-|] (6.85,0.5) -- (8.25,0.5);
+								\draw [green] [|-|] (8.25,0.5) -- (9.85,0.5);
+								\node [right] at (9.85,0.5) {\textcolor{green}{$p_1$}};
+							\end{tikzpicture}
+						}
+					\end{center}
+					}
+				\end{enumerate}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}[c]{Example}
+		\resizebox{1\textwidth}{!}{
+			\begin{tikzpicture}
+				% Etape 1
+				% Template
+				\fill [pattern=north west lines, pattern color=blue] (-4,1.9) rectangle (-1,2.1);
+				\draw [-, blue] (-1,2) -- (0.5,2);
+				\fill [pattern=north west lines, pattern color=blue] (0.5,1.9) rectangle (1,2.1);
+				\draw [-, blue] (1,2) -- (5,2);
+				\fill [pattern=north west lines, pattern color=blue] (5,1.9) rectangle (6.3,2.1);
+				\draw [-, blue] (6.3,2) -- (7.3,2);
+				\fill [pattern=north west lines, pattern color=blue] (7.3,1.9) rectangle (14,2.1);
+				\node [right] at (14,2) {\textcolor{blue}{\footnotesize \emph{template}}};
+				
+				% Seed
+				\onslide<2->{
+					\fill[fill=black] (2,0.8) rectangle (5,1);
+					\node [right] at (5,1) {\footnotesize seed};
+				}
+				
+				% Read avec suffixe aligné
+				\onslide<3->{
+					\draw [green] [|-] (0,0) -- (1,0);
+					\fill [green] (1,-0.1) rectangle (3,0.1);
+				}
+				
+				% Read avec préfixe aligné
+				\onslide<4->{
+					\fill [green] (3.5,-0.1) rectangle (5,0.1);
+					\draw [green] [-|] (5,0) -- (6.5,0);
+				}
+				
+				% Lmin
+				\onslide<3->{
+					\draw [<->] (2,0.6) -- (3,0.6);
+					\node [below] at (2.5,0.6) {\footnotesize $lmin$};
+				}
+				\onslide<4->{
+					\draw [<->] (4,0.6) -- (5,0.6);
+					\node [below] at (4.5,0.6) {\footnotesize $lmin$};
+				}
+				
+				% Flèche
+				\onslide<5->{
+					\draw [-triangle 45] (3.25,-1) -- (3.25,-2.5);
+				}
+				
+				% Contig obtenu
+				\onslide<5->{
+					\draw [green] [|-] (0,-3.5) -- (1,-3.5);
+					\fill [green] (1,-3.4) rectangle (2,-3.6);
+					\fill[fill=black] (2,-3.4) rectangle (5,-3.6);
+					\draw [green] [-|] (5,-3.5) -- (6.5,-3.5);
+					\node [right] at (6.5,-3.5) {\footnotesize obtained contig};
+				}
+				
+				% Accolade
+				\onslide<6->{
+					\draw [decorate,decoration={brace, amplitude=10pt, mirror}]
+					(-1,1) -- (-1,-3.6) node [black, midway, xshift=-2cm] 
+					{\footnotesize Step 1};
+				}
+				
+				
+				% Etape 2
+				% Read avec suffixe aligné
+				\onslide<7->{
+					\draw [green] [|-] (-2.5,-4.5) -- (-1,-4.5);
+					\fill [green] (-1,-4.4) rectangle (0.5,-4.6);
+				}
+				
+				% Read avec préfixe aligné
+				\onslide<8->{
+					\fill [green] (6.3,-4.4) rectangle (7.3,-4.6);
+					\draw [green] [-|] (7.3,-4.5) -- (9.3,-4.5);
+				}
+				
+				% Lmax
+				\onslide<7->{
+					\draw [<->] (0,-4.1) -- (0.5,-4.1);
+					\node [above] at (0.25,-4.1) {\footnotesize $lmax$};
+				}
+				\onslide<8->{
+					\draw [<->] (6,-4.1) -- (6.5,-4.1);
+					\node [above] at (6.25,-4.1) {\footnotesize $lmax$};
+				}
+				
+				% Lmin
+				\onslide<7->{
+					\draw [<->] (-0.5,-4.9) -- (0.5,-4.9);
+					\node [below] at (0,-4.85) {\footnotesize $lmin$};
+				}
+				\onslide<8->{
+					\draw [<->] (6.3,-4.9) -- (7.3,-4.9);
+					\node [below] at (6.8,-4.85) {\footnotesize $lmin$};
+				}
+				
+				% Flèche
+				\onslide<9->{
+					\draw [-triangle 45] (3.4,-6) -- (3.4,-7.5);
+				}
+				
+				% Contig obtenu
+				\onslide<9->{
+					\draw [green] [|-] (-2.5,-8.5) -- (-1,-8.5);
+					\fill [green] (-1,-8.4) rectangle (0,-8.6);
+					\draw [green] [-] (0,-8.5) -- (1,-8.5);
+					\fill [green] (1,-8.4) rectangle (2,-8.6);
+					\fill[fill=black] (2,-8.4) rectangle (5,-8.6);
+					\draw [green] [-] (5,-8.5) -- (6.5,-8.5);
+					\fill [green] (6.5,-8.4) rectangle (7.3,-8.6);
+					\draw [green] [-|] (7.3,-8.5) -- (9.3,-8.5);
+					\node [right] at (9.3,-8.5) {\footnotesize obtained contig};
+				}
+				
+				% Accolade
+				\onslide<10->{
+					\draw [decorate,decoration={brace, amplitude=10pt}]
+					(14,-3.4) -- (14,-8.5) node [black, midway, xshift=2cm] 
+					{\footnotesize Step 2};
+				}
+			\end{tikzpicture}
+		}
+	\end{frame}
+	
+	\begin{frame}[c]{Results and conclusion}		
+		Results of our method on a long reads dataset from ADP1, with parameters set to $lmin = 100$ and $lmax = 10$ : \sl
+		
+		\onslide<2->{
+		\resizebox{\textwidth}{!}{
+			\begin{tabular}{|c|c|c|c|c|c|c|c|}
+				\hline
+				Reads & Average length & Average identity & Number of contigs / read & Average length & Average identity & Covered template & Time \\
+				\hline
+				1D & 2 052 & 56,5\% & 2,296 & 645 & 88,636\% & 72,17\% & 19min52 \\
+				\hline
+				2D & 10 033 & 74,5\% & 2,732 & 2 421 & 88,186\% & 65,93\% & 14h06min \\
+				\hline
+			\end{tabular}
+		} \sl
+		}
+		
+		\begin{itemize}
+			\onslide<3->{
+			\item Runtime : Less than 10 seconds per long read on average \sl
+			}
+			\onslide<4->{
+			\item Still a high error rate of 12 \% \sl
+			}
+			\onslide<5->{
+			\item Production of multiple contigs for each long read, and weak coverage \sl
+			}
+			\onslide<6->{
+			\item Tuning the parameters didn't allow better results
+			}
+		\end{itemize}		
+	\end{frame}
+	
+	\section{Scaffolding with long reads}
+	
+	\begin{frame}[c]{Idea}
+		\begin{itemize}
+			\item Obtain contigs from a short reads assembly \sl
+			
+			\onslide<2->{
+			\item Align long reads on these contigs with BLASR to find local alignments \sl
+			}			
+			
+			\onslide<3->{
+			\item Link an order contigs with the help of long reads aligned on multiple contigs \sl
+			}
+						
+			\onslide<4->{
+			\item Fill the gaps between two linked contigs with a consensus of the bases from the linking long reads
+			}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Example}
+		\resizebox{\textwidth}{!}{
+		\begin{tikzpicture}
+			\draw [|-|] (-10,1) -- (-3,1);
+			\node at (-11,1) {contig$_1$};
+			\draw [|-|] (2,1) -- (7,1);
+			\node at (8,1) {contig$_2$};
+			\onslide<2->{
+			\draw [|-|, red] (-5,0) -- (5,0);
+			\node at (6,0) {\textcolor{red}{long read$_1$}};
+			}
+			\onslide<3->{
+			\draw [|-|, red] (-7,-1) -- (4,-1);
+			\node at (5,-1) {\textcolor{red}{long read$_2$}};
+			}
+			\onslide<4->{
+			\node at (-0.5,-2) {\textcolor{red}{\vdots}};
+			}
+			\onslide<5->{			
+			\draw [|-|, red] (-4,-3) -- (3,-3);
+			\node at (4,-3) {\textcolor{red}{long read$_n$}};
+			}
+			\onslide<6->{
+			\draw [dashed, red] (-3,1) -- (-3,-3);
+			\draw [dashed, red] (2,1) -- (2,-3);
+			}
+			\onslide<7->{
+			\draw [decorate,decoration={brace, amplitude=10pt, mirror}]
+					(-3,-3.5) -- (2,-3.5) node [black, midway, yshift=-1cm] 
+					{\footnotesize Consensus};
+			}
+			
+			\onslide<8->{			
+			\draw [-triangle 45] (-0.5,-5) -- (-0.5,-6);										
+			\draw [|-|] (-10,-7) -- (-3,-7);
+			\draw [-, red] (-3,-7) -- (2,-7);
+			\draw [|-|] (2,-7) -- (7,-7);
+			\node at (8.5,-7) {obtained scaffold};
+			}
+		\end{tikzpicture}
+		}
+	\end{frame}
+	
+	\begin{frame}[c]{Observations and conclusion}
+		\begin{itemize}
+			\onslide<1->{
+			\item Already existing method: SSPACE-LongRead already allows scaffolding with long reads, but fills the gaps
+				  between the contigs with Ns instead of building a consensus of the long reads bases \sl
+			}
+							  
+			\onslide<2->{
+			\item PBJelly also allows scaffolding with long reads, and fills the gaps with bases from the long reads \sl
+			}
+			
+			\onslide<3->{			
+			\item Useless to develop this idea any more
+			}
+		\end{itemize}
+	\end{frame}
+	
+	\section{Comparing k-mers from short reads and from long reads}
+	
+	\begin{frame}[c]{Idea}
+		\begin{itemize}
+			\item Get $k$-mers appearing in the long reads, but not in the short reads contigs \sl
+			
+			\onslide<2->{
+			\item Assemble the obtained $k$-mers $\Rightarrow$ Obtain new contigs
+			}
+			
+			\onslide<3->{
+			\item Use these new contigs to cover regions from the reference genome that were previously uncovered by the short reads contigs \sl
+			}
+			
+			\onslide<4->{
+			\item Try to allow a less fragmented assembly by assembling together short reads and long reads contigs
+			}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Tests and results}
+		With a set of reads from ADP1 : \sl
+		
+		\resizebox{\textwidth}{!}{
+		\begin{tabular}{|c|c|c|}
+			\hline
+			$k$-mer size & Number of $k$-mers & Number of $k$-mer in the short reads contigs \\
+			\hline
+			64 & 375 999 371 & 380 967 \\
+			\hline
+			32 & 335 836 269 & 2 942 135 \\
+			\hline
+			16 & 322 493 916 & 6 197 488 \\
+			\hline
+			8 & 65 376 & 65 309 \\
+			\hline
+		\end{tabular}
+		} \sl \sl
+		
+		\onslide<2->{
+		Only 8-mers seem to be present enough in the short reads contigs, but too short to bring any interesting information \sl
+		}		
+		
+		\onslide<3->{
+		$\Rightarrow$ More interesting to search for spaced $k$-mers ?
+		}
+	\end{frame}
+	
+	\begin{frame}[c]{spaced $k$-mers}
+		\begin{block}{Definition}
+			Here, we define a spaced $k$-mer as a $k$-mer in which we allow a gap of a certain length  
+		\end{block} \sl
+		
+		\onslide<2->{
+		\begin{exampleblock}{Example}
+			For instance, the 8-mer GATCTTAC, if we allow a gap of length 2, becomes the following spaced "8"-mer : GATC**TTAC,
+			where * denote joker positions (match or mismatch allowed)
+		\end{exampleblock} \sl
+		}
+		
+		\onslide<3->{
+		We use this definition of spaced $k$-mers rather than the classical one in order to take into account indel. error instead
+		of substitutions errors, as they are more common in long reads
+		}
+	\end{frame}
+	
+	\begin{frame}[c]{Tests and results}
+		Results on the previous dataset, allowing a gap of length at most 10 : \sl
+		
+		\resizebox{\textwidth}{!}{
+		\begin{tabular}{|c|c|c|}
+			\hline
+			$k$-mer size & Number of $k$-mers & Number of $k$-mer in the short reads contigs \\
+			\hline
+			64 & 375 999 371 & 425 155 \\
+			\hline
+			32 & 335 836 269 & 3 859 742 \\
+			\hline
+			16 & 322 493 916 & 16 036 610 \\
+			\hline
+		\end{tabular}
+		} \sl \sl
+		
+		\onslide<2->{
+		$\Rightarrow$ Comparison is still not interesting, even with spaced $k$-mers
+		}
+	\end{frame}
+	
+	\begin{frame}[c]{Observations}
+		\begin{itemize}
+			\onslide<1->{
+			\item Trimming the ends of the longs reads doesn't allow any better results
+				  $\Rightarrow$ Unlike short reads, errors aren't mostly located at the ends of the reads, but occur
+				  everywhere \sl
+			}
+			
+			\onslide<2->{
+			\item Comparing long reads $k$-mer directly with short reads $k$-mers doesn't allow
+				  any better results \sl
+			}
+			
+			\onslide<3->{
+			\item Not interesting approach \sl
+			}
+			
+			\onslide<4->{
+			\item Allow more gaps in the spaced $k$-mers, and not just one in the middle, could potentially yield better
+				  resultats $\Rightarrow$ Need to find an algorithm that builds a spaced suffix arrays
+			}
+		\end{itemize}
+	\end{frame}
+	
+	\section{Working correction approach}
+	
+	\begin{frame}[c]{Principle}	
+		5 étapes : \sl
+			
+		\begin{enumerate}
+			\onslide<2->{
+			\item Short reads correction (with Quorum) \sl	
+			}
+			
+			\onslide<3->{
+			\item Mapping of the short reads on the long reads, in order to find seeds (with BLASR) \sl
+			}
+			
+			\onslide<4->{
+			\item Merging of the seeds that overlap over more than a certain length \sl
+			}
+			
+			\onslide<5->{
+			\item Linking of the seeds, by extending them with perfect overlaps with $k$-mers from the corrected short reads \sl
+			}
+			
+			\onslide<6->{
+			\item Extension of the obtained synthetic long read, on the left (resp. right) of the leftmost (resp. rightmost) seed
+			}
+		\end{enumerate}				
+	\end{frame}
+	
+	\begin{frame}[c]{Used tool : PgSA}
+		\onslide<1->{
+		PgSA (Pseudogenome Suffix Array) allows the indexing of a set of reads, in order to answer the 7 following queries, for a given string $f$ :
+		}
+		
+		\begin{enumerate}
+			\onslide<2->{
+			\item In which reads does $f$ occur?
+			}
+			\onslide<3->{
+			\item In how many reads does $f$ occur?
+			}
+			\onslide<4->{
+			\item What are the occurrence positions of $f$?
+			}
+			\onslide<5->{
+			\item What is the number of occurrences of $f$?
+			}
+			\onslide<6->{
+			\item In which reads does $f$ occur only once?
+			}
+			\onslide<7->{
+			\item In how many reads does $f$ occur only once?
+			}
+			\onslide<8->{
+			\item What are the occurrence positions of $f$ in the reads where it occurs only once?
+			}
+		\end{enumerate}
+		
+		\onslide<9->{
+		Among these requests, the third one will allow us to find perfect overlaps between $k$-mers
+		}
+	\end{frame}
+	
+	\begin{frame}[c]{Used tool : PgSA}
+		Other data structures (Gk-Arrays, Compressed Gk-Arrays) are able to handle these requests, but the length $k$ of the string $f$
+		has to bet set at compilation time, whereas PgSA allows the handling of the requests for arbitrary values of $k$ \sl		
+		
+		\onslide<2->{
+		$\Rightarrow$ Allow to look for overlaps of length $k-2$ if no overlap of length $k-1$ was found, without any need to recompute the whole index
+		}
+	\end{frame}		
+	
+	\begin{frame}[c]{Step 4}
+		
+		The $k$-mers from the set of correct short reads (and their reverse-complements) are indexed with PgSA, and third request is looped over
+		to find perfect overlap between $k$-mers, allowing to link together the seeds \sl		
+		
+			\onslide<2->{
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [fill,blue] (-6,1.05) rectangle (5.5,0.95);
+					\node at (6,1) {\textbf{\textcolor{blue}{.  .  .  .}}};
+					\draw [fill=blue] [-|] (6.5,1.05) rectangle (7.5,0.95);
+					\node [right] at (8,1) {\textcolor{blue}{long read}};
+					%SEEDS					
+					\onslide<1-9>{
+					\draw [fill=black] (-5.5,0.05) rectangle (-2.5,-0.05);
+					}					
+					\onslide<3-5>{
+					\draw [fill=red] (-3.5,0.05) rectangle (-2.5,-0.05);
+					}
+					\onslide<5-8>{
+					\draw [fill=green] (-2.5,0.05) rectangle (-2.25,-0.05);
+					}
+					\onslide<6-8>{
+					\draw [fill=green] (-3.25,0.05) rectangle (-2.25,-0.05);
+					}
+					\onslide<8>{
+					\draw [fill=orange] (-2.25,0.05) rectangle (-2,-0.05);
+					}
+					\onslide<9>{
+					\draw [fill=orange] (-3,0.05) rectangle (-2,-0.05);
+					}
+					\draw [fill=black] (2,0.05) rectangle (5,-0.05);
+					%K-MERS
+					\onslide<4>{
+					\draw [fill=green] (-3.25,-0.1) rectangle (-2.25,-0.2);
+					}
+					\onslide<7>{
+					\draw [fill=orange] (-3,-0.1) rectangle (-2,-0.2);
+					}
+					\onslide<10-12>{
+					\draw [fill=black] (-5.5,0.1) rectangle (2.75,0.2);
+					}
+					\onslide<11-12>{
+					\draw [fill=yellow] (1.75,0.1) rectangle (2.75,0.2);
+					}
+					\onslide<12>{
+					\draw [fill=pink] (2,0.05) rectangle (3,-0.05);
+					}
+					\onslide<13->{
+					\draw [fill=black] (-5.5,0.05) rectangle (3,-0.05);
+					}
+				\end{tikzpicture}
+			}
+			\end{center} \sl
+			}
+	\end{frame}
+	
+	\begin{frame}[c]{Observations}
+		\begin{itemize}				  
+			\item It possible that a given $k$-mer perfectly overlaps multiple other $k$-mers $\Rightarrow$ Exploration of every possible
+				  extension with backtracking \sl
+			
+			\onslide<2-> {
+			\item Some seeds might be impossible to link together $\Rightarrow$ Production of a synthetic long read fragmented
+				  in multiple parts \sl
+			}
+			
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\onslide<3->{
+					\draw [fill=blue] [-] (-12,1.05) rectangle (9,0.95);
+					\node [right] at (9,1) {\textcolor{blue}{long read}};
+					}
+					%SEEDS
+					\onslide<4->{
+					\draw [fill=black] (-9,0.05) rectangle (-6,-0.05);
+					\node [right] at (-6,0) {seed$_1$};
+					}
+					\onslide<5->{
+					\draw [fill=black] (3,0.05) rectangle (6,-0.05);
+					\node [right] at (6,0) {seed$_2$};
+					}
+					
+					%TEMPLATE
+					\onslide<6->{
+					\draw [fill=red] (-12,-2.05) rectangle (-10.5,-1.95);
+					\node at (-10,-2) {\textbf{\textcolor{red}{. . . .}}};
+					\draw [fill=red] (-9.5,-2.05) rectangle (6,-1.95);
+					\node at (6.5,-2) {\textbf{\textcolor{red}{. . . .}}};
+					\draw [fill=red] (7,-2.05) rectangle (9,-1.95);
+					\node [right] at (9,-2) {\textcolor{red}{reference genome}};
+					}
+					%SEEDS
+					\onslide<7->{					
+					\draw [fill=black] (-8,-3.05) rectangle (-5,-2.95);
+					\node [right] at (-5,-3) {seed$_2$};
+					}
+					\onslide<8->{
+					\draw [fill=black] (2.5,-3.05) rectangle (5.5,-2.95);
+					\node [right] at (5.5,-3) {seed$_1$};
+					}	
+				\end{tikzpicture}
+			}
+			\end{center}
+			
+			\onslide<9->{
+			\item When only one seed mapped on a given long read, we just extend this seed on both directions
+			}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}[c]{Step 5}
+		The leftmost seed doesn't always map right at the beginning of the long read, and the rightmost doesn't 
+		always reach the end \sl
+		
+		\onslide<2->{
+		$\Rightarrow$ Once all seeds have been linked, and the synthetic long read produced, we extend, with the help
+		of perfectly overlapping $k$-mers, its both ends, until the borders of the initial long reads are reached,
+		or an ambiguity is met (multiple $k$-mers perfectly overlapping the currently considered one)
+		}
+	\end{frame}
+	
+	\begin{frame}[c]{Step 5, first case : No ambiguity}
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [fill=blue] [-] (-12,1.05) rectangle (9,0.95);
+					\node [right] at (9,1) {\textcolor{blue}{long read}};
+					%LR CORRIGÉ
+					\draw [fill=black] [-] (-9,-0.95) rectangle (6,-1.05);
+					\onslide<2-4>{
+					\draw [fill=red] [-] (5,-0.95) rectangle (6,-1.05);
+					}
+					\node [right] at (0,-2) {synthetic long read};
+					%EX
+					\onslide<3>{
+					\draw [fill=green] (5.25,-1.15) rectangle (6.25,-1.25);
+					}
+					\onslide<4-5>{
+					\draw [fill=green] (6,-0.95) rectangle (6.25,-1.05);
+					}
+					\onslide<5-7>{
+					\draw [fill=green] (5.25,-0.95) rectangle (6.25,-1.05);
+					}
+					\onslide<6>{
+					\draw [fill=orange] (5.5,-1.15) rectangle (6.50,-1.25);
+					}
+					\onslide<7-8>{
+					\draw [fill=orange] (6.25,-0.95) rectangle (6.50,-1.05);
+					}
+					\onslide<8>{
+					\draw [fill=orange] (5.50,-0.95) rectangle (6.50,-1.05);
+					}
+					\onslide<9->{
+					\draw [fill=black] [-] (-9,-0.95) rectangle (8.75,-1.05);
+					}
+					\onslide<10-12>{
+					\draw [fill=yellow] [-] (7.75,-0.95) rectangle (8.75,-1.05);
+					}
+					\onslide<11>{
+					\draw [fill=pink] (8,-1.15) rectangle (9,-1.25);
+					}
+					\onslide<12-13>{
+					\draw [fill=pink] (8.75,-0.95) rectangle (9,-1.05);
+					}
+					\onslide<13->{
+					\draw [fill=pink] (8,-0.95) rectangle (9,-1.05);
+					}				
+					%TRAIT
+					\onslide<14->{
+					\draw [green, dashed] (9,1.05) -- (9,-1.25);
+					}
+					\onslide<15->{
+					\draw [fill=black] [-] (-9,-0.95) rectangle (9,-1.05);
+					}
+				\end{tikzpicture}
+			} 
+			\end{center}
+	\end{frame}
+	
+	\begin{frame}[c]{Step 5, second case : Ambiguity}
+			\begin{center}
+			\resizebox{0.75\textwidth}{!}{
+				\begin{tikzpicture}
+					%TEMPLATE
+					\draw [fill=blue] [-] (-12,1.05) rectangle (9,0.95);
+					\node [right] at (9,1) {\textcolor{blue}{long read}};
+					%LR CORRIGÉ
+					\draw [fill=black] [-] (-9,-0.95) rectangle (6,-1.05);
+					\onslide<2-4>{
+					\draw [fill=red] [-] (-9,-0.95) rectangle (-8,-1.05);
+					}
+					\node [right] at (0,-2) {synthetic long read};
+					%EXT GAUCHE
+					\onslide<3>{
+					\draw [fill=green] (-9.25,-1.15) rectangle (-8.25,-1.25);
+					}
+					\onslide<4-5>{
+					\draw [fill=green] (-9.25,-0.95) rectangle (-9,-1.05);
+					}
+					\onslide<5-7>{
+					\draw [fill=green] (-9.25,-0.95) rectangle (-8.25,-1.05);
+					}
+					\onslide<6>{
+					\draw [fill=orange] (-9.50,-1.15) rectangle (-8.50,-1.25);
+					}
+					\onslide<7-8>{
+					\draw [fill=orange] (-9.50,-0.95) rectangle (-9.25,-1.05);
+					}
+					\onslide<8-9>{
+					\draw [fill=orange] (-9.50,-0.95) rectangle (-8.50,-1.05);
+					}
+					\onslide<9>{
+					\draw [fill=blue] (-9.75,-1.15) rectangle (-8.75,-1.25);
+					\draw [fill=pink] (-9.75,-0.85) rectangle (-8.75,-0.75);
+					}
+					\onslide<10>{
+					\draw [fill=black] [-] (-9.5,-0.95) rectangle (6,-1.05);
+					}
+				\end{tikzpicture}
+			} 
+			\end{center}
+	\end{frame}
+	
+	\begin{frame}[c]{Results and comparison with NaS : Mapping}		
+	
+			On the 6 ADP1 long reads datasets available from the Genoscope website:
+			
+			\begin{table}
+			\resizebox{1\textwidth}{!}{
+			\begin{tabular}{|c|c|c|c|c|c|}
+				\hline
+				& \textbf{Number of reads} & \textbf{Average length} & \textbf{Cumulative size} & \textbf{Average identity} &s \textbf{Runtime} \\
+				\hline
+				\textbf{Raw LRs} & 70 314 & 	2 530 & 177 869 033 & 3,84 \% & N.A. \\
+				\hline
+				\textbf{NaS (fast)} & 8 219 & 4 514 & 37 099 564 & 99,92 \% & TODO \\
+				\hline
+				\textbf{NaS (sensitive)} & 12 053 & 6 338 & 76 388 104 & 99,89 \% & TODO \\
+				\hline
+				\textbf{Nous} & 7 425 (249 fragmented) & 10 250 & 78 739 767 & 99,57 \% & TODO \\
+				\hline
+			\end{tabular}
+			}
+			\caption{On the 1D long reads}
+			\end{table}
+		
+			\onslide<2->{
+			\begin{table}
+			\resizebox{1\textwidth}{!}{
+			\begin{tabular}{|c|c|c|c|c|c|}
+				\hline
+				& \textbf{Number of reads} & \textbf{Average length} & \textbf{Cumulative size} & \textbf{Average identity} &s \textbf{Runtime} \\
+				\hline
+				\textbf{Raw LRs} & 18 697 & 10 884 & 203 496 742 & 37,07 \% & N.A. \\
+				\hline
+				\textbf{NaS (fast)} & 15 844 & 11 084 & 175 607 625 & 99,78 \% & TODO \\
+				\hline
+				\textbf{NaS (sensitive)} & 16 439 & 11 871 & 195 138 674 & 99,79 \% & TODO \\
+				\hline
+				\textbf{Nous} & 15 575 (984 fragmented) & 10 562 & 178 222 404 & 99,54 \% & TODO \\
+				\hline
+			\end{tabular}
+			}
+			\caption{On the 2D long reads}
+			\end{table}
+			}
+	\end{frame}
+	
+	\begin{frame}[c]{Results and comparison with NaS : Assembly}		
+			With the two 1D and 2D datasets previously corrected:			
+			
+			\begin{table}
+			\resizebox{\textwidth}{!}{
+			\begin{tabular}{|c|c|c|c|c|c|}
+			\hline
+			\textbf{Tool} & \textbf{Number of reads} & \textbf{Number of contigs} & \textbf{Genome coverage} 	
+			& \textbf{Identity} \\
+			\hline
+			\textbf{NaS (fast)} & 24,063 & 1 & 100 \% & 99.98 \% \\
+			\textbf{NaS (sensitive)} & 28,492 & 1 & 100 \% & 99.99 \% \\
+			\textbf{Our method} & TODO & TODO & TODO & TODO \\
+			\hline
+			\end{tabular}
+			}
+			\caption{Assembly results \label{tabres3}}
+			\end{table}
+			
+	\end{frame}
+	
+	\begin{frame}[c]{To do}
+		\begin{itemize}
+			\item Try to produce less fragmented synthetic long reads $\Rightarrow$ Tuning of BLASR parameters \sl
+			
+			\onslide<2->{
+			\item Allow the correction to run in parallel to reduce runtime
+			}
+		\end{itemize}
+	\end{frame}
+	
+	\section{Long reads mapping on a DBG}
+	
+	\begin{frame}[c]{Méthodes existantes}
+		\begin{itemize}
+			\item LoRDEC (2014, Hybrid, short reads DBG) \sl
+			
+			\item Jabba (2016, Hybrid, short reads DBG) \sl
+			
+			\item LoRMA (2016, Only LRs, long reads DBG) \sl
+			\end{itemize}
+	\end{frame}
+	
+\end{document}
