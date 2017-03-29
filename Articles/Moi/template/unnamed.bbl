@@ -1,0 +1,43 @@
+\begin{thebibliography}{1}
+
+\bibitem{Kent2002}
+W.~J. Kent.
+\newblock {BLAT — The BLAST -Like Alignment Tool}.
+\newblock {\em Genome research}, 12:656--664, 2002.
+
+\bibitem{Kowalski2015}
+T.~Kowalski, S.~Grabowski, and S.~Deorowicz.
+\newblock {Indexing arbitrary-length k-mers in sequencing reads}.
+\newblock {\em PLoS ONE}, 10(7):1--14, 2015.
+
+\bibitem{Madoui2015}
+M.-A. Madoui, S.~Engelen, C.~Cruaud, C.~Belser, L.~Bertrand, A.~Alberti,
+  A.~Lemainque, P.~Wincker, and J.-M. Aury.
+\newblock {Genome assembly using Nanopore-guided long and error-free DNA
+  reads}.
+\newblock {\em BMC Genomics}, 16:327, 2015.
+
+\bibitem{Maillet2014}
+N.~Maillet, G.~Collet, T.~Vannier, D.~Lavenier, and P.~Peterlongo.
+\newblock {Commet: Comparing and combining multiple metagenomic datasets}.
+\newblock {\em Proceedings - 2014 IEEE International Conference on
+  Bioinformatics and Biomedicine}, IEEE BIBM(November):94--98, 2014.
+
+\bibitem{Marcais2015}
+G.~Mar{\c{c}}ais, J.~A. Yorke, and A.~Zimin.
+\newblock {QuorUM: An Error Corrector for Illumina Reads}.
+\newblock pages 1--13, 2015.
+
+\bibitem{Niko2013}
+V.~Niko.
+\newblock {Scalable and Versatile k -mer Indexing for High-Throughput
+  Sequencing Data}.
+\newblock (250345):237--248, 2013.
+
+\bibitem{Philippe2011}
+N.~Philippe, M.~Salson, T.~Lecroq, M.~Leonard, T.~Commes, and E.~Rivals.
+\newblock {Querying large read collections in main memory: a versatile data
+  structure}.
+\newblock {\em BMC bioinformatics}, 12(1):242, 2011.
+
+\end{thebibliography}

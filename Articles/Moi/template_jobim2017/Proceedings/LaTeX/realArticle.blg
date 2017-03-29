@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: realArticle.aux
+The style file: unsrt.bst
+Database file #1: ../../../../../Bibliographies/library.bib
+Warning--empty journal in Allam2015
+You've used 22 entries,
+            1791 wiz_defined-function locations,
+            604 strings with 7982 characters,
+and the built_in function-call counts, 5949 in all, are:
+= -- 529
+> -- 314
+< -- 4
++ -- 113
+- -- 91
+* -- 467
+:= -- 952
+add.period$ -- 66
+call.type$ -- 22
+change.case$ -- 21
+chr.to.int$ -- 0
+cite$ -- 23
+duplicate$ -- 242
+empty$ -- 518
+format.name$ -- 91
+if$ -- 1291
+int.to.chr$ -- 0
+int.to.str$ -- 22
+missing$ -- 23
+newline$ -- 113
+num.names$ -- 22
+pop$ -- 37
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 124
+stack$ -- 0
+substring$ -- 464
+swap$ -- 63
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 1
+while$ -- 63
+width$ -- 24
+write$ -- 244
+(There was 1 warning)

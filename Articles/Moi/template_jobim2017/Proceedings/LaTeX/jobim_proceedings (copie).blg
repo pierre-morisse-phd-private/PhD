@@ -1,0 +1,52 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: jobim_proceedings (copie).aux
+The style file: unsrt.bst
+Database file #1: ../../../../../Bibliographies/library.bib
+Warning--empty journal in Niko2013
+Warning--there's a number but no volume in Niko2013
+Warning--empty journal in Marcais2015
+Warning--empty journal in Tange2011
+Warning--empty year in Tange2011
+You've used 21 entries,
+            1791 wiz_defined-function locations,
+            589 strings with 7586 characters,
+and the built_in function-call counts, 5620 in all, are:
+= -- 489
+> -- 305
+< -- 4
++ -- 110
+- -- 89
+* -- 445
+:= -- 906
+add.period$ -- 63
+call.type$ -- 21
+change.case$ -- 21
+chr.to.int$ -- 0
+cite$ -- 26
+duplicate$ -- 229
+empty$ -- 484
+format.name$ -- 89
+if$ -- 1211
+int.to.chr$ -- 0
+int.to.str$ -- 21
+missing$ -- 21
+newline$ -- 108
+num.names$ -- 21
+pop$ -- 39
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 115
+stack$ -- 0
+substring$ -- 424
+swap$ -- 58
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 5
+while$ -- 59
+width$ -- 23
+write$ -- 229
+(There were 5 warnings)

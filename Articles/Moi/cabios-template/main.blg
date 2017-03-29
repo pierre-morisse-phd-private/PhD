@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: main.aux
+The style file: natbib.bst
+Database file #1: ../../../Bibliographies/library.bib
+Warning--empty journal in Marcais2015
+Warning--empty journal in Niko2013
+Warning--there's a number but no volume in Niko2013
+You've used 19 entries,
+            2378 wiz_defined-function locations,
+            656 strings with 7706 characters,
+and the built_in function-call counts, 10441 in all, are:
+= -- 957
+> -- 696
+< -- 9
++ -- 208
+- -- 208
+* -- 1007
+:= -- 1816
+add.period$ -- 88
+call.type$ -- 19
+change.case$ -- 117
+chr.to.int$ -- 19
+cite$ -- 22
+duplicate$ -- 408
+empty$ -- 617
+format.name$ -- 233
+if$ -- 2057
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 19
+newline$ -- 98
+num.names$ -- 76
+pop$ -- 127
+preamble$ -- 1
+purify$ -- 117
+quote$ -- 0
+skip$ -- 285
+stack$ -- 0
+substring$ -- 617
+swap$ -- 104
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 171
+warning$ -- 3
+while$ -- 90
+width$ -- 0
+write$ -- 247
+(There were 3 warnings)

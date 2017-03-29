@@ -1,0 +1,556 @@
+\documentclass{article}
+
+\usepackage{ALgo}
+\usepackage{multicol}
+\usepackage{verbatim}
+\usepackage{graphics}
+
+\title{\ALgo\\\small{Writing algorithms in \LaTeX.}}
+\author{Arnaud Lefebvre}
+\date{ABISS -- Universit\'e de Rouen -- FRANCE\\Arnaud.Lefebvre@univ-rouen.fr}
+\renewcommand{\abstractname}{Description}
+\begin{document}
+
+\maketitle
+\begin{abstract}
+The \ALgo\ extension is an easy to use set of commands including numerous
+ options like line numbering, vertical rules for instructions blocks, 
+ different languages (you can define your own keywords and styles)\ldots
+\end{abstract}
+~\\
+\hrule
+\tableofcontents
+~\\
+\hrule
+\newpage
+\section{First algorithm}
+
+The \ALgo\ extension provides an environment simply called \textit{algo}.
+This environment takes two arguments (the name of the algorithm and its parameters) and a series of options:\\
+
+\noindent\verb!\begin{algo}[option1,option2...]{Name}{Parameters}!\\
+\noindent\verb!	instructions!\nopagebreak\\
+\noindent\verb!\end{algo}!\\
+
+The easiest way to use it, without any option, is shown Fig.\ref{fig:env}.
+\begin{figure}[b]
+\begin{center}
+\begin{minipage}{\textwidth}
+\setlength{\columnseprule}{1pt}
+\begin{multicols}{2}
+\verb!\begin{algo}{Double}{i}!\\
+\verb!\RETURN{2\times i}!\\
+\verb!\end{algo}!\\
+\begin{algo}{Double}{i}
+\RETURN{2\times i}
+\end{algo}
+\end{multicols}
+\end{minipage}
+\end{center}
+\caption{\label{fig:env}First algorithm. On the left, the source code. On the right, the corresponding algorithm.} 
+\end{figure}
+
+As you can see, it is very simple. Let us now describe all the different commands available in this environment.
+
+\section{All the commands}
+
+Here are all the commands available in the \ALgo\ package.
+For each command, an example is given.
+
+\subsection{Preliminary commands}
+
+The following commands have to be called just after the \verb!\begin{algo}...! line and before the first instruction of the algorithm. 
+
+\begin{itemize}
+\item 
+	\verb!\IN{inputs}!: with this command you can specify the inputs of
+		the algorithm: 
+	$$\verb!\IN{$i$, $j$ integers strictly greater than 0}!$$
+\item 
+	\verb!\OUT{outputs}!: with this command you can specify the outputs of
+		the algorithm:
+	$$\verb!\OUT{$m$ equal to $i\times j$}!$$
+\item 
+	\verb!\AUX{auxiliaries}!: with this command you can specify the other 
+		variables used in the algorithm:
+	$$\verb!\AUX{$k$ integer}!$$
+\end{itemize}
+
+\noindent{Remark:} if one of these three commands is used, keywords \verb!BEGIN! and \verb!END! are automatically added at the beginning and at the end of the algorithm.
+
+\subsection{Simple commands}
+\begin{itemize}
+\item 
+	\verb!\SET{i}{j}!: produces $i\leftarrow j$.
+\item 
+	\verb!\INCR{i}!: produces $i\leftarrow i+1$.
+\item 
+	\verb!\DECR{i}!: produces $i\leftarrow i-1$.
+\item 
+	\verb!\CALL{Name}{Parameters}!: produces a call to another algorithm such as \CALL{Name}{Parameters}. This command can be used outside an 
+	algorithm.
+\item 
+	\verb!\COM{comments}!: introduces a comment in your algorithm. This 
+			command can also be used as a parameter of another 
+			command. For example: \verb!\SET{i}{\COM{two times $i$}}! will produce $i\leftarrow~$\textit{two times $i$}. If this command is alone on a line, by default this line has no number and the comment starts with a $\triangleright$. If you want this line to be numbered, use the \verb!numcom! option.
+\item
+	\verb!\ACT{value}!: writes the \verb!value! in math mode;
+\item
+	\verb!\CUT!: enables to cut a long line (comment or loop condition for
+		example). If you call this command, the end of the current 
+		line is put on the next line (with appropriate tabulations). 
+		This is very useful for long inputs.  
+\item 
+	\verb!\RETURN{value}!: produces \textsc{Return} $value$.
+\item 
+	\verb!\BREAK!: produces \textsc{break}.
+\item
+	\verb!\LABEL{label}!: introduces a label in the algorithm. This command has to be placed just after the instruction you want to label. A call to the famous \verb!\ref! command will give the number of the line where the instruction appears.
+\end{itemize}
+
+\subsection{Loops and conditions}
+
+This is the list of all the possible conditions and loops.
+The best way to understand each one is to have a look at Fig.\ref{fig:ex}.  
+
+\begin{itemize}
+\item 
+	\verb!\IF{condition}...\FI! or \verb!\IF{condition}...\ELSE...\FI!: just a simple condition instruction.
+\item 
+	\verb!\IF{condition_1}...\ELSEIF{condition_2}...\FI! or \\
+	\verb!\IF{condition_1}...\ELSEIF{condition_2}...\ELSE...\FI!: multiple 
+	conditions instruction with or without a final \verb!\ELSE! default case.
+\item 
+	\verb!\DOWHILE{condition}...\OD!: for while loops.
+\item 
+	\verb!\DO...\WHILEOD{condition}!: for while loops where the condition is verified at the end of the loop.
+\item 
+	\verb!\DOFOR{sentence}...\OD!: useful for a loop where the bounds are not clearly defined. For example:
+	$$\verb!\DOFOR{each~line~of~the~file~F}...\OD!$$ 
+\item 
+	\verb!\DOFOREACH{sentence}...\OD!: no need to say more\ldots 
+\item 
+	\verb!\DOFORI{var}{begin}{end}...\OD!: \verb!var! takes all the values from \verb!begin! upto \verb!end!.
+\item
+	\verb!\DOFORD{var}{begin}{end}...\OD!: this time \verb!var! takes all the values from \verb!begin! downto \verb!end!.
+\item
+	\verb!\DOFORIS{var}{begin}{end}{step}...\OD!: similar to\\ \verb!\DOFORI{var}{begin}{end}...\OD! but with a \verb!step! between to values.
+\item
+	\verb!\DOFORDS{var}{begin}{end}{step}...\OD!: similar to\\ \verb!\DOFORD{var}{begin}{end}...\OD! but with a \verb!step! between to values.
+\item
+	\verb!\REPEAT...\UNTIL{condition}!: no need to say more.
+\end{itemize}
+
+\begin{figure}
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\setlength{\columnseprule}{1pt}
+\begin{multicols}{2}
+\verb!\begin{algo}{Example}{i}!\\
+\verb!\IN{$i$ positive integer}!\\
+\verb!\OUT{$j$ equal to $i$}!\\
+\verb!\AUX{$k$ integer}!\\
+\verb!\IF{i=1}!\\
+\verb!  \SET{j}{i}!\\
+\verb!\ELSEIF{\COM{OK}}!\\
+\verb!  \SET{j}{0}!\\
+\verb!\ELSE!\\
+\verb!  \SET{j}{0}!\\
+\verb!\FI!\\
+\verb!\SET{k}{0}}!\\
+\verb!\REPEAT!\\
+\verb!  \INCR{j}!\\
+\verb!\UNTIL{j>i}!\\
+\verb!\DOFORI{k}{0}{i}!\\
+\verb!  \SET{j}{k}!\\
+\verb!\OD!\\
+\verb!\DOFORDS{k}{j}{0}{1}!\\
+\verb!  \SET{i}{\ACT{i}}!\\
+\verb!\OD!\\
+\verb!\DOWHILE{k<i}!\\
+\verb! \SET{j}{\CALL{Double}{k}}!\\
+\verb! \INCR{k}!\\
+\verb!\OD!\\
+\verb!\COM{Now $j=i$}!\\
+\verb!\SET{j}{(j/2)+1}!\\
+\verb!\RETURN{j}!\\
+\begin{algo}[rules]{Example}{i}
+\IN{$i$ positive integer}
+\OUT{$j$ equal to $i$}
+\AUX{$k$ integer}
+\IF{i=1}
+  \SET{j}{i}
+\ELSEIF{\COM{OK}}
+  \SET{j}{0}
+\ELSE
+  \SET{j}{0}
+\FI
+\SET{k}{0}
+\REPEAT
+  \INCR{j}
+\UNTIL{j>i}
+\DOFORI{k}{0}{i}
+  \SET{j}{k}
+\OD
+\DOFORDS{k}{j}{0}{1}
+  \SET{i}{\ACT{i}}
+\OD
+\DOWHILE{k<i}
+ \SET{j}{\CALL{Double}{k}}
+ \INCR{k}
+\OD
+\SET{j}{(j/2)+1}
+\COM{Now $j=i$}
+\RETURN{j}
+\end{algo}~\\~\\
+~\\
+\end{multicols}
+\end{minipage}
+\end{center}
+\caption{\label{fig:ex}Example of commands, conditions and loops. On the left, the source code. On the right, the corresponding algorithm.} 
+\end{figure}
+
+\section{All the options}
+
+All the options presented in this section can be given through the 
+$$\verb!\usepackage[option1,option2...]{ALgo}!$$ command (in this case
+these options are given for all the algorithms in the document) or 
+through the $$\verb!\begin{algo}[option1,option2...]!$$ environment (in this
+case, these options are given for the current algorithm only). 
+
+Here are all the options available in the \ALgo\ package:
+\begin{itemize}
+\item
+	\verb!noeqtab!: if you want tabulation sizes depending on 
+			the loop you are in.
+\item
+	\verb!ends!: if you want to add ends of loops.
+\item
+	\verb!rules!: if you want to draw vertical rules delimiting loops.
+\item
+	\verb!nonum!: if you don't want the numbers of the lines.
+\item
+	\verb!numcom!: if you want comment lines to be numbered. Of course this option is taken into account if the \verb!nonum! option is not used. 
+\end{itemize}
+
+\section{The configuration file}
+
+With this package you need the \verb!ALgo.cfg! file. In this file you can 
+ specify your own keywords by adding a call to the \verb!\LANG! call. 
+You can also define the way you want your keywords and line numbers to be 
+written by adding a call to the \verb!\STYLE! command.
+
+\textbf{Important : } The first argument of each of the two commands define 
+ the name of the style or the keywords set. It is this name you need to give 
+ as an option to use them.   
+
+The different possible values in the \verb!\STYLE! command are:
+\begin{itemize}
+\item
+	\verb!BOLD!: keywords are written in bold font;
+\item
+	\verb!NUMBOLD!: line numbers are written in bold font;
+\item
+	\verb!ITALIC!: keywords are written in italic;
+\item
+	\verb!NUMITALIC!: line numbers are written in italic;
+\item
+	\verb!SMALLCAPS!: keywords are written in small caps (only possible
+without the \verb!BOLD! and \verb!ITALIC! options).
+\end{itemize}
+
+You can see examples in the \verb!ALgo.cfg! file given in section~\ref{annexe}.\\ 
+
+\textbf{Important : }do not delete the \verb!default! style and the \verb!english! language. They are called by default.\\
+
+\textbf{Important : }if you don't fill in all the possible fields in the \verb!\LANG! command, the default english keywords will be used instead.  
+
+\section{Examples}
+
+Figures~\ref{ex1}-\ref{ex2} in this section present the same 
+ algorithm written with the
+ \ALgo\ package but with different options. 
+Options used are given in the respective captions.
+
+\begin{figure}[!h]
+\begin{center}
+\begin{algo}{EgyptianMultiplication}{i,j}
+\IN{$i$ integer greater than 0, $j$ integer greater than 0}
+\OUT{$m$ equal to $i\times j$}
+\AUX{$k$ integer}
+\SET{m}{0}
+\SET{k}{1}
+\WHILE{2\times k\le i}\LABEL{loop}
+  \SET{k}{2\times k}
+  \SET{j}{2\times j}
+\OD
+\WHILE{k\ge 1}
+  \IF{k\le i}
+  \SET{m}{m+j}
+  \SET{i}{i-k}
+  \FI
+  \SET{k}{k \DIV 2}
+  \SET{j}{j \DIV 2}
+\OD
+\RETURN{m}
+\end{algo}
+\end{center}
+\caption{\label{ex1}Algorithm written without any option. A label has been
+ put line~\ref{loop}.}
+\end{figure}
+
+\begin{figure}[!h]
+\begin{center}
+\begin{algo}[french,rules,ends,noeqtab]{EgyptianMultiplication}{i,j}
+\IN{$i$ integer greater than 0,\CUT $j$ integer greater than 0}
+\OUT{$m$ equal to $i\times j$}
+\AUX{$k$ integer}
+\SET{m}{0}
+\SET{k}{1}
+\WHILE{2\times k\le i}
+  \SET{k}{2\times k}
+  \SET{j}{2\times j}
+\OD
+\WHILE{k\ge 1}
+  \IF{k\le i}
+  \SET{m}{m+j}
+  \SET{i}{i-k}
+  \FI
+  \SET{k}{k \DIV 2}
+  \SET{j}{j \DIV 2}
+\OD
+\RETURN{m}
+\end{algo}
+\end{center}
+\caption{Algorithm written with the \texttt{french}, \texttt{rules},
+ \texttt{ends} and \texttt{noeqtab} options. A call to the \texttt{$\backslash$CUT} 
+  command has been placed after the comma on the input line.}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\begin{algo}[rules,nonum]{EgyptianMultiplication}{i,j}
+\IN{$i$ integer greater than 0, $j$ integer greater than 0}
+\OUT{$m$ equal to $i\times j$}
+\AUX{$k$ integer}
+\SET{m}{0}
+\SET{k}{1}
+\WHILE{2\times k\le i}
+  \SET{k}{2\times k}
+  \SET{j}{2\times j}
+\OD
+\WHILE{k\ge 1}
+  \IF{k\le i}
+  \SET{m}{m+j}
+  \SET{i}{i-k}
+  \FI
+  \SET{k}{k \DIV 2}
+  \SET{j}{j \DIV 2}
+\OD
+\RETURN{m}
+\end{algo}
+\end{center}
+\caption{\label{ex2}Algorithm written with the \texttt{nonum} and \texttt{rules}
+ options.}
+\end{figure}
+
+%\newpage
+\section{\label{annexe}Annexe: example of ALgo.cfg file}
+
+\begin{verbatim}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The default style                     %
+% DO NOT DELETE IT!!!!                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\STYLE{default,
+ BOLD, 
+ %ITALIC,
+ %SMALLCAPS,
+ NUMITALIC,
+ %NUMBOLD
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The default language                  %
+% DO NOT DELETE IT!!!!                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\LANG{english,
+ BEGIN = Begin,
+ END   = End,
+ IF    = if,
+ FI    = end~if,
+ THEN  = then,
+ ELSE  = else,
+ FOR   = for,
+ TO    = to,
+ DOWNTO = downto,
+ STEP  = step,
+ DO    = do,
+ DOWHILE = do,
+ REPEAT = repeat,
+ UNTIL = until,
+ ODFOR = end~for,
+ WHILE = while,
+ ODWHILE = end~while,
+ RETURN = Return,
+ BREAK = break,
+ INPUT = Input:~,
+ OUTPUT = Output:~,
+ AUX = Auxiliary:~,
+ TRUE = true,
+ FALSE = false
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For algorithms in french              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\LANG{french,
+ BEGIN = D\'ebut,
+ END   = Fin,
+ IF    = si,
+ FI    = fin~si,
+ THEN  = alors,
+ ELSE  = sinon,
+ FOR   = pour,
+ TO    = \`a,
+ DOWNTO = \`a,
+ STEP  = pas,
+ DO    = faire,
+ DOWHILE = faire,
+ REPEAT = r\'ep\'eter,
+ UNTIL = jusqu'\`a,
+ ODFOR = fin~pour,
+ WHILE = tantque,
+ ODWHILE = fin~tantque,
+ RETURN = Retourner,
+ INPUT = Entr\'ee~:~,
+ OUTPUT = Sortie~:~,
+ AUX = Auxiliaire~:~,
+ TRUE = vrai,
+ FALSE = faux
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For algorithms in german              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\LANG{german,
+ BEGIN = Beginn,
+ END   = Ende,
+ IF    = wenn,
+ FI    = Ende,
+ THEN  = dann,
+ ELSE  = sonst,
+ FOR   = f\"ur,
+ TO    = bis,
+ DOWNTO = bis,
+ STEP  = Schritt,
+ DO    = tue,
+ DOWHILE = tue,
+ REPEAT = wiederhole,
+ UNTIL = bis,
+ ODFOR = Ende,
+ WHILE = solange,
+ ODWHILE = Ende,
+ RETURN = Zur\"uck,
+ INPUT = Eingabe~:~,
+ OUTPUT = Ausgabe~:~,
+ AUX = Daten~:~,
+ TRUE = zutreffendes,
+ FALSE = falsches
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For algorithms in spanish             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\LANG{spanish,
+ BEGIN = Inicio,
+ END   = Fin,
+ IF    = si,
+ FI    = fin~si,
+ THEN  = entonces,
+ ELSE  = en~caso~contrario,
+ FOR   = desde,
+ TO    = hasta,
+ DOWNTO = hasta,
+ STEP  = paso,
+ DO    = hacer,
+ DOWHILE = hacer,
+ REPEAT = repetir,
+ UNTIL = hasta~que,
+ ODFOR = fin~desde,
+ WHILE = mientras,
+ ODWHILE = fin~mientras,
+ RETURN = Vuelta,
+ INPUT = Entrada~:~,
+ OUTPUT = Salida~:~,
+ AUX = Herramientas~:~,
+ TRUE = verdadero,
+ FALSE = falso
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For algorithms in portuguese          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\LANG{portuguese,
+ BEGIN = In\'\i{}cio,
+ END   = Fim,
+ IF    = se,
+ FI    = fim~se,
+ THEN  = ent\~ao,
+ ELSE  = sen\~ao,
+ FOR   = para,
+ TO    = at\'e,
+ DOWNTO = at\'e,
+ STEP  = etapa,
+ DO    = fa\c{c}a,
+ DOWHILE = fa\c{c}a,
+ REPEAT = repita,
+ UNTIL = at\'e,
+ ODFOR = fim~para,
+ WHILE = enquanto,
+ ODWHILE = fim~enquanto,
+ RETURN = Retorna,
+ INPUT = Entrada~:~,
+ OUTPUT = Sa\'\i{}da~:~,
+ AUX = Dados~:~,
+ TRUE = verdadeiro,
+ FALSE = falso
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For algorithms in italian             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\LANG{italian,
+ BEGIN = Inizio,
+ END   = Fine,
+ IF    = se,
+ FI    = fine~se,
+ THEN  = allora,
+ ELSE  = altrimenti,
+ FOR   = per,
+ TO    = a,
+ DOWNTO = a,
+ STEP  = passo,
+ DO    = fai,
+ DOWHILE = fai,
+ REPEAT = ripeti,
+ UNTIL = fino~a,
+ ODFOR = fine~per,
+ WHILE = mentre,
+ ODWHILE = fin~mentre,
+ RETURN = Restituisci,
+ INPUT = Input~:~,
+ OUTPUT = Output~:~,
+ AUX = Ausiliario~:~,
+ TRUE = vero,
+ FALSE = falso
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{verbatim}
+\end{document}

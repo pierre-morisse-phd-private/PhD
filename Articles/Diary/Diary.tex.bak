@@ -1,0 +1,1561 @@
+\documentclass[12pt]{report}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{color}
+\usepackage{txfonts}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{pdfpages}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows} 
+\usepackage{enumitem}
+\usepackage{rotating}
+
+\begin{document}
+
+\chapter{TODO}
+
+\begin{itemize}
+	\item Algo : Extension par mates / GkA
+	\item Algo : Consensus si des seeds se chevauchent
+	\item Assemblage : Etat de l'art
+	\item Correction : Continuer état de l'art + trier par idée
+	\item Lire Nanopolish + Pilon
+	\item Lire Hybrid SPAdes
+	\item Lire PBJelly 1/2
+\end{itemize}
+
+\chapter{Année 1 : 2016 - 2017}
+
+\section {Mois 1 : Septembre 2016}
+
+\subsection{Jour 1}
+
+\begin{itemize}
+  \item Relecture mémoire M2
+
+  \item Relecture résultats
+
+  \item Réappropriation sujet
+\end{itemize}
+
+\subsection{Jour 2}
+
+\begin{itemize}
+  \item Correction de bugs dans l'algo de correction
+
+  \item Test de l'algo
+\end{itemize}
+
+\subsection{Jour 3}
+
+\begin{itemize}
+  \item Lecture article CoLoRMap
+
+  \item Renommage des SR test par leur nom correct
+
+  \item Tests et étude des overlaps
+\end{itemize}
+
+\subsection{Jour 4}
+
+\begin{itemize}
+  \item Etude des propriétés des autres outils de correction
+
+  \item Appropriation des idées pour le notre
+
+  \item Remplir les gaps avec les bases non corrigées du RL (idée + début)
+\end{itemize}
+
+\subsection{Jour 5}
+
+\begin{itemize}
+  \item Papiers administration
+
+  \item Achat voiture
+\end{itemize}
+
+\subsection{Jour 8}
+
+\begin{itemize}
+  \item Possibilité de remplir les gaps avec bases non corrigés du RL si gap < maxgap
+
+  \item RL ainsi produits : Bases corrigées en min, bases erronées en maj
+
+  \item Début automatisation traitement en C + débarrassage fichiers seeds
+\end{itemize}
+
+\subsection{Jour 9}
+
+\begin{itemize}
+  \item Fin automatisation traitement en C
+
+  \item Tests comparatifs outils automatisé / outil géré par bash
+
+  \item => Automatisation plus lente que de passer par bash
+
+  \item Test de la qualité des résultats f(maxgap)
+\end{itemize}
+
+\subsection{Jour 10}
+
+\begin{itemize}
+  \item Automatisation création du fichiers de seeds (en bash)
+
+  \item Automatisation des tests (run algo, alignement résultats, calcul précision)
+
+  \item Installation PgSA
+
+  \item Dénombrement des templates bien couverts (maxgap = 0)
+\end{itemize}
+
+\subsection{Jour 11}
+
+\begin{itemize}
+  \item Séminaire (P. Caron)
+
+  \item Papiers administratifs (création agent / financement machine)
+
+  \item Dénombrement des templates bien couverts
+
+  \item Premier test sur PgSA
+\end{itemize}
+
+\subsection{Jour 12}
+
+\begin{itemize}
+  \item Dénombrement des templates bien couverts
+
+  \item Pblat : lmin rendu paramétrable
+
+  \item Pblat : seuil pour match total (aligné sur >= xx\% de la longueur = match total) rendu paramétrable
+\end{itemize}
+
+\subsection{Jour 15}
+
+\begin{itemize}
+  \item Pblat : Pas de lmin inutiles dans les fonctions (visiblement)
+
+  \item Algo : Plus de snprintf, remplacés par des fprintf
+
+  \item Algo : get\_tpl\_seq corrigé -> Ne prend le tpl que si pas suivi d'un autre chiffre
+
+  \item Algo : Premier clean-up de code + optimisation
+
+  \item Algo : Tests en variant lmin / lmax
+
+  \item Devis PC
+\end{itemize}
+
+\subsection{Jour 16}
+
+\begin{itemize}
+  \item Tests sur lmin / lmax / th et conclusions
+
+  \item Comparatifs pblat basique / pblat modifié
+
+  \item Début lecture survey
+
+  \item Commentaires .h
+
+  \item  Algo : Besoin d'un consensus entre les seeds
+
+  \item Déménagement frigo (1h)
+\end{itemize}
+
+\subsection{Jour 17}
+
+\begin{itemize}
+  \item Récupération jeu de données bien nommé et complet
+
+  \item Correction script stats, pour l'adapter au nouveau jeu de données + modification recherche longueur du template (virer le \_1 à la fin du nom du contig)
+
+  \item Recalcul des alignements SR sur LR (fichiers psl)
+
+  \item Recalcul des résultats (SR 1 \& 2 et params par défaut) + tableau
+
+  \item 2ème étape de recrutement semble inutile (peu de pref / suff recrutés)
+
+  \item => Vérification si préfixes / suffixes présents dans les gaps des tpl corrigés
+
+  \item Survol du survey de correction, semble peu intéressant, bien que présente les différents types d'erreurs en fonction de la technologie de séquençage choisie, les fréquences / seuils / tailles pour les k-mers, subs vs subs + indels, modèles statistiques pour les erreurs, les répétitions / haplotypes, méthodes de corrections en fonction de plateforme utilisée => RIEN SUR NANOPORE A PART NANOCORR
+
+  \item Installation de NaS et premiers tests
+
+  \item Ebauche poster fête de la science
+\end{itemize}
+
+\subsection{Jour 18}
+
+\begin{itemize}
+  \item Recalcul des résultats (SR 1 \& 2 et params par défaut) + tableau
+
+  \item Dénombrement des pref / suff recrutés lors de la deuxième étape (lmax = 10 / lmax =50)
+
+  \item => Extrêmement peu de recrutement, aussi bien dans 1D que 2D
+\end{itemize}
+
+\subsection{Jour 19}
+
+\begin{itemize}
+  \item Recalcul des résultats (SR 1 \& 2 et params par défaut)
+
+  \item Réunion w/ TL
+
+  \item Installation et problèmes avec NaS
+
+  \item Gros problèmes de Wi-Fi
+
+  \item Signature contrat + Documents mission / remboursement / etc
+\end{itemize}
+
+\subsection{Jour 20}
+
+\begin{itemize}
+  \item Recalcul des résultats (SR 1 \& 2)
+
+  \item Noms uniques pour fichier seeds et tmp.psl
+
+  \item Possibilité de lancer plusieurs instances de l'algo en même temps
+
+  \item Travail sur poster
+\end{itemize}
+
+\subsection{Jour 21}
+
+\begin{itemize}
+  \item Recalcul des résultats (SR 1 \& 2)
+
+  \item MinION6 2D : EXTREMEMENT LONG
+
+  \item Travail sur poster (Intro / schéma / comparatif séquenceurs) -> une moitié terminée
+\end{itemize}
+
+\subsection{Jour 22}
+
+\begin{itemize}
+  \item Poster terminé (8h -> 13h30)
+
+  \item Tableau résultats SR1 \& SR2
+
+  \item Tableau résultats filtrés (qualité de tous les contigs > 90\% pour pouvoir corriger un read)
+  \item NaS => Problème = Newbler (runAssembly project)
+\end{itemize}
+
+\subsection{Jour 23}
+
+\begin{itemize}
+  \item Tableau résultats filtrés (un contig avec q > 90\% pour pouvoir corriger un read)
+
+  \item Création de deux scripts de filtrage (all contigs >= 90 \& un contig >= 90) + génération auto ligne tableau résultats
+
+  \item Tableau comparatif NaS / nous
+
+  \item Tests sur NaS, toujours pas fonctionnel => path à modifier pour last / runassembly
+
+  \item Résumé Colormap sur pdf
+
+  \item Réunion w/ TL \& AL, pistes de travail (mates, utilisation de GkA, assemblage SR puis mapping LR)
+\end{itemize}
+
+\subsection{Jour 24}
+
+\begin{itemize}
+  \item Installation de Minia + premiers tests assemblage \& mapping RL sur SR assemblés + tableau résultats + stats rapides des LR matchant sur plusieurs contigs
+
+  \item Début lecture papier Minia (reste 1 page)
+
+  \item Installation de CoLoRMap + test perfs  => très long
+
+  \item Recherche pblat paired end => Ne semble pas être possible
+
+  \item Installation inchworm (pour pblat en paired end) => Bug avec psl2sam.pl
+
+  \item Résultats algo sans 2nde étape (calculs)
+
+  \item Erreur MinION : Détection par 6 nucléotides, donc séparation difficiles si homopolymères de longueur > 6 (suppressions favorisées, 66\% des erreurs observées)
+
+  \item Commande pour laisser programmes tourner sur le serveur : nohup
+\end{itemize}
+
+\subsection{Jour 25}
+
+\begin{itemize}
+  \item Fin lecture Minia
+
+  \item Séminaire Lyndon
+
+  \item Fin temps exec algo (étape 1 seulement) avec SR1 \& SR2 => Fail car .fa résultat non supprimé lors de l'exécution => Relancement des tests en soirée
+
+  \item Test Colormap sur jeu exemple du papier + sur ensemble de LR MinION => Beaucoup trop long sur MinION (+ de 3h)
+
+  \item Algo : Suppression des fichiers temporaires une fois le traitement terminé
+
+  \item Revue poster avec mme Selmi
+\end{itemize}
+
+\subsection{Jour 26}
+
+\begin{itemize}
+  \item Modifications poster
+
+  \item Tableau résultats (Etape 1 seulement, SR1 \& SR2 concaténés)
+
+  \item Récupération temps exec Colormap sur MinION : + de 16h => TROP LONG
+
+  \item Recherche sur inchworm, pour maper avec BLAT en paired-end
+
+  \item Calcul résultats avec Etape 1 ET Etape 2 (SR1 \& SR2 concaténés)
+\end{itemize}
+
+\section {Mois 2 : Octobre 2016}
+
+\subsection{Jour 29}
+
+\begin{itemize}
+  \item Visite médicale
+
+  \item Parallel : Possibilité de lancer l'algo sur x cores en même temps => Enorme gain de temps
+
+  \item Paired-end reads : Impossible d'estimer la distance entre les deux sans mapping
+
+  \item Nouveaux tests sur Minia => Non déterministe, ne produit jamais le même assemblage
+\end{itemize}
+
+\subsection{Jour 30}
+
+\begin{itemize}
+  \item Remise au propre du diary
+
+  \item Recalcul des temps d'exécution avec parallel
+	
+	\item Tableau assemblage puis mapping LR sur PDF pour réunion
+	
+	\item Statistiques sur pairs de reads mappés sur même LR template
+	
+	\item Statistiques sur distance entre les deux reads d'une paire
+	
+	\item Réunion w/ TL \& AL
+\end{itemize}
+
+\subsection{Jour 31}
+
+\begin{itemize}
+	\item Tri des articles dans répertoires
+	
+	\item Lecture BLAST
+	
+	\item Comparaison alignement PBLAT / BLAT / BLAST sur SR assemblés => Production fichier BLAST avec tous les alignements
+	
+	\item Filtrage des alignements (lmin <= |al| <= lmax) => Production fichier temporaire avec les alignements significatifs
+	
+	\item Filtrage des alignements pour trouver les LR mappés sur différents contigs => Production fichier temporaire avec les contigs liable
+	
+	\item Dénombrement et calcul taille moyenne des contigs liables / non liables par les LR
+\end{itemize}
+
+\subsection{Jour 32}
+
+\begin{itemize}
+	\item Analyse du fichier de contigs liables, afin de déterminer les liens et gaps entre les contigs liés par un même LR (matin)
+
+	\item Filtrage des gaps / overlaps trop longs entre contigs sur lesquels s'est mappé un même LR (début) => comptage des contigs liables
+	obtenus (après midi)
+	
+	\item Tentative automatisation du filtrage des alignements, du calcul des LR alignés sur plusieurs contigs et du filtrage des gaps trop
+	longs avec parallel => GROS FAIL, GROSSE PERTE DE TEMPS, GROSSE GALERE A RETROUVER LES BONS RESULTATS (fin après midi)
+\end{itemize}
+
+\subsection{Jour 33}
+
+\begin{itemize}
+	\item Filtrage des gaps / overlaps trop longs entre contigs sur lesquels s'est mappé un même LR => Production du fichier final permettant
+	de générer le graphe
+	
+	\item Reprogrammation de filterAlignments en C (getMultimaps et filterGaps bash plus rapide car utilisation de grep dans le
+	script) => filterAlignments maintenant instantané
+	
+	\item Automatisation de la création du fichier final permettant de générer le graphe
+	(Temps total : 2 min avec les 6 jeux MinION (All SR) - 2 min avec les 6 jeux MinION (|250| SR))
+	
+	\item Correction de bugs dans le script générant le fichier final permettant de générer le graphe (car production de mauvais résultats
+	en cas d'enchainement de contigs non liable / liable / non liable / liable)
+	
+	\item Analyse d'un graphe minimal, afin de voir comment implémenter => Graphé orienté, noeuds = contigs, edges = LR + |gap|
+\end{itemize}
+
+\subsection{Jour 36}
+
+\begin{itemize}
+	\item Programmation d'une structure de graphe, afin de construire le graphe d'assemblage
+	
+	\item Modification du format du fichier permettant de générer le graphe
+	
+	\item Parcours du fichier de graphe et génération du graphe
+	
+	\item Programmation d'une fonction de parcours du graphe explorant tous les successeurs possible de chaque noeud
+	
+	\item Etude des résultats obtenus
+\end{itemize}
+
+\subsection{Jour 37}
+
+\begin{itemize}
+	\item Re-génération du graphe avec des différents paramètres => Semble plus cohérent de fixer un gap max et un overlap max
+	plutôt qu'un gap et une extension min
+
+	\item Reprise de la fonction de parcours afin de réaliser la plus grande extension possible lors de l'exploration de chaque noeud
+	
+	\item Etude des résultats obtenus (longueur max d'un contig VS longueur de l'assemblage), et de leur pertinence
+	
+	\item Plus long contig produit par Minia jamais liable => Nécessité d'un seuil d'overlap / gap max relatif à la longueur du contig et du LR ?
+	
+	\item L'assemblage en cas d'overlap semble produire des contigs de mauvaise qualité
+	
+	\item Reprogrammation de filterGaps en C
+\end{itemize}
+
+\subsection{Jour 38}
+
+\begin{itemize}
+	\item Modification du filtrage des multimaps : Au lieu de chercher les LR mappés sur plusieurs contigs, on cherche juste les LR avec
+	plusieurs hits 
+	
+	\item Reprogrammation du fitlrage des multimaps en C : Maintenant instantané 
+	
+	\item Filtrage des multimaps inutile : Le filtrage des gaps écarte déjà les LR avec un unique mapping, et vérifie, en cas de double
+	mapping, que les deux contigs de référence sont bien différents
+	
+	\item => Génération du fichier du graphe maintenant uniquement en C (sauf pour le lancement / tris de fichier : bash) et instantanée
+	
+	\item Ajout des free dans tous les programmes en C (Multimaps / filterGaps / assembleContigs)
+	
+	\item Génération de graphes avec différents maxGap pour les deux sous ensembles de LR pour réunion
+	
+	\item Nécessité d'avoir la position de début du gap en plus de sa longueur dans les edges du graphe
+\end{itemize}
+
+\subsection{Jour 39}
+
+\begin{itemize}
+	\item Fête de la science
+	
+	\item Réunion w/ TL
+\end{itemize}
+
+\subsection{Jour 40}
+
+\begin{itemize}
+	\item Fête de la science
+\end{itemize}
+
+\subsection{Jour 43}
+
+\begin{itemize}
+	\item Correction mineure dans algo correction MinION
+	
+	\item Génération des scaffolds lors du parcours du graphe
+	
+	\item Dénombrement couples / scaffolds en fonction de |al| min alignement => Tableau
+	
+	\item Stats. sur les scaffolds produits (longueur, qualité, \% du génome couvert, ...) en fonction de |al| min, |al| max = 500, plusieurs
+	passages par noeud
+\end{itemize}
+
+\subsection{Jour 44}
+
+\begin{itemize}
+	\item Stats. sur les scaffolds produits (longueur, qualité, \% du génome couvert, ...) en fonction de |al| min, |al| max = 500, plusieurs
+	passages par noeud
+	
+	\item Modification de la génération des scaffolds afin de pouvoir autoriser un petit overlap
+	
+	\item Stats sur les scaffolds GAP + OVERLAP + plusieurs passages => Semble peu intéressant car perte rapide de qualité, influence variable
+	sur avLen des scaffolds + Minia aurait trouvé les overlaps
+	
+	\item Stats sur les scaffolds produits en fonction de |al| min, |al| max = 500, en ne passant qu'une fois par chaque noeud du graphe 
+	=> Semble plus prometteur, bons résultats
+	
+	\item Augmentation de |al| max -> Autant de "couples", mais plus de scaffolds, génome de référence mieux couvert => Plus intéressant
+\end{itemize}
+
+\subsection{Jour 45}
+
+\begin{itemize}
+	\item Stats sur les scaffolds GAP + OVERLAP + un passage => Semble peu intéressant car perte rapide de qualité, influence variable
+	sur avLen des scaffolds + Minia aurait trouvé les overlaps
+
+	\item Recherche du seuil |al| min et |al| max idéal pour obtenir des scaffolds de bonne qualité et bien couvrir le génome de référence
+	
+	\item Mise en évidence d'un problème dans le parcours : Parfois impossible de "rabouter" plusieurs scaffolds qui devraient normalement
+	n'en former qu'un (+ dessin dans PDF réunion)
+	
+	\item Stats sur les scaffolds produits en fonction de |al| min, |al| max = 500, en ne passant qu'une fois par chaque noeud du graphe
+	et en raboutant les contigs => Mieux que de pouvoir repasser infiniment par chaque noeud, mais moins bon que de n'y passer qu'une fois
+	
+	\item Statistiques et comparaisons des différentes méthodes de parcours du graphe (avec et sans raboutage), avec variation maxGap, 
+	maxOverlap, ...
+\end{itemize}
+
+\subsection{Jour 46}
+
+\begin{itemize}	
+	\item Gestion de mode de production de scaffolds raboutés : Toutes les parties + le tout OU juste le tout
+	
+	\item Tout ce qui a été fait précédemment était faux, car les contigs sans successeur étaient reportés dans le fichier de résultat
+	=> reprise de TOUS les tableaux
+	
+	\item Réunion w/ TL, quelques pistes, mais peu d'idées
+\end{itemize}
+
+\subsection{Jour 47}
+
+\begin{itemize}
+	\item Relecture des résultats de notre GA => Parcours sans marquer les noeuds et avec variations sur |al| peut potentiellement mieux couvrir => Tableau 
+	=> bonne couverture mais mauvaise qualité
+	
+	\item Choisir d'aller vers le noeud le plus proche à chaque fois permet d'augmenter la qualité mais diminue la couverture
+	
+	\item Mise en évidence d'un problème avec le raboutage => Produit un scaffold trop court => Correction à l'aide d'un MWE 
+	(on copiait le contig au lieu du scaffold)
+	
+	\item Nouveaux tests avec le raboutage corrigé => Permet de BEAUCOUP MIEUX couvrir mais perte de qualité
+	
+	\item L'exécution sur l'ensemble de reads Illumina de taille 250 semble produire des résultats similaires
+		
+	\item Lecture du papier de Karlsson, totalement inintéressant => Détails sur reads MinION et sur le fait qu'on peut scaffolder avec 
+	+ paramètres utilisés pour blast => beaucoup trop long (10-12h)
+	
+	\item Nouveaux tests, overlaps intéressants => Améliore avLEn, avQual, et genCov => très proche de la couverture à 100\%
+		  (idéal à 2100 -150 1, si on ne va QUE vers le noeud le plus long à chaque fois, sans poursuivre avec un autre si déjà visité)
+		  
+	\item Reprise de tous les tableaux, car lors de l'exploration d'un noeud, si le noeud permettant l'extension max est déjà visité, 
+	on peut poursuivre maintenant poursuivre avec un autre noeud => Permet de mieux couvrir, qualité similaire
+\end{itemize}
+
+\subsection{Jour 48}
+
+\begin{itemize}
+	\item Fin du remplissage des tableaux
+
+	\item Nouvelle idée de parcours : Tout parcourir même si déjà visité, mais ne pas sortir les scaffolds commençant à un noeud
+	se trouvant en milieu de parcours => Longueur et couverture similaire, meilleure qualité, mais TRÈS LONG
+\end{itemize}
+
+\subsection{Jour 50}
+
+\begin{itemize}
+	\item Assemblage avec ABYSS => Moins de contigs, visiblement de meilleure qualité et longueur, mais beaucoup plus long
+	
+	\item Mise en évidence d'un bug dans assembleContigs, lors de la lecture du fichier du graphe le contig destination est copié avec le \\n final => 
+	Correction
+	
+	\item Tests de GA avec les contigs générés par ABYSS => Permet de quasiment tout couvrir mais assez mauvaise qualité pour le peu de bases LR introduites
+	
+	\item Tests de GA avec les contigs Minia, en sortant les contigs non traversés => Augmente la qualité et couvre un peu plus
+	
+	\item Stats sur les distances moyennes entre deux contigs liés par notre algo en fonction de de |al| min
+		  => contigs liés généralement trop loin l'un de l'autre pour obtenir une bonne qualité et couverture
+\end{itemize}
+
+\subsection{Jour 51}
+
+\begin{itemize}
+	\item Début lecture Canu
+	
+	\item GA avec filtration des LR (on ne garde que les LR, |LR| <= 10k) => Peu concluant
+	
+	\item Idem avec les reads 2D seulement => Peu concluant
+	
+	\item Tentative de réalignement avec BLAST des LR sur les scaffodls obtenus + ré-exécution de l'algo => Très mauvais résultats, autant
+	en qualité qu'en couverture
+	
+	\item Tentative de polishing des résultats de la GA avec Pilon => Permet un gain de qualité et un gain de couverture 
+	=> Intéressant de run plusieurs fois ?
+\end{itemize}
+
+\subsection{Jour 52}
+
+\begin{itemize}
+	\item Fin lecture Canu 
+	
+	\item Suppression des fichiers inutiles du serveur
+\end{itemize}
+
+\subsection{Jour 53}
+
+\begin{itemize}
+	\item Tentatives de polishing, mais bugs avec Pilon => Bizarre car marchait la veille
+	
+	\item Réécriture du fonctionnement de Canu sur PDF + éclaircissement de certains points
+	
+	\item Calcul des distances de mappings entre scaffold produit et contig le plus à gauche du scaffold => Généralement très éloignés l'un de l'autre
+	
+	\item Réunion w/ TL \& TL (27/10/16) => Nouvelle pistes de travail (Consensus sur les LR dans les gaps, nouveau jeu de données, ...)
+\end{itemize}
+
+\subsection{Jour 54}
+
+\begin{itemize}
+	\item Téléchargement nouveau jeu de données (Ecoli)
+	
+	\item Tri et extraction de données du grand ensemble de SR
+	
+	\item Assemblage des SR avec Minia + stats
+	
+	\item Dénombrement et étude des LR différents permettant de lier 2 contigs (avec variation |al| min max et gap min max, sur ADP) => Consensus possible
+	=> On fait le consensus de toutes les portions de LR permettant de combler le gap entre 2 contigs en fixant la taille de chacune de ces portions
+	à la taille du plus grand gap
+	
+	\item Test Canu sur ADP1 => 6h pour run
+	
+	\item EBI down : Impossible de télécharger les MinION de Ecoli
+\end{itemize}
+
+\subsection{Jour 57}
+
+\begin{itemize}
+	\item Étude des résultats de Canu sur ADP1 => Galère avec BWA
+
+	\item Téléchargement des fichiers MinION de Ecoli (MAP005) + test de notre GA 
+	=> Produit de très mauvais résultats => Les LR de MAP005 sont pourris, alignements à < 1\% d'identité sur génome de référence
+
+	\item Test Canu sur MAP005 => Ne fonctionne pas => MAP005 trop pourri
+	
+	\item Début génération consensus des LR permettant de lier 2 contigs
+\end{itemize}
+
+\subsection{Jour 58}
+
+\begin{itemize}
+	\item Re-subsampling des SR Ecoli (pour Abyss)
+	
+	\item Assemblage des SR Ecoli avec Abyss et Minia + stats
+	
+	\item Génération consensus des LR permettant de lier 2 contigs
+	
+	\item Test GA avec consensus sur ADP1 => Bug
+	
+	\item Téléchargement MinION Ecoli (MAP006) => Meilleur que MAP005, alignements à 70\% identité
+	
+	\item Test Canu sur MAP006
+\end{itemize}
+
+\subsection{Jour 59}
+
+\begin{itemize}
+	\item Analyse résultats Canu (MAP006 et ADP1) => Excellents résultats
+	
+	\item Correction bug génération consensus => On dépassait parfois la fin de certains LR, d'où des résultats non déterminés
+	
+	\item Test GA sur ADP1 ; avec consensus (Minia et Abyss)
+	
+	\item Test GA sur MAP006 ; assemblage Minia ; sans consensus
+
+	\item Test GA sur MAP006 ; assemblage Minia ; avec consensus
+	
+	\item Comparaison résultats avec / sans consensus => Consensus semble inutile car implique baisse de qualité et de couverture
+	
+	\item Nouvelle idée : Générer les "contigs" produits par méthode stage en corrigeant les LR, les blaster sur les contigs, et
+		  réaliser la GA avec ces résultats plutôt avec les LR 
+	
+	\item Nouvelle idée : Corriger les LR avec Canu, blaster les LR corrigés sur les contigs, et réaliser la GA avec ces résultats plutôt
+		  qu'avec les LR non traités
+\end{itemize}
+
+\subsection{Jour 60}
+
+\begin{itemize}
+	\item Tests et étude des résultats de la GA avec LR corrigés par Canu / parties "corrigées" par méthode du stage
+	
+	\item Bug dans la production de scaffolds : \\n parfois copié => Car reads corrigés par canu n'avaient pas un nom unique => corrigé
+
+	\item Nouvelle idée : Générer les "contigs" produit par méthode stage en corrigeant les LR, et les assembler avec Minia / Abyss => Prometteur !
+	
+	\item => Mais PBLAT des SR sur les LR Ecoli extrêmement long
+	
+	\item Nouvelle idée : Tester l'alignement des séquences produites avec dnadiff => Intéressant seulement si très peu de contigs très longs
+	
+	\item Description des jeux de données (SR Ecoli, "contigs" produits par méthode stage, LR corrigés par Canu) sur PDF Réunions
+	
+	\item Réunion with AL \& TL (03/11/16) => Nouvelle idée prometteuse, mais nécessité de comparer les k-mers SR / LR
+	
+	\item Blast des SR sur les LR => Bcp trop long
+	
+	\item PBLAT de 1M SR sur LR Ecoli => 34 min, mais exécution de l'algo beaucoup trop lente
+\end{itemize}
+
+\subsection{Jour 61}
+
+\begin{itemize}
+	\item Installation et tests de Bowtie2
+	
+	\item Test de perfs des aligneurs (sur 1M et 12M reads Ecoli)	
+	
+	\item Ajout contigs SR et contigs régions correctes de LR dans un fichier puis assemblage => Peu intéressant
+	
+	\item Ajout contigs SR et régions correctes de LR dans un fichier puis assemblage => Peu intéressant
+	
+	\item Assemblage des régions correctes de LR avec Abyss => Possible avec ABYSS et non abyss-pe, mais produit de mauvais résultats qq soit taille kmer
+	
+	\item Comparaison Abyss / Abyss 2.0.2 en paired-ends => 2.0.2 plus efficace, produit moins de contigs, globalement plus longs
+		  => Mais une fois contigs courts filtrés, résultats similaires, 2.0.2 couvre 0,2 \% du génome en plus
+	
+	\item Programmation script bash pour récupérer SR non mappés
+	
+	\item Ajout SR inutilisés et régions correctes de LR dans un fichier puis assemblage => Semble peu intéressant, quelle que
+		  soit la combinaison utilisée, bien que test approximatif, car SR mal nommés lors du mapping (non prise en compte des /1 /2)
+		  
+	\item Etude format sortie Bowtie2 (SAM) pour voir comment récupérer les régions correctes des LR
+	
+	\item Lecture Jabba => Très intéressant
+\end{itemize}
+
+\subsection{Jour 63}
+
+\begin{itemize}
+	\item Tests récupération parties correctes LR Ecoli, avec algo Stage, 1M SR alignés avec PBLAT => Extrêmement long
+	
+	\item Tests perf Bowtie vs Bowtie2 vs SOAP2
+	
+	\item Génération parties correctes des LR à partir de fichier SAM => Régions des LR extraites de bonne qualité
+	
+	\item Test assemblage parties correctes LR Ecoli, avec algo Filtration, 1M SR alignés avec Bowtie2, very-fast => Mauvais résultats GA
+	
+	\item Test assemblage parties correctes LR Ecoli, avec algo Filtration, 12M SR p-e alignés avec Bowtie2, very-fast => Mauvais résultats GA
+	
+	\item Recalcul des alignements SR sur LR avec PBLAT, pour ADP1, avec SR renommés (prise en compte des /1 /2)
+\end{itemize}
+
+\subsection{Jour 64}
+
+\begin{itemize}
+	\item Retravail sur script récupérant les SR non mappés => Maintenant avec parallel, mais toujours long
+		  
+	\item Ajout des SR complets et régions correctes / contigs LR dans un même fichier puis assemblage => Pas concluant (pour ADP1)
+	
+	\item Test assemblage parties correctes LR Ecoli, avec algo Filtration, 12M SR s-e alignés avec Bowtie2, very-fast => Mauvais résultats GA
+	
+	\item Test assemblage parties correctes LR ADP1, avec algo Filtration, 12M SR s-e alignés avec Bowtie2, very fast => Mauvais résultats GA
+	
+	\item => Assembler les parties correctes des LR ne sert donc à rien
+	
+	\item Test de Guided Assembly sur Ecoli, avec Abyss => Aussi peu satisfaisant que Minia
+		  
+	\item Début de tentative d'ordre des contigs SR avec les LR.
+		  => Construction d'un graphe pour "parcourir" les contigs liés
+		  => Poids d'une "arrête" = nombre de LR permettant de lier c2 à droite de c1 
+		  
+	\item Lecture spaced k-mer machin => Peu intéressant, orienté résultats
+	
+	\item Nouvelle idée : Ajouter les reverse-complement de chaque contig => Plus mauvais résultats que sans RC pour la GA, 
+		  mais semble intéressant pour l'ordre
+	
+	\item Nouvelle idée : Concaténer tous les LR et mapper les contigs SR sur le résultat obtenu => BWA mem ne passe pas
+\end{itemize}
+
+\subsection{Jour 65}
+
+\begin{itemize}
+	\item Programmation d'un graphe et d'algos de parcours permettant de générer l'ordre des contigs
+	
+	\item Filtrer les alignements en fonction de leur identité => Améliore les résultats de la GA, mais pas suffisamment 
+	
+	\item Ordonner les contigs avec les LR semble difficile, même en utilisant les RC des contigs
+	
+	\item Nouvelle idée : Ajouter les RC des LR également => Mauvais résultats pour la GA
+	
+	\item Ordre des contigs avec RC contigs et RC LR => Semble possible d'en tirer qq chose
+\end{itemize}
+
+\subsection{Jour 66}
+
+\begin{itemize}	
+	\item Ajout SR inutilisés et régions correctes / contigs LR / etc dans un même fichier puis assemblage, avec l'intégralité
+		  des SR non mappés, pour ADP1 avec Algo correction => Pas concluant
+	
+	\item Lecture de SSPACE-Longread
+		  
+	\item Test de SSPACE-Longread => Permet effectivement de relier certains contigs
+	
+	\item Ordonner les contigs avec mapping des LR dessus est donc possible
+	
+	\item Nouvelle idée : Poids d'une arrête = Nombre de LR permettant de lier c2 à droite de c1 + qualité des alignements
+		  => Parcours du graphe permettant de relier les contigs en se basant sur la qualité des alignements prometteur
+	
+	\item Nouvelle idée : Poids d'une arrête = Nombre de LR permettant de lier + qualité * longueur des alignements = nombre de bases correctes alignées
+		  => Essayer de déterminer les liens avec le nombre moyen de bases correctement alignées par lien (qual * len / nbLR)
+	
+	\item Réunion w/ TL (10/11/16) => Continuer à essayer d'ordonner les contigs, voir comment comparer les k-mers (diagramme de Venn)
+	
+	\item Nouvelle idée : Filtrer les alignements pour ne conserver les liens entre deux contigs que s'ils sont préfixes / suffixes,
+		  et avec un alMin de taille la longueur des k-mers => Toujours pas concluant pour la GA, même en réduisant gapMax, la distance 
+		  réelle entre deux contigs joints reste trop grande, mais semble prometteur pour l'ordre
+		  
+	\item Combiner poids des arrêtes = (qual * len / nbLR) + liens pref / suff uniquement avec alMin = k => Semble prometteur, mais
+		  toujours certains contigs mal ordonnés => nécessité de trouver pourquoi
+\end{itemize}
+
+\subsection{Jour 67}
+
+\begin{itemize}
+	\item Prendre en compte si les LR mappés sont RC ou non 
+	
+	\item Positions début / fin de mapping des LR => Apporte de l'info ? => Oui, end < beg signifie que le hit est en resverse complement
+	
+	\item Prendre en compte alEnd > alBeg pour les LR et ne prendre un compte que les alignements préfixes / suffixes
+		  sur les contigs => Pas concluant pour la GA (meilleure qualité mais bien moins bonne couverture), permet de bien ordonner
+		  les contigs, mais un contig n'est généralement lié qu'à un seul autre, qui est parfois trop loin => pas assez de liens pour conclure qqch
+		  
+	\item Régions qui se mappent plusieurs fois = régions répétées ? => Visiblement non
+	
+	\item Les overlaps ont tendance à introduire des erreurs dans les placements
+\end{itemize}
+
+\subsection{Jour 70}
+
+\begin{itemize}
+	\item Compareads => Compare les reads et non les kmers
+
+	\item Problème : nb de bases correctes = faux, car on ne prend en compte les alignements que d'un seul côté du lien,
+		  donc pas possibilité d'en tirer une info pertinente
+	
+	\item Conséquence : Poids des arrêtes = nombre de LR reliant c1 à c2 et c'est tout
+
+	\item Compter l'intégralité des liens entre 2 contigs et ordonner en prenant en compte ce poids
+		  (ie si c1 c1 c1 c3 liés par un LR, on aura un poids de 3 pour c1 -> c3)
+	
+	\item Nécessité : Trouver les reads qui se mappent à plusieurs endroits et les splitter
+	
+	\item Ajout des RC des LR et des contigs => Plus de mappings, mais que des doublons
+	
+	\item Vérifier que end > beg pour ne pas avoir du duplicata avec les RC des reads et/ou des contigs 
+		  (car end > beg = Mapping sur RC) => Sans vérification, tous les alignements sont produits en double
+	
+	\item Compter le nombre de mapping sur contig / RC(contig) afin de déterminer lequel est correct, avec résultats BLAST
+		  => En comptant le nombre de mapping à l'endroit / à l'envers de chaque contig dans le fichier blast : Pas concluant aussi bien pour ADP que Ecoli
+		  => En comptant le nombre de contigs liés à gauche et à droite dans le graphe : Pas concluant aussi bien pour ADP que Ecoli
+		  
+	\item Réunion ED
+	
+	\item Meilleurs résultats avec un autre aligneur ? => Téléchargement de BLASR, comme dans SSPACE-Longread, car fait pour aligner des LR
+	
+	\item Ajouter les RC des LR et des contigs est inutile, car BLAST et BLASR mappent quer -> ref dans les deux sens
+\end{itemize}
+
+\subsection{Jour 71}
+
+\begin{itemize}
+	\item Test de scaffolding avec les résultats de BLASR => Aussi peu intéressant qu'avec BLAST
+	
+	\item Comparaison résultats SSPACE / nous afin de voir où ça bloque => Probablement filtration
+	
+	\item Récupération du filtre de filtration de SSPACE, et production des alignements conservés dans un fichier => Produit un graphe
+		  permettant de lier correctement les contigs
+		  
+	\item Comme pour SSPACE => Poids d'une arrête de c1 vers c2 : Nombre de lr + longueurs et scores alignements c1 + longueurs et scores alignements c2
+		  
+	\item Étude des liens obtenus => Comment déterminer comment parcourir le graphe ? Comment choisir entre read / RC(read) ?
+		  => Tout produire, et pour chaque contig, regarder si contig ou RC(contig) produit le meilleur scaffold (le plus long / meilleur score / etc)
+	
+	\item Test de SSPACE sur Ecoli : Peu concluant (356 contigs => 154 scaffolds) => 2eme passe : 113 scaffolds
+	
+	\item Scaffolder semble peu intéressant => nécessité de trouver les k-mers des LR non présents dans les contigs
+	
+	\item Jellyfish : Permet de compter / exporter les k-mers dans un fasta
+	
+	\item Combiner Jellyfish + GkA => Visiblement 10h30 pour trouver tous les k-mers des LR non présents dans les contigs => Besoin de + rapide
+\end{itemize}
+
+\subsection{Jour 72}
+
+\begin{itemize}
+	\item Mauvais résultats de SSPACE peuvent venir d'Abyss qui ne coupe par les reads / contigs au niveau des régions répétées
+
+	\item Installation et test de CLCbio + SSPACE => Pas efficace
+	
+	\item Rerun SSPACE + Abyss avec les paramètres de Karlsson => Bien pour ADP1, bof pour Ecoli avec tous les jeux MinION
+	
+	\item Filtration des courts contigs Ecoli (< 1000) et rerun de SSPACE => Beaucoup mieux pour Ecoli
+	
+	\item Qualité / Couverture des scaffolds SSPACE très bonne => Vraiment nécessaire de remplacer les N par les bases des LR ?
+
+	\item Installation et tests des GkA => Construction très longue + impossible de chercher un k-mer à partir de sa séquence
+	
+	\item Bug dans GkA : Quand on recherche un k-mer de taille > 63, il apparaît dans tous les reads, même ceux composés uniquement d'une même lettre répétée
+\end{itemize}
+
+\subsection{Jour 73}
+
+\begin{itemize}
+	\item SeqBio
+\end{itemize}
+
+\subsection{Jour 74}
+
+\begin{itemize}
+	\item SeqBio
+\end{itemize}
+
+\subsection{Jour 77}
+\begin{itemize}
+	\item Test PgSA : Beaucoup trop long à construire
+
+	\item Alignement des scaffolds produits par SSPACE avec BWA : Très mauvaise qualité => Probablement dû aux N ajoutés dans les gaps entre les contigs
+	
+	\item Semble y avoir peu de différence dans les résultats lors de l'utilisation de plusieurs jeux ou d'un seul jeu de MinION,
+		  plus de MinION permet juste de couvrir plus (pour SSPACE)
+		  
+	\item Amélioration du code du Scaffolding
+		  
+	\item Remplissage des gaps par les bases des LR sur un exemple (ADP1) => Aussi bon que SSPACE avec dnadiff, BIEN MEILLEUR avec BWA
+	
+	\item Test parcours du graphe sur Ecoli => Ne fonctionne pas
+	
+	\item Le scaffold produit par SSPACE ne commence pas par le contig mappé en position 1, mais scaffolds marqués comme "circulaires" quand c'est le cas
+		  
+	\item Déterminer quel est le prochain contig : Avec le plus petit gap ? => Non
+	
+	\item SSPACE n'ordonne pas toujours bien les contigs, nécessité de mieux filtrer / mieux parcourir => Étudier l'ordre des contigs
+		  et les liens de BLASR
+\end{itemize}
+
+\subsection{Jour 78}
+
+\begin{itemize}
+	\item Installation et tests sur les CGkA
+	
+	\item Correction parcours du graphe => Fonctionne avec Ecoli
+
+	\item Travail sur le parcours du graphe avec exemple graphe Ecoli afin de déterminer un parcours meilleur que SSPACE
+	
+	\item Bug lors de la construction du graphe : Certaines arrêtes ne sont pas ajoutées => Problème vient du tableau de LR, qui
+		  peut se collisionner avec les tableaux d'autres contigs => À corriger
+		  
+	\item Nécessité de trouver le contig le plus à gauche sur le Gen. Ref. non encore exploré pour faire le parcours ?
+		  => Semble impossible si scaffold circulaire
+	
+	\item alMin = 3000 semble permettre de bien lier chaque contig à son successeur direct => Recalcul des résultats SSPACE + nous
+		  => On semble être bien meilleur en utilisant BWA, pour ADP1
+	
+	\item Question : Pourquoi 284 scaffolds lorsqu'on ne filtre pas les < 1000 des 366 contigs Ecoli => Car SSPACE sort sous forme
+		  de scaffold les contigs non utilisés lors du scaffolding
+	
+	\item Problème : Même avec notre technique, on ne mappe pas en position 1 sur le génome de référence
+		  => Corrigé au jour 80 ; on ne choisissait pas la séquence RC du contig si le scaffold démarrait par un contig RC
+\end{itemize}
+
+\subsection{Jour 79}
+
+\begin{itemize}
+	\item Question : Comment comparer deux génomes ? => dnadiff semble splitter le génome query en plusieurs parties
+		  => Si on split en moins de partie que SSPACE on est bon !
+		  
+	\item Comparaison résultats dnadiff entre nous et SSPACE en fonction de cov / qual et nombre de parties alignées (moins il y en a mieux c'est)
+		  => On couvre mieux, un peu moins bonne qualité, et moins de parties alignées
+	
+	\item Comparaison résultats BWA entre nous et SSPACE en fonction de cov / qual
+		  => On a une bien meilleure qualité
+		  
+	\item Recherche sur comment obtenir consensus de plusieurs séquence => Avec clustalw2 ? => Visiblement non car sort des caractères non-ACGT
+	
+	\item Correction bug génération scaffold avec Ecoli : Car le Ecoli-rccontigs.fa avait les contigs sur plusieurs lignes
+	
+	\item Bug du tableau des LR corrigé : Le problème venait de l'initialisation du tableau conseq servant à faire les consensus, avec i au lieu de size
+		  comme indice
+		  
+	\item Débugage : Bug lors de la sortie des séquence des scaffolds, utilisation de valgrind => On copiait le \\0 trop loin
+	
+	\item Travail sur les CGkA pour pouvoir chercher par séquence et non par position => Calcul nombre de k-mers des LR
+		  présents dans les contigs SR => Très peu
+		  
+	\item alMin = 3000 lie bien chaque contig à son successeur direct, mais produit plusieurs scaffolds, nécessaire de les relier entre eux
+		  en raboutant, et d'obtenir un scaffold unique
+\end{itemize}
+
+\subsection{Jour 80}
+
+\begin{itemize}
+	\item Calcul du nombre de k-mers des LR présents dans le génome de référence => Très peu
+	
+	\item Calcul du nombre de k-mers des LR présents dans les SR => Très peu
+	
+	\item Recalcul des résultats et retests : Si on part du même contig de début que SSPACE, on obtient un scaffold de meilleure qualité
+	
+	\item Tests SSPACE / GA sur ADP1 avec 1DR => Mauvais résultats
+	
+	\item Lecture LSCPLus (Correction LR avec alignement SR) => Intéressant en utilisant nos extensions pref / suff ?
+	
+	\item Recherche dans code SSPACE : Comment choisit-il le premier contig ? => Il prend le plus long, fait les scaffolds,
+		  et une fois les scaffolds produits, tente de les relier (là, il peut potentiellement prendre le RC d'un scaffold
+		  si cela peut permettre la création d'un lien)
+		  
+	\item Modification du script de conversion de LSCPlus => Ne marchait pas bien
+		  
+	\item Test de LSCPlus sur ADP1, M12D => Mauvais résultats
+\end{itemize}
+
+\subsection{Jour 81}
+
+\begin{itemize}
+	\item Test de LSCPlus sur tout ADP1 => PAS ASSEZ D'ESPACE DISQUE
+	
+	\item Etude des MAW dans ref / LR / SR => Calculs longs
+	
+	\item Etude estimation des gaps / overlaps VS réalité sur ADP1 => Pas toujours juste, d'où l'impossibilité de mapper en un coup avec BWA
+	
+	\item Test avec consensus lors de gaps avec notre méthode => Diminue la qualité si on compte les occ des lettres
+		  => Besoin de trouver une stratégie de consensus plus efficace
+		  
+	\item Étude des lens / scores nous vs SSPACE => Impossible de déterminer pourquoi ils sont différents, car les mêmes valeurs sont
+		  ajoutées aux liens => Besoin de refaire une recherche afin de pouvoir avoir les mêmes résultats que 
+		  SSPACE en prenant alMin = 1500 TODO
+		  
+	\item Correction de bugs dans le code de la GA (on ne remplissait pas le tableau de nom des contigs aux indices RC)
+		  
+	\item Comparaison nous / SSPACE sur un autre génome (Yeast) => Résultats semblent similaires à SSPACE (à raboutage prêt)
+	
+	\item Tests sur SSPACE en autorisant les hits à ne pas être uniquement préfixe / suffixe => Aucun changement
+	
+	\item Yeast est en fait composé de 30 séquences de "référence" différentes => On devrait obtenir 30 scaffolds, mais SSPACE
+		  ne produit pas de bons résultats
+		  
+	\item Tests de notre méthode sans le filtre SSPACE, uniquement en définissant alMin, idMin, gapMin => Résultats semblant être
+		  plus "continus" qu'avec le filtre sur Ecoli alMin = 1500, égaux au résultats avec filtre avec alMin = 3000
+		  => MAIS le filtre sert à garder le meilleur alignement et non le premier de la liste en cas d'overlap trop important, et est donc utile
+\end{itemize}
+
+\subsection{Jour 82}
+
+\begin{itemize}
+	\item Implémentation du raboutage des scaffolds
+	
+	\item Corrections sur le code (rev-comp d'une séquence, ...)
+	
+	\item Tests finaux : On est meilleurs quoiqu'il arrive (sur Ecoli / ADP1)
+	
+	\item Téléchargement d'un nouveau génome (Arabidopsis)
+	
+	\item Test de LSCPlus sur plusieurs jeux de données : Mauvais résultats
+\end{itemize}
+
+\subsection{Jour 83}
+
+\begin{itemize}
+	\item Implémentation du "filtre" de SSPACE pour notre GA (différent de celui de SSPACE mais semble correct)
+	
+	\item Test assemblage des 64-mers LR non présents dans les contigs SR => Pas concluant
+	
+	\item Test avec notre méthode + répétitions => Pas concluant
+	
+	\item Réunion w/ TL => Besoin de chercher des k-mers espacés
+	
+	\item Test de comparaison des k-mers LR / SR / Ref / ... avec k = 32 => Toujours peu concluant
+\end{itemize}
+
+\subsection{Jour 84}
+
+\begin{itemize}
+	\item Assemblage des SR Arabidopsis avec Abyss (très long...)
+	
+	\item Recherche sur l'extraction de spaced k-mers
+	
+	\item Test alignement LR -> contigs avec BWASW => Comparable à BLASR en termes de temps, trop difficile de parser le .sam
+	
+	\item Comparaison assemblage NaS vs Gen. Ref. avec dnadiff => NaS est toujours bien meilleur
+	
+	\item Recherche des 16-mers, 8-mers des LR dans les contigs LR => 16+-mers espacés (avec un 8-mer de chaque côté) semble la meilleure option
+	
+	\item Test de Miniasm => Moins bon que SSPACE / Nous
+	
+	\item Mapping avec minimap => Presque instantané 
+	
+	\item Recherche sur les résultats de Minimap, pour voir si on peut scaffolder => Visiblement non
+\end{itemize}
+
+\subsection{Jour 85}
+
+\begin{itemize}	
+	\item Tests sur Minimap avec différents paramètres => Pas concluant
+
+	\item Test assemblage des k-mers LR non présents dans les contigs SR => Pas concluant
+	
+	\item Séminaire
+	
+	\item abyss-pe long sur arabidopsis car needed subsampling => subsampled à 12M SR mais toujours très long + plante quand on lance d'autre processus
+	
+	\item Nouvelle idée : Assembler les k-mers des LR non présents dans les SR, et mapper les contigs obtenus assez longs sur les contigs SR
+		  => Pas concluant actuellement car trop de k-mers uniquement LR,
+		  mais peut être intéressant si on arrive à trouver un faible nombre de k-mers non présents ?
+	
+	\item Recalcul des k-mers LR présents dans les contigs des SR car erreur lors d'un test => Toujours mauvais résultats
+	
+	\item Recherche d'un nouveau génome sur lequel tester
+	
+	\item Test de DALIGNER => Instantané, mais comment voir les résultats ?
+\end{itemize}
+
+\subsection{Jour 86}
+
+\begin{itemize}
+	\item Réunion w/ TL \& AL => Pistes de travail pour l'indexation de spaced k-mers
+	
+	\item Assemblage des SR Arabidopsis avec Minia, car impossible avec Abyss => Ne produit aucun contig correct
+	
+	\item Problème !!! => Les SR arabidopsis sont en fait trop courts !
+	
+	\item Génération de SR arabidopsis avec ART, puis test nous vs SSPACE avec assemblage Minia (car SSPACE trop long)
+		  SSPACE => Mauvais résultats avec al = 3 000 / overlap = 5 000 => car LR = PacBio 
+		  SSPACE => Retest avec al = 1 500 / overlap = 9 000 => Mieux, mais toujours pas d'unique scaffold
+		  Nous => On fait pire que SSPACE => BESOIN DE REVOIR COMMENT CHOISIR ENTRE F ET RC POUR DEBUTER UN SCAFF
+		  => Mauvais résultats à cause de la taille des contigs Minia ?
+	
+	\item Installation et tests de Graphmap => Ne peut trouver qu'un mapping par LR => Inintéressant
+	
+	\item Recalcul recherche des k-mers LR avec RC => 2 x plus fois 64, 1,75 x plus avec 32, 2x plus avec 16, presque tout avec 8
+	
+	\item Étude des résultats de DALIGNER => Pas concluant, ne permet pas de relier convenablement
+	
+	\item Recherche des k-mers NaS dans contigs SR => Quasiment tous présents
+	
+	\item Nouvelle idée : Prendre un LR, rechercher tous ses k-mers (non chevauchant) de taille 128 dans l'ensemble
+		  des MAW de taille 128 des SR => Aucun résultat
+		  => Au final, revient à chercher les k-mers des LRs dans les k-mers des SR => Donc reprend notre idée de spaced k-mers
+		  
+	\item Assemblage avec Abyss (il ne faut aucun autre process en même temps)
+	
+	\item SSPACE vs Nous : On fait n'importe quoi
+\end{itemize}
+
+\subsection{Jour 89}
+
+\begin{itemize}
+	\item Étude de notre scaffolding, car résultats très différents de SSPACE sur Arabidopsis
+	
+	\item SSPACE produit également de mauvais chemins, dû au mauvais jeu de données SR, car trop faible couverture ?
+		  => En effet, Karlsson recommande un coverage x1000, et le papier SSPACE également, alors qu'on était à 49
+	
+	\item Relecture papier GkA
+	
+	\item Tests sur MWE pour les spaced-GkA => Semble marcher
+\end{itemize}
+
+\subsection{Jour 90}
+
+\begin{itemize}
+	\item Regénération de SR avec ART (100x coverage) + assemblage Abyss
+	
+	\item Test SSPACE et Nous sur le nouveau jeu de données
+	
+	\item => Impossible, assemblage Abyss interminable
+\end{itemize}
+
+\subsection{Jour 91}
+
+\begin{itemize}
+	\item Re-MWE sur spaced-GkA 
+	
+	\item Étude sur comment faire un spaced SA => Simplement par tri des suffixes
+	
+	\item Test de LAST : Rapide, mais produit de mauvais liens + ne prend pas en compte les strands query / db
+	
+	\item Etude du code de GkA => Impossible de trouver comment remplacer le SA par un spaced-SA
+	
+	\item Reprise du code des tests de CGkA afin de rechercher des k-mers espacés
+	
+	\item Test de la recherche des k-mers espacés sur 8 -> 64, gap = 1
+\end{itemize}
+
+\subsection{Jour 92}
+
+\begin{itemize}
+	\item Test de la recherche de k-mers espacés, gap = 2, 3
+	
+	\item Test de la recherche de k-mers espacés, gap variable (jusque 10)
+	
+	\item Test de correction de LR à l'aide de seeds + unitigs overlapant => Pas concluant avec Minia (unitigs trop courts) 
+		  ni avec Abyss (trop peu d'unitigs)
+	
+	\item Étude du code de CGkA pour remplacer SA par spaced-SA => Impossible de trouver également
+	
+	\item Bug sur la recherche de k-mers espacés ? Pas les mêmes résultats avec k-mers contigus et 0-spaced-k/2-mers ...
+	
+	\item Bug corrigé => Recalcul de recherche des k-mers espacés
+	
+	\item Nouvelle idée : Mapper les SR sur les LR, s'en servir comme seed, et relier les seeds à l'aide des GkA
+\end{itemize}
+
+\subsection{Jour 93}
+
+\begin{itemize}
+	\item Encore des bugs dans la recherche de k-mers espacés... => Correction
+	
+	\item Recalcul recherche k-mers espacés LR dans CSR => Pas concluant
+	
+	\item Construction CGkA des LR
+	
+	\item Test recherche des k-mers CSR dans LR => Pas concluant
+
+	\item Test de reliage de seeds à l'aide des GkA => Bug, à reprendre
+	
+	\item Nouvelle idée : Recherche de spaced-k-mers de LR DANS les LR, afin de déterminer bons / mauvais k-mers
+	
+	\item Recherche des k-mers espacés LR dans CSR => Pas concluant
+\end{itemize}
+
+\subsection{Jour 96}
+
+\begin{itemize}
+	\item PBJelly2 : Même idée, mapper LR sur CSR avec BLASR, mais impossible à installer / tester
+	
+	\item Travail sur le reliage de seeds à l'aide des CGkA / PgSA => Impossible avec des reads de longueur différente => Problématique
+	
+	\item Subsampling de l'ensemble de SR ADP1 en ne gardant que ceux de longueur 301
+	
+	\item Retest de reliage de seeds avec CGkA => Très rarement des overlaps parfaits à k fixé
+		  => Nécessaire de diminuer peu à peu la taille du k-mer recherché afin de trouver des overlaps
+		  => Donc nécessaire d'utiliser PgSA
+	
+	\item Construction de l'index PgSA, et étude des fonctions traitant les requêtes 
+\end{itemize}
+
+\subsection{Jour 97}
+
+\begin{itemize}
+	\item Réunion w/ TL \& AL : Validation du spaced-GkA, idées pour la recherches de nouveaux spaced-k-mers, trimming des LR, ...
+	
+	\item Travail sur PgSA pour permettre de relier les seeds (tout l'aprem)
+	
+	\item Calcul des ensembles de k-mers des LR trimmés de 8
+	
+	\item Recherche des 64-0-10-spaced-k-mers, puis des 32 des non trouvés, etc => Bug car les k-mers non trouvés sont
+		  écrits dans le fichier en RC => Correction et rerun
+\end{itemize}
+
+\subsection{Jour 98}
+
+\begin{itemize}
+	\item Recherche des 0-10-spaced-k-mers dans les 8-trimmed-LR => Pas concluant, donc erreurs pas en début-fin
+		  mais aléatoires
+	
+	\item Bug dans la production des 32-mers => Recalculer les k-mers présents dans les CSR (peu de changement donc osef)
+	
+	\item Poursuite du travail sur PgSA => Mauvais résultats car certains SR sont de mauvaise qualité
+		  => Correction des SR (avec Karect) et retest
+		  => Karect trop long, test avec Lighter => N'améliore pas beaucoup la qualité, seulement +0,2 \% id
+		 
+	\item Pour le reliage avec PgSA => Si on utilise des spaced-SA, on pourra potentiellement mieux relier
+		  (car tolérera qq erreurs de subs, parfait pour Illumina)
+		  => NON EN FAIT, car un spaced-SA sert à rechercher des k-mers avec des gaps entre les bases 
+		  et non des k-mers avec des mismatches
+		  
+	\item Recherche sur les spaced-SA => Un algo (DisLex) mais pas dispo, ou radix sort
+\end{itemize}
+
+\subsection{Jour 99}
+
+\begin{itemize}
+	\item Test de reliage avec PgSA en utilisant les SR corrigés par Lighter => Ne change rien
+		  => Parfois dans jeu Illumina, présence de reads de faible qualité, qui font merder le reliage
+		  
+	\item Test de perM pour comparer les k-mers : Trouve un peu plus de k-mers que précédemment, mais pas top
+		  non plus, prend en compte des erreurs de mismatches, et non des erreurs d'indels
+		  => Bons résultats avec des 16-mers, car tolère une erreur par 8-mer, et car presque tous les 8-mers sont trouvés sans erreur
+	
+	\item Test reliage de deux reads très éloignés avec PgSA => Pas très efficace, car toujours certains SR 
+		  de mauvaise qualité
+	
+	\item Nouvelle idée : Pour le reliage avec PgSA, le faire avec l'ensemble de k-mers des SR ? Permettra par ex. de trouver un lien
+		  entre un SR et le milieu d'un autre SR
+		  => Fonctionne en effet bcp mieux niveau qualité (même descendant à overlap = 10)
+		  => Mais produit des liens plus courts, quoique agrandissable en baissant overlapMin
+		  
+	\item Prog d'un algo donnant le SA pour un pattern nb match - nb gap donné
+	
+	\item Différenciation spaced-seeds de la littérature, et spaced-k-mers définis par nous
+\end{itemize}
+
+\subsection{Jour 100}
+
+\begin{itemize}
+	\item Réunion w/ TL \& AL  => Rechercher des k-mers avec 20-21 bases solides, obtenir DisLex pour rechercher nos gapped-k-mers, continuer PgSA
+	
+	\item Recherche de k-mers avec 20-21 bases solides avec perM => Assez mauvais résultats, plus proche des 32-mers que des 16-mers
+	
+	\item Mail pour code source DisLex
+	
+	\item Test recherche de mot dans SSA et dans SA => Les SSA tels qu'on les a défini permettent bien de rechercher
+		  des motifs avec gaps, et non avec mismatches => GOOD
+	
+	\item Travail sur reliage avec PgSA (utilisation des RC des k-mers) => Segmentation fault : A cause de k-mers en double ?
+\end{itemize}
+
+\subsection{Vavances de noël : Jours 101 - 117}
+
+\begin{itemize}
+	\item Retest génération PgSA avec RC 64-mers, en ne gardant qu'un exemplaire de chaque 64-mer => Bug toujours
+	
+	\item Génération PgSA avec RC 64-mers, en ne gardant que les 64-mers apparaissant au moins 2 fois => Works!
+		  => Les "contigs" ainsi obtenus sont de bonne qualité, mais toujours difficile de relier 2 64-mers sans backtrack
+	
+	\item Recherche des 20-mers avec CgKA
+	
+	\item Recherche des 21-mers impossible : Car on ne peut charger en mémoire qu'un seul index, et diviser les k-mers à rechercher par deux
+		  => Donc recherche des 22-mers à la place
+		  
+	\item Programmation du backtracking pour relier les seeds
+		  => Ne marche pas bien sur l'exemple visant à relier 2 seeds mappés sur un LR
+		  => Marche très bien, insta, 99\% id pour relier 2 seeds provenant du gen. ref.
+\end{itemize}
+
+\subsection{Jour 118}
+
+\begin{itemize}
+	\item Test de reliage de 2 seeds provenant du gen. ref. avec les SR 250bp de NaS => Identité de 100\%
+	
+	\item Relier des seeds provenant du mapping SR sur LR marche en fait
+	
+	\item Retravail sur la fonction de reliage, afin de ne pas return 10000 fois
+	
+	\item Travail sur pblat, afin de produire un fichier contenant les seeds à relier => Fait, en reprenant le code de l'algo du stage
+	
+	\item Problème : Encore des seeds de mauvaise qualité, du à la fusion => Nécessité de consensus ? De prendre seulement le meilleur ?
+	
+	\item Solution retenue : Quand il y a des chevauchements, on ne garde que le seed avec le plus de matches	
+		  => Permet de n'avoir quasiment que des seeds s'alignant à 100\%, le plus faible = 99 \%
+\end{itemize}
+
+\subsection{Jour 119}
+
+\begin{itemize}
+	\item Problème : Certains k-mers des seeds ne sont pas présents dans le PgSA (sûrement parce qu'on a demandé au moins 2 occ de chaque k-mer avant
+		  la construction) => Tests avec le sous-ensemble de reads de longueur 301
+		  
+	\item Même en retenant les seeds se mappant avec une bonne identité, toujours impossible de relier certains k-mers, semble-t-il
+		  à cause d'erreurs de mismatches (généralement on tombe sur le k-mer cible à UN SEUL mismatch près)
+		  
+	\item Tentative de solution : Considérer les seeds comme liés quand on arrive sur un k-mer chevauchant le seed destination sur 2/3 de sa longueur
+		  => Semble bête par rapport à la solution du dessous
+		  
+	\iten Tentative de solution : Considérer les seeds comme liés quand on arrive sur un k-mer avec < n différences avec la cible
+		  => Beaucoup plus correct
+		  
+	\item Idée : Utilisation d'un double PgSA (64 et 32 mers par ex) s'il est impossible de relier 2 seeds avec un k PgSA de taille k,
+		  on en prend un plus petit ? => Non, car les k des PgSA est variable
+	
+	\item Problème : Backtracking bug encore mais c seulement la prog
+\end{itemize}
+
+\subsection{Jour 120}
+
+\begin{itemize}
+	\item Travail sur l'algo de reliage de seeds avec PgSA, correction de bugs, mise en évidence de problèmes
+	
+	\item Le backtracking fonctionne et retourne correctement
+	
+	\item La correction semble marcher au moins avec le jeu NaS
+	
+	\item Mise en évidence d'un problème si les seeds sont plus distants sur le gen. ref. que sur le LR
+		  => Perte de qualité et augmentation temps d'exécution
+	
+	\item Toujours des problèmes avec les free
+	
+	\item Besoin de plus de seeds, car certaines zones du LR sont peu couvertes, et donc perte de longueur sur le LR corrigé
+\end{itemize}
+
+\subsection{Jour 121}
+
+\begin{itemize}
+	\item Travail sur algo reliage, notamment sur les free
+	
+	\item Idée : Utiliser des k-mers comme seeds
+		  => Impossible, car pas assez de longueur pour être précis, on peut donc avoir des placements ne concordant pas sur le LR et sur le gen ref
+		  (par ex, S2 à droite de S1 dans le LR, mais à gauche dans le gen. ref.), amenant à des impossibilité de reliure
+		  
+	\item On peut en fait avoir le même problème avec des SR complets comme seeds, mais c sûrement plus rare
+	
+	\item Recherche de paramètres pblat
+	
+	\item Erreurs de malloc / free semblaient venir de algo.c, qui produisait mal les séquences à relier
+	
+	\item Programmation d'une fusion des seeds s'ils se chevauchent correctement au lieu de juste garder celui avec la meilleure qualité
+	
+	\item Utiliser des SR complets comme seeds va être difficile, car on impose une forte contrainte sur leur nombre de match,
+		  et peu de LR pourront donc être corrigés
+		  Idée => Utiliser des LR complets, récupérer le fichier "tolink", et le corriger ?
+\end{itemize}
+
+\subsection{Jour 123}
+
+\begin{itemize}
+	\item Lors du mapping SR -> LR pour obtenir les seeds, mapper les SR ou les SR + leur RC n'amène pas au même résultat, bizarre
+
+	\item Les free provoquent toujours des erreurs si on copie avec mlen dans algo.c, mais avec rlen ça passe
+\end{itemize}
+
+\subsection{Jour 124}
+
+\begin{itemize}
+	\item Préparation prochaine réunion
+	
+	\item Mapping des SR sur tous les LR 1D / 2D avec minScore 150 pour compter les seeds
+	
+	\item Téléchargement et test de Quorum (correction rapide de SR) => Peut être prometteur, car plus besoin de minScore, et seeds
+		  obtenus s'alignent à 100 \%, et très rapide
+		  
+	\item Retravail sur l'algo reliage, car bugs avec malloc / free, encore => Tous retirés, semble ne plus poser de problèmes
+	
+	\item Nouveau problème : Quand les seeds sont plus disants sur les LR que sur le gen. ref., il est alors possible que les SR soient
+		  distants sur le LR alors qu'ils s'overlappent sur le gen. ref.
+	
+	\item => Solution + amélioration : Calcul des overlaps entre les seeds avant de stocker dans le fichier
+	
+	\item Une fois les overlaps calculés, le premier exemple fonctionne bien plus rapidement si on laisse le 25eme seed,
+		  mais celui-ci est toujours erroné
+		  
+	\item En fait non, si on ne met aucune condition de score, le 1er exemple bug juste au milieu, mais si on le sépare en deux, les deux parties
+		  s'alignent bien à 100 \%.
+		  De même, si on retire les deux seeds qui posent problème (pck autour de 900k sur le gen. ref., alors que les autres autour de 300k),
+		  on obtient une seule partie s'alignant à 100 \%
+\end{itemize}
+
+\subsection{Jour 125}
+
+\begin{itemize}
+	\item Mapping des SR corrigés sur tous les LR 1D / 2D pour compter les seeds => Moins de LR avec seeds après correction, mais plus de seeds par LR,
+		  donc plus intéressants
+	
+	\item Séparation des tests SR bruts / corrigés dans le PDF réunion
+		  
+	\item Recalcul des 64-mers des SR NaS corrigés, avec ajout des RC des SR NaS corrigés => Ne change rien aux résultats précédents
+	
+	\item Recherche sur comment faire la partie non reliable du 1er ex
+		  => Skipper le seed non reliable (44 -> 45) du 1er exemple et continuer ne change rien, toujours impossible de relier 44 aux suivants
+		  => Mapper les SR + leurs RC sur le LR ne change rien, 44 et 45 ne se relient pas
+		  => Recherche de tous les 64-mers de la partie du gen. ref. qui cause l'impossibilité de reliure => Bizarre car tous présents dans
+		  	 notre ensemble de 64-mers servant à générer le PgSA => L'EXEMPLE 1 DEVRAIT PRODUIRE UN LR UNIQUE, plante sûrement à cause
+		  	 de la limitation du nombre d'appels récursifs
+	
+	\item Tests avec l'ensemble complet de SR, après correction => Ne marche pas sur le 1er exemple, car présence d'erreurs dans les seeds
+	
+	\item Automatisation de la séparation du LR synthétique en plusieurs parties quand certains seeds ne peuvent pas être reliés
+	
+	\item Recherche paramètres pblat pour faire disparaître les seeds mappés dans les 900k sur l'exemple 2
+		  => Augmenter stepSize semble les faire disparaître, mais les seeds à relier sont alors plus éloignés,
+		  ce qui cause une segfault car trop de backtracks
+	
+	\item Implémentation d'un nombre max de retours arrières + recherche d'un seuil => Problème : Semble impossible de relier des seeds
+		  trop distants, à cause d'une seg fault quand trop d'appels récursifs
+		  
+	\item => Besoin de revoir l'implémentation de la fonction de backtracking
+	
+	\item Quand tous les seeds se mappent sur le LR dans l'ordre inverse d'apparition sur le gen. ref. => Pas de soucis en fait !
+\end{itemize}
+
+\subsection{Jour 126}
+
+\begin{itemize}
+	\item Dépression.
+	
+	\item Test de notre méthode (avec les SR corrigés) sur le jeu test NaS => Marche parfaitement
+	
+	\item Test de NaS (après galère à faire marcher) sur le jeu test NaS => Résultats un peu meilleurs, mais 6 fois + long
+	
+	\item Tentative de modification de l'algo pour relier => Gros bugs de partout, dur de revenir à une version qui marche
+	
+	\item Amélioration de l'algo pour relier, dans le cas où il n'y a pas d'ambiguité (un seed ne peut être étendue que par un seul k-mer) : plus d'appels 
+		  récursifs
+		  => Permet d'améliorer le temps d'exécution
+		  => Besoin de retravailler un peu, dans le cas où deux seeds sont difficiles à relier (car ici, on baisse le chevauchement
+		  nécessaire et on fait le backtrack à partir de l'extension maximale du seed, et non du seed lui même)
+\end{itemize}
+
+\subsection{Jour 127}
+
+\begin{itemize}
+	\item Ajout d'un filtre de taille max de l'extension
+		  => Maintenant, il est possible de relier tout le LR du 1er test en une seule partie !
+		  => Nécessité de fixer cette taille max à la taille du template ?
+		  => Effectivement, semble bien marcher
+		  
+	\item Reprise des tests avec le filtre taille extension et comparaison nous vs NaS sur exemple LR1/2/3 => On le défonce
+	
+	\item Script pour tester sur un grand ensemble de LR
+	
+	\item Test sur M12D : 44min, nb reads / fragments = 566 (contre 602 LR initiaux) avlen = 4 906 (contre 5 197 LR initiaux), avid = 99,84 \%
+		  => Notre solution marche vraiment bien !
+\end{itemize}
+
+\subsection{Jour 128}
+
+\begin{itemize}
+	\item Mapper les SR sur chaque LR séparément et sur tous les LR d'un coup ne produit pas les mêmes résultats
+		  => Une méthode fast (tout d'un coup) et une méthode sensitive (chaque LR séparément) ?
+	
+	\item Programmation de fonction extension à gauche et à droite
+		  => Mange à peine plus de temps (10 sec) et permet de gagner une avLen de quasiment 1k, et d'être plus long que NaS, tout en gardant
+		  une excellente identité et autant de reads fragmentés, mais plus petit cumSize que NaS (quand on mappe tout d'un coup)
+	
+	\item Retravail sur sortie de la méthode : Les LR corrigés sont maintenant sortis sur une seule ligne
+	
+	\item Réunion w/ TL \& AL => Validation de la méthode, besoin de commencer à écrire article, de trouver compromis entre tout mapper et 
+		  mapper séparément, étudier k-mers des SR corrigés et bruts
+\end{itemize}
+
+\subsection{Jour 130}
+
+\begin{itemize}
+	\item Préparation diapos pour réunion MASTODON
+	
+	\item Début répétition réunion MASTODON
+	
+	\item Test de notre méthode sur un autre jeu de données => Sur reads 1D, légèrement moins bonne qualité que NaS (-0,25 \%), mais bien meilleures
+		  longueur moyenne et taille cumulée
+	
+	\item Reprise des tests sur M12D car résultats pas identiques à ceux notés sur le pdf
+		  => On corrige moins de reads si on étend à gauche et à droite : wtf ? => En fait non, après retest ça marche, mais bizarre
+		  
+	\item Quand on mappe tous les SR sur tous les LR d'un coup => Si il n'y a qu'un seul seed sur un LR, alors on l'étend et on sort
+		  cette extension comme correction => Permet de corriger (à 1 ou 2 près) autant de LR que NaS
+		  
+	\item Test de correction (sur M12D et M41D) en passant le nombre d'erreurs tolérées (dans algo.c et fichier reliage) à 0
+		  => Sur M12D, 2 reads fragmentés en plus, - 50 avLen, - 6 217 cumSize, + 0,03 \% avId
+		  => Sur M41D, 8 reads fragmentés en plus, - 146 avLen, - 23 422 cumSize, + 0,04 \% avId
+		  => On garde
+\end{itemize}
+
+\subsection{Jour 131}
+
+\begin{itemize}
+	\item Test sur tous les LR ADP1 => Rapide et très efficace sur les reads 1D, long sur les reads 2D car très nombreux
+		  => test arrêté, mais bonne qualité des résultats produits jusque là
+		  
+	\item Test sur les autres jeux de données NaS (Ecoli et Yeast) => Pareil, beaucoup trop de LR
+		  => Nécessité de prendre un échantillon de ces jeux de données pour tester
+	
+	\item Amélioration diapos MASTODON (matinée)
+	
+	\item Réunion Stringmasters (Aprem)
+\end{itemize}
+
+\subsection{Jour 131}
+
+\begin{itemize}
+	\item Test sur Ecoli et Yeast avec des échantillons de 500 LR => Bons résultats
+	
+	\item Retirer la liste des k-mers déjà visités => produit des reads plus fragmentés et est + coûteux en temps
+	
+	\item Début écriture article
+	
+	\item Test tuning paramètres PBLAT pour ne plus fragmenter les reads => Ne donne rien
+		  => Comment ne plus fragmenter les reads ?
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,245 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Journal Article
+% LaTeX Template
+% Version 1.4 (15/5/16)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com) with extensive modifications by
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[twoside,twocolumn]{article}
+
+\usepackage{blindtext} % Package to generate dummy text throughout this template 
+
+\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{patterns}
+\usetikzlibrary{decorations.pathreplacing}
+\usepackage{multirow}
+\usepackage{mathrsfs}
+\usetikzlibrary{automata,positioning}
+
+\usepackage[english]{babel} % Language hyphenation and typographical rules
+
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+
+%\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+
+\usepackage{enumitem} % Customized lists
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+%\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+%\renewcommand\thesubsection{\roman{subsection}} % roman numerals for subsections
+%\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+%\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{Running title $\bullet$ May 2016 $\bullet$ Vol. XXI, No. 1} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+\usepackage{titling} % Customizing the title section
+
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\setlength{\droptitle}{-4\baselineskip} % Move the title up
+
+\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
+\posttitle{\end{center}} % Article title closing formatting
+\title{A new method for the production of NaS reads} % Article title
+\author{%
+\textsc{Pierre Morisse} \\[1ex] % Your name
+\normalsize University of Rouen \\ % Your institution
+\normalsize \href{mailto:pierre.morisse2@univ-rouen.fr}{pierre.morisse2@univ-rouen.fr} % Your email address
+%\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
+%\textsc{Jane Smith}\thanks{Corresponding author} \\[1ex] % Second author's name
+%\normalsize University of Utah \\ % Second author's institution
+%\normalsize \href{mailto:jane@smith.com}{jane@smith.com} % Second author's email address
+}
+\date{\today} % Leave empty to omit a date
+\renewcommand{\maketitlehookd}{%
+\begin{abstract}
+\noindent \blindtext % Dummy abstract text - replace \blindtext with your abstract text
+\end{abstract}
+}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+% Print the title
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\section{Introduction}
+
+Since a few years, long reads sequencing technologies are being developed, and allow the solving of assembly problems for large and complex
+genomes that were impossible with the use of short reads sequencing technologies alone. The two major actors of these long reads sequencing technologies are
+Pacific Biosciences and Oxford Nanopore, which, with the release of the MinION device, allowed a low-cost and ???? long reads sequencing. \\
+\indent However, even though long reads can reach lengths of tens of kb, they also reach a very high error rate of around 15\% for Pacific Biosciences' reads, and up to 30\% for Oxford Nanopore reads, the vast majority of these errors being insertions and deletions . Correcting these long reads before using them to solve assembly problems is therefore mandatory. \\
+\indent Many methods are available for short reads correction, but these methods are not applicable to the long reads, on the one hand because 
+of their much higher error rate, and on the other because most of the error correction tools for short reads focus on substitution errors,
+the dominant error type in Illumina data, whereas insertions and deletions are more common in long reads. \\
+\indent Recently, several methods for long reads correction have been developed. These methods can be divided into two main categories: either
+the long reads are selfcorrected by aligning them against each other, or either a hybrid strategy is adopted, in which the long reads
+are corrected with the help of accurate short reads. \\
+\indent Cite existing selfcorrection tools \\
+\indent Cite existing hybrid correction tools \\
+\indent NaS \cite{Madoui2015}, instead of directly correcting the long reads, uses them as templates to produce synthetic long reads, by mapping short reads both on long reads and against each others. A synthetic long read is thus obtained and used as a correction of a given template long read by assembling a subset of short reads related to the said template. \\
+\indent In this paper, we present a new method to produce synthetic long reads, that gets rid of the time consuming step of aligning all
+the short reads against each other. Instead, we focus on a seed-and-extend approach where we extend and link together the seeds, found by mapping
+the short reads on the long reads, with perfectly overlapping $k$-mers from the short reads, found with the help of PgSA \cite{Kowalski2015}. \\
+\indent Our experiments show that, while producing comparable results both in terms of length and accuracy of the synthetic long reads, our method is several orders of magnitude faster than NaS. 
+
+\section{PgSA Overview}
+
+PgSA, along with GkA \cite{Philippe2011} and CGkA \cite{Niko2013} are data structures that allow the indexing of a set of reads, in order
+to answer the following queries, for a given string $f$ : \\
+
+\begin{enumerate}
+	\item In which reads does $f$ occur?
+	\item In how many reads does $f$ occur?
+	\item What are the occurrence positions of $f$ ?
+	\item What is the number of occurrences of $f$ ?
+	\item In which reads does $f$ occur only once?
+	\item In how many reads does $f$ occur only once?
+	\item What are the occurrence positions of $f$ in the reads where it occurs only once?
+\end{enumerate}
+
+In these queries, $f$ can be given either as a sequence of DNA symbols, or as a couple of numbers, representing respectively a read ID, and the
+start position of $f$ in that read. \\
+\indent As previously mentioned, in order to answer these queries, an index of the reads has to be built. To do so, PgSA first computes the overlaps
+between the reads, and merges the reads that do overlap, thus obtaining a pseudogenome, shorter than the naive concatenation of the whole reads set. 
+Then, an auxiliary array is built to allow the retrieval of the reads from the original set in the pseudogenome. Each record of this array  
+associates a read ID in the original reads set to a read offset in the pseudogenome, and contains a flag data that brings complementary information about
+the said read and that will be used for the handling of the requests. \\
+\indent As the reads are overlapped during the pseudogenome computation, and the auxiliary array doesn't record any information about their lengths, PgSA will only allow the indexing and querying of a set of reads of same length. However, unlike its peers GkA and CGkA, PgSA doesn't set 
+the length of $f$ at compilation time, and thus supports querying for multiple lengths of $f$ without any need to recompute the index, which is why
+we chose this data structure over the two others. 
+
+
+\section{NaS Overview}
+
+NaS is a hybrid method for the error correction of long reads. Unlike other methods, instead of directly correcting the long reads, it rather uses them as
+templates. Short reads are mapped both on these templates long reads and against each other in order to gather different subsets of short reads, each 
+related to one given template. Once a subset of short reads is obtained, contained short reads are assembled and the produced contig is used as a correction for the related template. More precisely, a synthetic long read is produced as follows: \\
+\indent First, the short reads are aligned on the template long read using BLAT \cite{Kent2002} (untrue, blat is used for fast mode, and last for sensitive mode, although the NaS paper only mentions blat), in order to find seeds, which are short reads that correctly align with the template. Then, once these seeds are found, all the other short reads are aligned against each other, and similar reads are recruited,
+with the help of Commet \cite{Maillet2014}. Finally, the obtained subset of short reads is assembled using Newbler (CITE), and a contig is produced,
+and used as the correction of the initial template long read. \\ 
+\indent Usually, a single contig is produced, but in repeated regions, a few bad reads can be recruited and therefore yield erroneous contigs 
+that must not be associated with the template. To address this issue, and produce a single contig, NaS explicitly builds the contig-graph, 
+weighted with the seeds coverage of the contigs. Once the graph is built, the path with the highest total weight is chosen with the Floyd-Warshall
+algorithm, and contigs along that path are assembled to generate the final synthetic long read. Finally, the consistency of the synthetic read is checked
+by aligning initial Illuminia short reads and detecting gap of coverage. \\
+\indent The reads recruitment step is the most important(?) step of the method, as it allows to retrieve short reads corresponding to low quality
+regions of the template long read. However, this step is also the bottleneck of the whole NaS pipeline, as it is responsible for 70\% of the
+total runtime on average. \\
+\indent NaS is able to generate synthetic long reads up to 60kb, that align entirely to the reference genome with no error, and that spans
+repetitive regions. On average, the accuracy of synthetic long reads yielded by NaS reaches 99.97\%, without any significant length drop
+compared to the input template long reads.
+
+\section{Our method}
+
+Our method, like NaS, aims to use erroneous long reads as templates, and produce synthetic long reads from an assembly of short reads, related to
+the templates. However, our main objective is to get rid of the time consuming step of reads recruiting, that requires the mapping of all the short reads
+against each other. To do so, we focus on a seed-and-extend approach, where seeds are extended and linked together by perfectly overlapping $k$-mers from the short reads data, found with the help of PgSA. The workflow of our method is summarized Figure \ref{OMWorkflow}, and detailed below. \\
+\begin{figure}
+	\resizebox{.5\textwidth}{!}{
+		\begin{tikzpicture}
+			\node (SR) at (0,0) {short reads};
+			\node[draw, rectangle] (Qu) at (2.5,0) {Quorum};
+			\draw [->] (SR) -- (Qu);
+			\node (CSR) at (6,0) {corrected short reads};
+			\draw [->] (Qu) -- (CSR);
+			\node[draw, rectangle] (GK) at (9.5,0) {get kmers};
+			\draw [->] (CSR) -- (GK);
+			\node[draw, rectangle] (PgSA) at (9.5,-1.5) {PgSA};
+			\draw [->] (GK) -- (PgSA);
+			\node (IK) at (9.5,-3) {indexed $k$-mers};
+			\draw [->] (PgSA) -- (IK);			
+			\node[draw, rectangle] (PBLAT) at (3.5,-1.5) {PBLAT};
+			\node (LR) at (0,-1.5) {long reads};
+			\draw [->] (LR) -- (PBLAT);
+			\draw [->] (CSR) -- (PBLAT);
+			\node (seeds) at (3.5,-3) {seeds};
+			\draw [->] (PBLAT) -- (seeds);
+			\node[draw, rectangle] (Link) at (6.5,-5) {seeds extension and linking};
+			\draw [->] (seeds) -- (Link);
+			\draw [->] (IK) -- (Link);
+			\node (SLR) at (6.5,-7) {synthetic long reads};
+			\draw[->] (Link) -- (SLR);
+		\end{tikzpicture}
+	}
+	\label{OMWorkflow}
+	\caption{Our method's workflow}
+\end{figure}
+\indent Even though short reads are very accurate, as we seek to use their $k$-mers to compute perfect overlaps and extend the seeds, we need to get rid of as much sequencing errors as we can in this data. We thus correct the short reads with the help of Quorum \cite{Marcais2015}, which provides a good raise 
+of the accuracy in very little time. \\
+\indent Once corrected, the $k$-mers from the short reads and their reverse complements are extracted with Jellyfish (CITE), and indexed with PgSA, before
+being queried to extend and link the seeds together during the next steps. \\
+\indent Like in NaS, the seeds are found by mapping the corrected long reads on the template long reads with BLAT, or more exactly PBLAT, a slightly modified version of BLAT that allows multithreaded execution. \\
+\indent Then, for each template, the mapped seeds are checked, and those that overlap over more that a certain length, defined as the size of a $k$-mer minus 1, are merged. Otherwise, if two seeds do overlap, but not over a sufficient length, only the one with the best alignment score is kept. \\
+\indent Once seeds have been found and merged for each template, our method attempts to link together every couple of seeds, by extending the rightmost $k$-mer of the left seed with perfectly overlapping $k$-mers from the short reads, until the leftmost $k$-mer of the right seed is reached. To do so, PgSA's third request, that gives the occurrences positions of a given string, is looped over to find overlaps of length $k - 1$ between the currently 
+considered $k$-mer and the other $k$-mers from the set of short reads. When such an overlap is found, the current $k$-mer is extended
+with the non-overlapping bases of the new found one, which is then considered for the next extension. If no overlap of length $k - 1$ is found, then the length is decreased and overlaps are searched again, as PgSA allows requesting for strings of variable lengths. Overlap length thus keeps on decreasing until an overlap is found, or until the minimum length, fixed as $k / 2$ is reached. \\
+\indent When requesting PgSA to find overlapping $k$-mers, it possible to find multiple $k$-mers that perfectly overlap with the currently considered $k$-mer. In such cases, all possible extensions are checked with the use of backtracking, to find the one that will allow correct linking of the two seeds. However, to avoid long runtimes and intensive computations, a threshold on the maximum number of backtracks is set. If this threshold, or the previously defined minimum overlap length, is reached and no path has been found to link the two seeds, then the linking is given up, a new linking is computed for the next seeds couple, and a fragmented synthetic long read is produced. \\
+\indent Finally, it is obvious that seeds don't always map right at the beginning and until the end of the templates. Thus, in order to get as close as possible to the original templates' lengths, once all the seeds have been linked, we keep extending the so produced synthetic long read, on the left of the leftmost seed, and on the right of the rightmost seed, until we reach the template's borders, or an ambiguity. This happens when multiple $k$-mers perfectly
+overlap the currently considered $k$-mer, and that its extension is therefore possible with every of these different $k$-mers. As we have no clue as to which one to chose and to continue the extension with, nor precise destination, as when we attempt to link two seeds, then extension is simply stopped when such a situation is reached. 
+
+\section{Results and discussions}
+
+We tested our method on various datasets in order to compare it with NaS. Results of these experiments are given Table [it doesn't exist yet].
+
+\section{Conclusions}
+
+We developed ...
+
+\section{Competing interests}
+
+None declared.
+
+
+%----------------------------------------------------------------------------------------
+%	REFERENCE LIST
+%----------------------------------------------------------------------------------------
+
+\bibliographystyle{abbrv}
+\bibliography{../../Bibliographies/library}
+%\printbibliography
+
+%----------------------------------------------------------------------------------------
+
+\end{document}

@@ -1,0 +1,14 @@
+\BOOKMARK [1][-]{section*.1}{1 Introduction}{}% 1
+\BOOKMARK [1][-]{section*.2}{2 NaS Overview}{}% 2
+\BOOKMARK [1][-]{section*.3}{3 PgSA Overview}{}% 3
+\BOOKMARK [1][-]{section*.4}{4 Our method}{}% 4
+\BOOKMARK [2][-]{section*.6}{4.1 Short reads correction and indexing}{section*.4}% 5
+\BOOKMARK [2][-]{section*.7}{4.2 Seeds retrieving and merging}{section*.4}% 6
+\BOOKMARK [2][-]{section*.8}{4.3 Seeds linking}{section*.4}% 7
+\BOOKMARK [2][-]{section*.9}{4.4 Tips extension}{section*.4}% 8
+\BOOKMARK [1][-]{section*.10}{5 Results and discussion}{}% 9
+\BOOKMARK [2][-]{section*.11}{5.1 Parameters}{section*.10}% 10
+\BOOKMARK [2][-]{section*.12}{5.2 Datasets}{section*.10}% 11
+\BOOKMARK [2][-]{section*.14}{5.3 Mapping quality}{section*.10}% 12
+\BOOKMARK [2][-]{section*.17}{5.4 Assembly quality}{section*.10}% 13
+\BOOKMARK [1][-]{section*.19}{6 Conclusions}{}% 14

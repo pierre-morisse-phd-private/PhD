@@ -1,0 +1,129 @@
+\begin{thebibliography}{}
+
+\bibitem[Au {\em et~al.}(2012)Au, Underwood, Lee, and Wong]{Au2012}
+Au, K.~F., Underwood, J.~G., Lee, L., and Wong, W.~H. (2012).
+\newblock {Improving PacBio Long Read Accuracy by Short Read Alignment}.
+\newblock {\em PLoS ONE\/}, {\bf 7}(10), 1--8.
+
+\bibitem[Chaisson and Tesler(2012)Chaisson and Tesler]{Chaisson2012}
+Chaisson, M.~J. and Tesler, G. (2012).
+\newblock {Mapping single molecule sequencing reads using basic local alignment
+  with successive refinement (BLASR): application and theory.}
+\newblock {\em BMC bioinformatics\/}, {\bf 13}, 238.
+
+\bibitem[Chin {\em et~al.}(2013)Chin, Alexander, Marks, Klammer, Drake, Heiner,
+  Clum, Copeland, Huddleston, Eichler, Turner, and Korlach]{Chin2013}
+Chin, C.-S., Alexander, D.~H., Marks, P., Klammer, A.~A., Drake, J., Heiner,
+  C., Clum, A., Copeland, A., Huddleston, J., Eichler, E.~E., Turner, S.~W.,
+  and Korlach, J. (2013).
+\newblock {Nonhybrid, finished microbial genome assemblies from long-read SMRT
+  sequencing data}.
+\newblock {\em Nature Methods\/}, {\bf 10}(6), 563--569.
+
+\bibitem[Haghshenas {\em et~al.}(2016)Haghshenas, Hach, Sahinalp, and
+  Chauve]{Haghshenas2016}
+Haghshenas, E., Hach, F., Sahinalp, S.~C., and Chauve, C. (2016).
+\newblock {CoLoRMap: Correcting Long Reads by Mapping short reads}.
+\newblock {\em Bioinformatics\/}, {\bf 32}(17), i545--i551.
+
+\bibitem[Hu {\em et~al.}(2016)Hu, Sun, and Sun]{Hu2016}
+Hu, R., Sun, G., and Sun, X. (2016).
+\newblock {LSCplus: a fast solution for improving long read accuracy by short
+  read alignment}.
+\newblock {\em BMC Bioinformatics\/}, {\bf 17}(1), 451.
+
+\bibitem[Kent(2002)Kent]{Kent2002}
+Kent, W.~J. (2002).
+\newblock {BLAT — The BLAST -Like Alignment Tool}.
+\newblock {\em Genome research\/}, {\bf 12}, 656--664.
+
+\bibitem[Kielbasa {\em et~al.}(2011)Kielbasa, Wan, Sato, Kiebasa, Horton, and
+  Frith]{Kielbasa2011}
+Kielbasa, S.~M., Wan, R., Sato, K., Kiebasa, S.~M., Horton, P., and Frith,
+  M.~C. (2011).
+\newblock {Adaptive seeds tame genomic sequence comparison}.
+\newblock {\em Genome Research\/}, pages 487--493.
+
+\bibitem[Koren {\em et~al.}(2016)Koren, Walenz, Berlin, Miller, and
+  Phillippy]{Koren2016}
+Koren, S., Walenz, B.~P., Berlin, K., Miller, J.~R., and Phillippy, A.~M.
+  (2016).
+\newblock {Canu: scalable and accurate long-read assembly via adaptive k-mer
+  weighting and repeat separation}.
+\newblock {\em bioRxiv\/}, page 071282.
+
+\bibitem[Kowalski {\em et~al.}(2015)Kowalski, Grabowski, and
+  Deorowicz]{Kowalski2015}
+Kowalski, T., Grabowski, S., and Deorowicz, S. (2015).
+\newblock {Indexing arbitrary-length k-mers in sequencing reads}.
+\newblock {\em PLoS ONE\/}, {\bf 10}(7), 1--14.
+
+\bibitem[Li {\em et~al.}(2009)Li, Yu, Li, Lam, Yiu, Kristiansen, and
+  Wang]{Li2009}
+Li, R., Yu, C., Li, Y., Lam, T.~W., Yiu, S.~M., Kristiansen, K., and Wang, J.
+  (2009).
+\newblock {SOAP2: An improved ultrafast tool for short read alignment}.
+\newblock {\em Bioinformatics\/}, {\bf 25}(15), 1966--1967.
+
+\bibitem[Madoui {\em et~al.}(2015)Madoui, Engelen, Cruaud, Belser, Bertrand,
+  Alberti, Lemainque, Wincker, and Aury]{Madoui2015}
+Madoui, M.-A., Engelen, S., Cruaud, C., Belser, C., Bertrand, L., Alberti, A.,
+  Lemainque, A., Wincker, P., and Aury, J.-M. (2015).
+\newblock {Genome assembly using Nanopore-guided long and error-free DNA
+  reads}.
+\newblock {\em BMC Genomics\/}, {\bf 16}, 327.
+
+\bibitem[Maillet {\em et~al.}(2014)Maillet, Collet, Vannier, Lavenier, and
+  Peterlongo]{Maillet2014}
+Maillet, N., Collet, G., Vannier, T., Lavenier, D., and Peterlongo, P. (2014).
+\newblock {Commet: Comparing and combining multiple metagenomic datasets}.
+\newblock {\em Proceedings - 2014 IEEE International Conference on
+  Bioinformatics and Biomedicine\/}, {\bf IEEE BIBM}(November), 94--98.
+
+\bibitem[Mar{\c{c}}ais and Kingsford(2011)Mar{\c{c}}ais and
+  Kingsford]{Marcais2011}
+Mar{\c{c}}ais, G. and Kingsford, C. (2011).
+\newblock {A fast, lock-free approach for efficient parallel counting of
+  occurrences of k-mers}.
+\newblock {\em Bioinformatics\/}, {\bf 27}(6), 764--770.
+
+\bibitem[Mar{\c{c}}ais {\em et~al.}(2015)Mar{\c{c}}ais, Yorke, and
+  Zimin]{Marcais2015}
+Mar{\c{c}}ais, G., Yorke, J.~A., and Zimin, A. (2015).
+\newblock {QuorUM: An Error Corrector for Illumina Reads}.
+\newblock pages 1--13.
+
+\bibitem[Miclotte {\em et~al.}(2016)Miclotte, Heydari, Demeester, Rombauts,
+  {Van de Peer}, Audenaert, and Fostier]{Miclotte2016}
+Miclotte, G., Heydari, M., Demeester, P., Rombauts, S., {Van de Peer}, Y.,
+  Audenaert, P., and Fostier, J. (2016).
+\newblock {Jabba: hybrid error correction for long sequencing reads}.
+\newblock {\em Algorithms Mol Biol\/}, {\bf 11}, 10.
+
+\bibitem[Niko(2013)Niko]{Niko2013}
+Niko, V. (2013).
+\newblock {Scalable and Versatile k -mer Indexing for High-Throughput
+  Sequencing Data}.
+\newblock (250345), 237--248.
+
+\bibitem[Philippe {\em et~al.}(2011)Philippe, Salson, Lecroq, Leonard, Commes,
+  and Rivals]{Philippe2011}
+Philippe, N., Salson, M., Lecroq, T., Leonard, M., Commes, T., and Rivals, E.
+  (2011).
+\newblock {Querying large read collections in main memory: a versatile data
+  structure}.
+\newblock {\em BMC bioinformatics\/}, {\bf 12}(1), 242.
+
+\bibitem[Salmela and Rivals(2014)Salmela and Rivals]{Salmela2014}
+Salmela, L. and Rivals, E. (2014).
+\newblock {LoRDEC: Accurate and efficient long read error correction}.
+\newblock {\em Bioinformatics\/}, {\bf 30}(24), 3506--3514.
+
+\bibitem[Salmela {\em et~al.}(2016)Salmela, Walve, Rivals, and
+  Ukkonen]{Salmela2016}
+Salmela, L., Walve, R., Rivals, E., and Ukkonen, E. (2016).
+\newblock {Accurate selfcorrection of errors in long reads using de Bruijn
+  graphs}.
+\newblock {\em Bioinformatics\/}, page btw321.
+
+\end{thebibliography}
