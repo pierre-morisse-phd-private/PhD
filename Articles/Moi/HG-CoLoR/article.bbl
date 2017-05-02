@@ -1,0 +1,135 @@
+\begin{thebibliography}{10}
+
+\bibitem{Chin2013}
+Chen-Shan Chin, David~H Alexander, Patrick Marks, Aaron~A Klammer, James Drake,
+  Cheryl Heiner, Alicia Clum, Alex Copeland, John Huddleston, Evan~E Eichler,
+  Stephen~W Turner, and Jonas Korlach.
+\newblock {Nonhybrid, finished microbial genome assemblies from long-read SMRT
+  sequencing data}.
+\newblock {\em Nature Methods}, 10(6):563--569, 2013.
+
+\bibitem{Berlin2015}
+Konstantin Berlin, Sergey Koren, Chen-Shan Chin, James~P Drake, Jane~M
+  Landolin, and Adam~M Phillippy.
+\newblock {Assembling large genomes with single-molecule sequencing and
+  locality-sensitive hashing.}
+\newblock {\em Nature biotechnology}, 33(6):623--630, 2015.
+
+\bibitem{Au2012}
+Kin~Fai Au, Jason~G. Underwood, Lawrence Lee, and Wing~Hung Wong.
+\newblock {Improving PacBio Long Read Accuracy by Short Read Alignment}.
+\newblock {\em PLoS ONE}, 7(10):1--8, 2012.
+
+\bibitem{Hackl2014}
+Thomas Hackl, Rainer Hedrich, J{\"{o}}rg Schultz, and Frank F{\"{o}}rster.
+\newblock {Proovread: Large-scale high-accuracy PacBio correction through
+  iterative short read consensus}.
+\newblock {\em Bioinformatics}, 30(21):3004--3011, 2014.
+
+\bibitem{Haghshenas2016}
+Ehsan Haghshenas, Faraz Hach, S~Cenk Sahinalp, and Cedric Chauve.
+\newblock {CoLoRMap: Correcting Long Reads by Mapping short reads}.
+\newblock {\em Bioinformatics}, 32(17):i545--i551, 2016.
+
+\bibitem{deBruijn1946}
+Nicolaas~Govert de~Bruijn.
+\newblock {A combinatorial problem}.
+\newblock {\em Koninklijke Nederlandse Akademie van Wetenschappen te
+  Amsterdam}, 49(7):758--764, 1946.
+
+\bibitem{Salmela2014}
+Leena Salmela and Eric Rivals.
+\newblock {LoRDEC: Accurate and efficient long read error correction}.
+\newblock {\em Bioinformatics}, 30(24):3506--3514, 2014.
+
+\bibitem{Miclotte2016}
+Giles Miclotte, Mahdi Heydari, Piet Demeester, Stephane Rombauts, Yves {Van de
+  Peer}, Pieter Audenaert, and Jan Fostier.
+\newblock {Jabba: hybrid error correction for long sequencing reads}.
+\newblock {\em Algorithms Mol Biol}, 11:10, 2016.
+
+\bibitem{Salmela2016}
+Leena Salmela, Riku Walve, Eric Rivals, and Esko Ukkonen.
+\newblock {Accurate selfcorrection of errors in long reads using de Bruijn
+  graphs}.
+\newblock {\em Bioinformatics}, 33(6):799--806, 2017.
+
+\bibitem{Madoui2015}
+Mohammed-Amin Madoui, Stefan Engelen, Corinne Cruaud, Caroline Belser, Laurie
+  Bertrand, Adriana Alberti, Arnaud Lemainque, Patrick Wincker, and Jean-Marc
+  Aury.
+\newblock {Genome assembly using Nanopore-guided long and error-free DNA
+  reads}.
+\newblock {\em BMC Genomics}, 16:327, 2015.
+
+\bibitem{Kowalski2015}
+Tomasz Kowalski, Szymon Grabowski, and Sebastian Deorowicz.
+\newblock {Indexing arbitrary-length k-mers in sequencing reads}.
+\newblock {\em PLoS ONE}, 10(7):1--14, 2015.
+
+\bibitem{Ehrenfecht2004}
+Andrzej Ehrenfeucht, Tero Harju, Ion Petre, David~M Prescott, and Grzegorz
+  Rozenberg.
+\newblock {\em {Overlap Graphs}}, pages 99--108.
+\newblock Springer Berlin Heidelberg, Berlin, Heidelberg, 2004.
+
+\bibitem{Kent2002}
+W~James Kent.
+\newblock {BLAT — The BLAST -Like Alignment Tool}.
+\newblock {\em Genome research}, 12:656--664, 2002.
+
+\bibitem{Kielbasa2011}
+Szymon~M Kielbasa, Raymond Wan, Kengo Sato, Szymon~M Kiebasa, Paul Horton, and
+  Martin~C Frith.
+\newblock {Adaptive seeds tame genomic sequence comparison}.
+\newblock {\em Genome Research}, 21(3):487--493, 2011.
+
+\bibitem{Maillet2014}
+Nicolas Maillet, Guillaume Collet, Thomas Vannier, Dominique Lavenier, and
+  Pierre Peterlongo.
+\newblock {Commet: Comparing and combining multiple metagenomic datasets}.
+\newblock In {\em IEEE International Conference on Bioinformatics and
+  Biomedicine (BIBM)}, 2014.
+
+\bibitem{Marcais2015}
+Guillaume Mar{\c{c}}ais, James~A Yorke, and Aleksey Zimin.
+\newblock {QuorUM: An Error Corrector for Illumina Reads}.
+\newblock {\em PLOS ONE}, 10(6):1--13, 2015.
+
+\bibitem{Marcais2011}
+Guillaume Mar{\c{c}}ais and Carl Kingsford.
+\newblock {A fast, lock-free approach for efficient parallel counting of
+  occurrences of k-mers}.
+\newblock {\em Bioinformatics}, 27(6):764--770, 2011.
+
+\bibitem{Chaisson2012}
+Mark~J Chaisson and Glenn Tesler.
+\newblock {Mapping single molecule sequencing reads using basic local alignment
+  with successive refinement (BLASR): application and theory.}
+\newblock {\em BMC bioinformatics}, 13(1):238, 2012.
+
+\bibitem{Tange2011}
+Ole Tange.
+\newblock {GNU Parallel - The Command-Line Power Tool}.
+\newblock {\em ;login: The USENIX Magazine}, 36(1):42--47, 2011.
+
+\bibitem{Allam2015}
+Amin Allam, Panos Kalnis, and Victor Solovyev.
+\newblock {Karect: accurate correction of substitution, insertion and deletion
+  errors for next-generation sequencing data}.
+\newblock {\em Bioinformatics}, 31(21):3421--3428, 2015.
+
+\bibitem{Li2010b}
+Heng Li and Richard Durbin.
+\newblock {Fast and accurate long-read alignment with Burrows-Wheeler
+  transform}.
+\newblock {\em Bioinformatics}, 26(5):589--595, 2010.
+
+\bibitem{Koren2016}
+Sergey Koren, Brian~P. Walenz, Konstantin Berlin, Jason~R. Miller, and Adam~M.
+  Phillippy.
+\newblock {Canu: scalable and accurate long-read assembly via adaptive k-mer
+  weighting and repeat separation}.
+\newblock {\em bioRxiv}, 2016.
+
+\end{thebibliography}

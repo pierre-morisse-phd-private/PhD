@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.10.19)  29 MAR 2017 12:30
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.10.19)  2 MAY 2017 10:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -3361,7 +3361,37 @@ Underfull \hbox (badness 10000) in paragraph at lines 2435--2437
 
  []
 
-[63] (./Réunions.aux)
+[63] [64] [65]
+Underfull \hbox (badness 10000) in paragraph at lines 2561--2563
+
+ []
+
+[66]
+Underfull \hbox (badness 10000) in paragraph at lines 2564--2567
+
+ []
+
+[67]
+Underfull \hbox (badness 10000) in paragraph at lines 2638--2642
+
+ []
+
+[68]
+Underfull \hbox (badness 10000) in paragraph at lines 2643--2647
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2648--2652
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2655--2656
+
+ []
+
+[69] (./Réunions.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -3381,10 +3411,10 @@ e/texmf-dist/fonts/type1/public/txfonts/rtxb.pfb></usr/share/texlive/texmf-dist
 onts/txsy.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><
 /usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Réunions.pdf (63 pages, 163084 bytes).
+Output written on Réunions.pdf (69 pages, 166693 bytes).
 PDF statistics:
- 240 PDF objects out of 1000 (max. 8388607)
- 166 compressed objects within 2 object streams
+ 259 PDF objects out of 1000 (max. 8388607)
+ 179 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

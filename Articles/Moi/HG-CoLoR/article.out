@@ -1,0 +1,14 @@
+\BOOKMARK [1][-]{section*.1}{1 Introduction}{}% 1
+\BOOKMARK [1][-]{section*.2}{2 NaS Overview}{}% 2
+\BOOKMARK [1][-]{section*.3}{3 Hybrid graph}{}% 3
+\BOOKMARK [1][-]{section*.5}{4 HG-CoLoR description}{}% 4
+\BOOKMARK [2][-]{section*.7}{4.1 Short reads correction and indexing}{section*.5}% 5
+\BOOKMARK [2][-]{section*.8}{4.2 Seeds retrieving and merging}{section*.5}% 6
+\BOOKMARK [2][-]{section*.9}{4.3 Seeds linking}{section*.5}% 7
+\BOOKMARK [2][-]{section*.11}{4.4 Tips extension}{section*.5}% 8
+\BOOKMARK [1][-]{section*.12}{5 Results and discussion}{}% 9
+\BOOKMARK [2][-]{section*.13}{5.1 Parameters}{section*.12}% 10
+\BOOKMARK [2][-]{section*.14}{5.2 Datasets}{section*.12}% 11
+\BOOKMARK [2][-]{section*.16}{5.3 Alignment-based comparison}{section*.12}% 12
+\BOOKMARK [2][-]{section*.18}{5.4 Assembly-based comparison}{section*.12}% 13
+\BOOKMARK [1][-]{section*.20}{6 Conclusion}{}% 14

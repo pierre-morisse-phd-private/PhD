@@ -1,0 +1,109 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\catcode `:\active 
+\catcode `;\active 
+\catcode `!\active 
+\catcode `?\active 
+\bibstyle{unsrt}
+\citation{Chin2013}
+\citation{Berlin2015}
+\citation{Au2012}
+\citation{Hackl2014}
+\citation{Haghshenas2016}
+\citation{deBruijn1946}
+\citation{Salmela2014}
+\citation{Miclotte2016}
+\citation{Salmela2016}
+\citation{Madoui2015}
+\citation{Kowalski2015}
+\citation{Ehrenfecht2004}
+\select@language{french}
+\@writefile{toc}{\select@language{french}}
+\@writefile{lof}{\select@language{french}}
+\@writefile{lot}{\select@language{french}}
+\select@language{english}
+\@writefile{toc}{\select@language{english}}
+\@writefile{lof}{\select@language{english}}
+\@writefile{lot}{\select@language{english}}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section*.1}}
+\newlabel{sec:introduction}{{1}{1}{Introduction}{section*.1}{}}
+\citation{Kent2002}
+\citation{Kielbasa2011}
+\citation{Maillet2014}
+\citation{Kowalski2015}
+\@writefile{toc}{\contentsline {section}{\numberline {2}NaS Overview}{2}{section*.2}}
+\newlabel{sec:NaSO}{{2}{2}{NaS Overview}{section*.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Hybrid graph}{2}{section*.3}}
+\newlabel{sec:HG}{{3}{2}{Hybrid graph}{section*.3}{}}
+\citation{Marcais2015}
+\citation{Marcais2011}
+\citation{Chaisson2012}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces A simple example of our graph, when fixing the length of the $k$-mers to 6, computing overlaps of minimum length 3, and building from the three following reads: AAGCTTAC, CTTACGTA, GTATACTG. Numbers on the edges of the graph represent the overlap length between the $k$-mers. }}{3}{section*.4}}
+\newlabel{HGraph}{{1}{3}{Hybrid graph}{section*.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}HG-CoLoR description}{3}{section*.5}}
+\newlabel{sec:OMO}{{4}{3}{HG-CoLoR description}{section*.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces HG-CoLoR's workflow. First, the short reads are corrected in order to get rid of as much sequencing errors as possible. Then, all the $k$-mers from the corrected short reads, and their reverse-complements, are obtained with Jellyfish, and indexed with PgSA, to simulate the graph. The corrected short reads are aligned on the long reads with BLASR to find seeds, and each long read is then considered as a template, and processed independently. For a given template, the graph is traversed in order to extend and link together the associated seeds, used as anchor points. Then, the tips of the sequence obtained after the seeds linking step are extended in both directions by traversing the graph, to reach the initial template's borders. Finally, the synthetic long read is output. }}{3}{section*.6}}
+\newlabel{OMWorkflow}{{2}{3}{HG-CoLoR description}{section*.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Short reads correction and indexing}{3}{section*.7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Seeds retrieving and merging}{3}{section*.8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Seeds linking}{4}{section*.9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Illustration of the different cases of seed skips. Hatched lines represent the templates, standard segments represent the seeds, and bold segments represent the sequences obtained from the previously linked seeds. First case (left): No seeds have been linked so far, the current source seed is simply ignored, and both the source and the destination are moved to the next couple of seeds. Second case (right): Seeds have already been linked previously, the source remains the same, the destination seed that could not be reached is ignored, and the destination is defined as the next seed. }}{4}{section*.10}}
+\newlabel{SeedSkipping}{{3}{4}{Seeds linking}{section*.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Tips extension}{4}{section*.11}}
+\citation{Tange2011}
+\citation{Allam2015}
+\citation{Li2010b}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Results and discussion}{5}{section*.12}}
+\newlabel{sec:results}{{5}{5}{Results and discussion}{section*.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Parameters}{5}{section*.13}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Datasets}{5}{section*.14}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Description of the datasets used in our experiments.  Both MinION and Illumina data are available from the Genoscope's website \url  {http://www.genoscope.cns.fr/externe/nas/datasets.html}.}}{5}{section*.15}}
+\newlabel{tabdata}{{1}{5}{Datasets}{section*.15}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Alignment-based comparison}{5}{section*.16}}
+\citation{Koren2016}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Runtime and statistics of the long reads, before and after correction by the different tools. NaS runtimes are omitted because results did not compute in 3 days, even for \emph  {E. coli} in fast mode. NaS reads were therefore obtained from the Genoscope's website to allow comparison. }}{6}{section*.17}}
+\newlabel{tabid}{{2}{6}{Alignment-based comparison}{section*.17}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Assembly-based comparison}{6}{section*.18}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Statistics of the assemblies that were generated from the long reads, after correction by the different tools. CoLoRMap results are ommitted for the \emph  {A. baylyi} and Yeast datasets, because Canu did not manage to assemble the sets of corrected reads. }}{7}{section*.19}}
+\newlabel{tabas}{{3}{7}{Assembly-based comparison}{section*.19}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{7}{section*.20}}
+\newlabel{sec:conclusion}{{6}{7}{Conclusion}{section*.20}{}}
+\bibdata{../../../Bibliographies/library}
+\bibcite{Chin2013}{1}
+\bibcite{Berlin2015}{2}
+\bibcite{Au2012}{3}
+\bibcite{Hackl2014}{4}
+\bibcite{Haghshenas2016}{5}
+\bibcite{deBruijn1946}{6}
+\bibcite{Salmela2014}{7}
+\bibcite{Miclotte2016}{8}
+\bibcite{Salmela2016}{9}
+\bibcite{Madoui2015}{10}
+\bibcite{Kowalski2015}{11}
+\bibcite{Ehrenfecht2004}{12}
+\bibcite{Kent2002}{13}
+\bibcite{Kielbasa2011}{14}
+\bibcite{Maillet2014}{15}
+\bibcite{Marcais2015}{16}
+\bibcite{Marcais2011}{17}
+\bibcite{Chaisson2012}{18}
+\bibcite{Tange2011}{19}
+\bibcite{Allam2015}{20}
+\bibcite{Li2010b}{21}
+\bibcite{Koren2016}{22}

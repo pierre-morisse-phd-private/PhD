@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: HG-CoLoR.aux
+The style file: unsrt.bst
+Database file #1: ../../../Bibliographies/library.bib
+You've used 22 entries,
+            1791 wiz_defined-function locations,
+            602 strings with 7891 characters,
+and the built_in function-call counts, 5624 in all, are:
+= -- 482
+> -- 314
+< -- 1
++ -- 113
+- -- 91
+* -- 470
+:= -- 931
+add.period$ -- 66
+call.type$ -- 22
+change.case$ -- 21
+chr.to.int$ -- 0
+cite$ -- 22
+duplicate$ -- 209
+empty$ -- 509
+format.name$ -- 91
+if$ -- 1191
+int.to.chr$ -- 0
+int.to.str$ -- 22
+missing$ -- 23
+newline$ -- 113
+num.names$ -- 22
+pop$ -- 35
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 78
+stack$ -- 0
+substring$ -- 439
+swap$ -- 30
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 60
+width$ -- 24
+write$ -- 243

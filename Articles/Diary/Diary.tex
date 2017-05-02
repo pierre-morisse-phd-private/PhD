@@ -2472,7 +2472,7 @@
 		  => changer les 2 paragraphes, plus commencer le 2 par Surprisingly, however ... Yet, the simple fact of... ?
 		  + Besoin de revoir la fin de conclusion => Dire que NaS n'est vraiment mieux que HG-CoLoR que sur Yeast ?
 	
-	\item Lancement correction Coli sur machine perso, avec le nouveau linker (qui malloc le res peu à peu)
+	\item Lancement correction Coli sur machine perso, avec le nouveau linker (qui malloc le res peu à peu) => Ne change rien
 \end{itemize}
 
 \section{Jour 199}
@@ -2498,7 +2498,377 @@
 	\item Renommage des fichiers PgSAtests related
 	
 	\item Test d'installation et de run de HG-CoLoR sur machine perso => Problème : ne corrige plus M12D
-		  => 
+		  => A cause des noms de templates incorrects
+		  => Fonctionne bien		  
+		  
+	\item Déploiement HG-CoLoR (galère pour commit avec le bon compte)
+	
+	\item Résolution conflit git pour avoir un backup des fichiers de thèse => Maintenant facile, juste à add les dossiers à update peu à peu
+	
+	\item Update articles avec nouvelles valeurs pour Yeast => L'assemblage est moins bon, il faudra revoir les paramètres
+		  de Canu pour la soumission finale
+	
+	\item Resoumission article
+	
+	\item Retest de la version déployée de HG-CoLoR sur machine perso, sur M12D => Marche nickel
 \end{itemize}
+
+\section{Jour 201}
+
+\begin{itemize}
+	\item Lecture Rastack => Semble ne pas être dispo en ligne ?
+\end{itemize}
+
+\section{Jour 202}
+
+\begin{itemize}
+	\item Optimisation code HG-CoLoR :
+			- passage en vecteur plutôt qu'en tableau de structs 
+			  => donne des résultats différents d'avant : car la comparaison entre 2 seeds est booléennes, et était entière avant
+			  
+			- passage en full string c++ plutôt qu'en char*
+			  => presque bon, sûrement une erreur d'indicage qui traine
+			  => L'erreur vient de la fragmentation des SLR => Problème réglé
+\end{itemize}
+
+\section{Jour 205}
+
+\begin{itemize}
+	\item Installation et test de gkampi => permet de compter des k-mers espacés
+	
+	\item Modifications sur PgSA pour pouvoir rechercher un ensemble de k-mers dans un index
+\end{itemize}
+
+\section{Jour 206}
+
+\begin{itemize}
+	\item Test recherche k-mers espacés des LR dans les SR => Pire que les kmers contigus
+			=> Parce que gkampi n'extrait pas les k-mers espacés de la façon dont on a besoin
+	
+	\item Téléchargement de Yeast Pacbio, et lancement de HG-CoLoR => Beaucoup trop de LR, pas viable
+	
+	\item Recherche d'un autre ensemble de LR PacBio Yeast => Trouvé un jeu assez similaire au précédent
+			=> Test qualité => Meilleur que le jeu d'avant (62\% vs 45\%)
+	
+	\item Déploiement de la version c++ de HG-CoLoR sur machine Crihan + lancement test sur Yeast voir si il y a des bugs => A l'air bon
+	
+	\item Lancement HG-CoLoR sur Yeast PacBio
+\end{itemize}
+
+\section{Jour 207}
+
+\begin{itemize}
+	\item Recherche Spaced SA dans LAST => Emplacement trouvé, possible de modifier et d'extraire le résultat en fonction du pattern donné
+	
+	\item Recherche calcul SA dans GkA => Emplacement trouvé, mais impossible de chercher un ensemble de k-mers provenant d'autre reads, car les
+		  requêtes se font par position
+\end{itemize}
+
+\section{Jour 208}
+
+\begin{itemize}
+	\item Difficile d'utiliser GkA / PgSA pour la recherche de k-mers espacés avec Spaced-SA, car on ne sait pas comment
+		  sont traîtées les requêtes, contrairemet à GkA
+		  
+	\item Test recherche k-mers espacés dans SSA => De toute façon, LAST calcule en fait mal le SA, même non espacé
+
+	\item Extraction de k-mers des LR avec contrainte sur le nombre min => Donne des k-mers corrects, mais bien trop peu nombreux
+	
+	\item Test de comparaison 64-mers LR vs 64-mers SR, contigus et espacés + cumSize des k-mers communs
+		  => Pas concluant, on ne trouve pas assez de k-mers communs, et le cumSize SR vs commun est clairement dominé par les SR
+		  
+	\item Même test avec des 16 mers => Pareil, le cumSize est dominé par les SR
+	
+	\item Test de comparaison 16-mers LR vs 16-mers SR en ajoutant tous les k-mers trouvés (espacés et non espacés) dans un même fichier
+		  => On arrive à des choses un peu plus intéressantes
+\end{itemize}
+
+\section{Jour 209}
+
+\begin{itemize}
+	\item Test comparaison 32-mers LR vs 32-mers SR => Résultats pourris avec les k-mers espacés
+	
+	\item Segfault dans HG-CoLoR => Recherche de la cause
+			=> Dépassement du cota disque à un moment, lors de la filtration des alignements
+			=> Test sur le LR le plus long, voir si à cause d'un débordement de la taille de la pile => Non, passe bien
+			=> Relancement de toute la correction Yeast PacBio
+			=> EN FAIT => Beaucoup trop de LR à corriger, beaucoup trop long, pas viable
+					   => Besoin d'un nouveau jeu de LR
+					   
+	\item Lancement correction ADP1 sur machine perso voir si segfault aussi => Passe sans problèmes
+	
+	\item Début calcul union 16-mers espacés avec un gap de len variable au milieu (pour l'instant, LR dans SR)
+	
+	\item Indexation de tous les 64-mers des LR (PgSA)
+\end{itemize}
+
+\section{Jour 212}
+
+\begin{itemize}
+	\item Fin calcul union 16-mers espacés LR dans SR => On capture quasi tout !
+	
+	\item Calcul union 32-mers espacés LR dans SR 
+	
+	\item Cleanup de code final HG-CoLoR 
+			=> Gain de temps en virant les drawData
+		    => Bug incompréhensible avec le outSrc
+\end{itemize}
+
+\section{Jour 213}
+
+\begin{itemize}
+	\item Fin calcul 32-mers espacés LR dans SR => Pas terrible
+	
+	\item GkAmpi marche bien avec des k-mers espacés
+	
+	\item Quand on cherche les 16-mers de ADP1 dans l'index des 64mers, on ne trouve pas tout...
+			=> Test en construisant l'index avec les RC en plus des forward => Améliore à peine
+			=> Il y avait en fait une erreur dans le code, pas de màj de found quand on recherchait le RC
+			=> Permet de retrouver les résultats de l'index avec les RC, mais ne trouve pas tout
+			=> => => car certains reads sont plus petits que 64, on perd juste l'info de ceux là => ok 
+			=> En cherchant les 16 mers, dans un index des 16 mers => on a bien tout
+			
+	\item Besoin de rerun tous les tests faits jusqu'alors, en construisant un index des SR pour chaque k
+	
+	\item Début recalcul 16-mers espacés LR dans SR
+\end{itemize}
+
+\section{Jour 214}
+
+\begin{itemize}
+	\item Fin recalcul 16-mers espacés LR dans SR => On identifie presque tout
+	
+	\item Début recalcul 32-mers espacés LR dans SR
+	
+	\item Bug avec l'index des 64-mers des LR
+			=> Construction de l'index des 32mers
+			=> Test avec cet index => Toujours impossible
+			=> Test avec l'index des 16 mers => Toujours pas
+	
+	\item Énorme bug incompréhensible sur HG-CoLoR, on ne retrouve jamais les mêmes résutlats
+			=> Comparaison point par point avec version Crihan : Tous les fichiers sont pareil
+			=> Aucune putain de version ne donne le même putain de résultat
+			=> Pas de SLR fragmentés sur machine Crihan, wtf => en fait si en réalignant 
+			=> Pas le même résultat en lançant 2 fois de suite la correction sur les mêmes fichiers => ?????????????????????
+			=> Dû au mapping avec BLASR, qui ne sort jamais le même fichier, vu que Quorum ne sort pas les reads dans le même ordre à chaque fois
+				=> NON, les fichiers sont exactements les mêmes à chaque fois ???????????
+			=> Quand on garde les mêmes fichiers tmp et qu'on lance 2 fois de suite la gen de SLR, on obtient la meme chose
+			=> Ok, résultats différents car le fichier d'alignement n'est pas sorti toujours dans le même ordre,
+			   donc parfois problème quand on compare 2 seeds avec "<", l'un pouvant être inclus dans l'autre, et sauté ou pas, en fonction de l'ordre
+			   d'apparition (n'était pas possible avant, car on avait une comparaison en 3 valeurs, en C)
+			   => Résolu en faisant un sort du fichier d'alignement avant traitement par le linker, on obtient bien alors, toujours le même résultat
+			   => Test de cette modif sur Crihan et sur machine perso => Good
+			   => Le sort prend environ 6 secondes pour ADP1 sur Crihan, et 2 sur machine perso, correct
+			=> A pris tout l'aprem
+			  
+	\item Test en passant curback par référence, en gardant les mêmes fichiers tmp qu'un test précédent
+			=> ne marche pas du tout, se bloque et provoque des infinite runtimes
+			=> retour à la version pointeur
+	
+	\item Test index 16-mers LR en utilisant les k-mers canoniques => Toujours segfault
+\end{itemize}
+
+\section{Jour 215}
+
+\begin{itemize}
+	\item Fin recalcul 32-mers espacés LR dans les SR
+	
+	\item Test relancement HG-CoLoR sur les 200k LR PacBio => Pas assez d'espace disque ?
+		  => A cause du sort du fichier d'alignement pour avoir le même res à chaque fois
+		  => Abandon de l'idée, car peut demander bcp trop d'espace disque
+		  => Test sans le sort
+		  => Beaucoup trop long
+		  
+	\item Test en coupant le fichier en 5 => Toujours trop long, 8h pour corriger 1500 LR...
+	
+	\item Passage des derniers char* de HG-CoLoR en string => Au final, besoin de rester en char* pour
+		  pas mal de fonctions => retour à l'ancienne version
+		  => Retest => marche bien
+		  => Redéploiement sur Github + retest => Good
+\end{itemize}
+
+\section{Jour 216}
+
+\begin{itemize}
+	\item Correction bcp trop longue avec Yeast PacBio => À cause de la technologie ?
+			=> Téléchargement d'un jeu Ecoli PacBio + test
+			=> Marche bien, rapide, mais l'assemblage est pourri : À cause des LR de base ?
+
+	\item Recherche d'un nouveau jeu Yeast avec moins de LR => Semble difficile à trouver,
+		  car bcp trop de LR avec PacBio, donc traitement bcp trop long
+	
+	\item Recherche sur comment chercher k-mers SR dans LR
+\end{itemize}
+
+\section{Jour 219}
+
+\begin{itemize}
+	\item Férié
+\end{itemize}
+
+\section{Jour 220}
+
+\begin{itemize}
+	\item Test construction et recherche dans l'index des 64-mers LR sur machine perso
+			=> demande trop de RAM
+\end{itemize}
+
+\section{Jour 221}
+
+\begin{itemize}
+	\item Recalcul de l'index des 16-mers et retest sur machine Crihan => Bug
+	
+	\item Test construction et recherche dans l'index 16-mers sur machine perso => Bug aussi
+			=> Le bug vient donc bien de PgSA
+\end{itemize}
+
+\section{Jour 222}
+
+\begin{itemize}
+	\item Test sur HG-CoLoR : Des trucs dans les log errlog ? Non, good, rien à part les sorties de BLASR / PgSA
+	
+	\item Test en séparant l'index des LR en 2 => Passe bien sur les deux parties
+	
+	\item Début de calcul des 16 mers des SR dans les LR avec les 2 index
+\end{itemize}
+
+\section{Jour 223}
+
+\begin{itemize}
+	\item Fin recherche des 16-mers des SR dans les LR avec les 2 index => Suffit à identifier tous les k-mers !
+	
+	\item Avec seulement les 16-mers jusqu'à 3 trous => Seulement la moitié des k-mers
+	
+	\item Avec seulement les 16-mers jusqu'à 5 trous => Seulement 2/3 des k-mers
+\end{itemize}
+
+\section{Jour 226}
+
+\begin{itemize}
+	\item Vérification : Les k-mers des SR trouvés dans les LR sont ils bons (présents dans les SR) ? => Non, la plupart
+		  sont mauvais, normal car on introduit des dels quand on les extrait
+		  => pas viable
+		  
+	\item Test extraction 32-mers espacés des LR, et conservation de ceux avec un certain nb occ, après union des fichiers
+		  => Impossible de les unir simplement, car après extraction, chaque k-mer n'apparait plus qu'une fois
+		  => De toute façon, il semble qu'il y ait peu de k-mers communs
+		  (Ici, on voulait d'abord extraire, puis fusionner, et déduire les fréquents après)
+		  
+	\item Test lancement HG-CoLoR Yeast PacBio avec bestn = 10 => + de 1k / heure !
+\end{itemize}
+
+\section{Jour 227}
+
+\begin{itemize}
+	\item Recherche de similarités entre les 16-mers des reads longs sur un run unique de ADP1 ?
+		  => Non, on perd trop d'info par rapport au jeu complet
+		  
+	\item Recherche des 16-mers espacés fréquents (>= 5) séparément, puis union des fichiers
+		  (Ici, on prend les fréquents de chaque sous ensemble, et on fusionne après)
+		  => Donne beaucoup de 16-mers une fois l'union faite, mais peu sont présents dans les SR
+		  => Les seeds avec + de trous semblent ne pas apporter d'info en plus (pour 1111011110111101111)
+		  => Recherche des 16-mers extraits dans le gen ref : Toujours enormément de 16-mers erronés (15M),
+		  mais on capture presque tous les 16-mers du gen ref (2 tiers)
+		  
+	\item Étude du nombre de 16-mers, 32-mers, 64-mers des SR (raw / corrigés) et du gen ref 
+		  => On doit effectivement s'approcher le plus possible du nombre de k-mers du gen ref
+			
+	\item Extraction des 32-mers fréquents et contigus (=> 5) pour pouvoir les aligner sur le gen ref
+		  => -L 5 = trop violent, passage de 3M de 16-mers récupérés à 150k de 32-mers
+		  => -L 3 = Passage de 3M à 1M, les 32-mers fréquents extraits sont pour 2/3 présents correctement dans le gen ref,
+		  	  pour le reste, ils s'alignent à 95.8 \% (99.76\% en global)
+		  => Quand on passe aux k-mers espacés (même avec 1 seul gap), presque aucun ne se trouve dans le gen ref,
+		  	 mais ils s'alignent à 99.74\% en global
+		  => Quand on extrait tous les 32-mers : 98,26 \% en global
+\end{itemize}
+
+\section{Jour 228}
+
+\begin{itemize}
+	\item Poursuite études des 32-mers des LR
+		  => 32-mers des SR bruts : 99.54\%
+		  => 32-mers des SR corrigés : 99,99\%
+		  => On est donc encore bien en dessous de la qualité attendue, même en conservant uniquement les 32-mers fréquents
+		  
+	\item Test de correction des 32-mers fréquents (contigus & 1 gap au milieu) avec Quorum => Aucune amélioration
+	
+	\item Test extraction de 32-mers espacés avec des seeds random (trous parsemés) => Très mauvais résultats
+	
+	\item Test : N'utiliser qu'un trou mais le déplacer ne donne pas les mêmes résultats en fonction d'où il est placé,
+		  et semble permettre de sortir pas mal de bons k-mers
+	
+	\item Recomptage k-mers SR raw / corr + gen ref, en canonique, pour pouvoir mieux comparer aux résultats des unions
+		  => En fait, il y a il y a pile le bon nombre de k-mers dans les SR
+	
+	\item Création script pour extraire tous les k-mers avec un trou qui se déplace => Recodé en python
+	
+	\item Test extraction de tous les 32 mers espacés possibles avec un trou, -L = 4 => Fail, lancé avec les mauvais paramètres (-L 1)
+\end{itemize}
+
+\section{Jour 229}
+
+\begin{itemize}
+	\item Re-extraction de tous les 32-mers espacés possibles avec un trou => Trop peu de k-mers présents dans le gen ref,
+		  + trop mauvais qualité
+		  
+	\item Extraction avec -L 5 => Encore pire niveau identité 
+	
+	\item Début préparation diapos
+	
+	\item Extraction avec -L 10 => Trop peu de k-mers, très peu dans le gen ref + identité encore pire
+\end{itemize}
+
+\section{Jour 230}
+
+\begin{itemize}
+	\item Poursuite préparation diapos
+	
+	\item Correction d'une ereur dans le schéma du graphe hybride dans le papier HG-CoLoR
+	
+	\item Test installation GkAmpi sur Crihan
+	
+	\item Étude : Comment LoRMA adapte LoRDEC ? => Plusieurs itérations de correction avec les k-mers des LR,
+		  en ne gardant que ceux qui apparaissent un cetrain nombre de fois, et en augmentant k à chaque itération
+		  => Jouable car par de SLR synthétiques, pas possible avec HG-CoLoR
+		  
+	\item Idée : Extraire les bons 16-mers (paramètres à trouver) puis synthétiser des bons k-mers plus grands
+		  avec notre graphe ou un assembleur ?
+		  => Avec un assembleur non, à voir avec notre graphe
+		  
+	\item Idée : Extraire les k-mers fréquents après correction des SR ?
+		  => Permet de réduire les mauvais k-mers, mais réduit aussi le nombre de bons (Les rev comp ? Possible des les retrouver ?)
+		  		=> Non, pas possible de les retrouver
+		  => Mais une petite limite (4-5) permet de réduire le nombre de mauvais k-mers tout en gardant tous les bons, et peut potentiellement
+		  	 accélérer le traitement de HG-CoLoR 
+\end{itemize}
+
+\section{Jour 232}
+
+\begin{itemize}
+	\item Récupération résultats Yeast PB et test d'assemblage => Pas beaucoup mieux qu'avec MinION pour l'assemblage
+\end{itemize}
+
+\section{Jour 233}
+
+\begin{itemize}
+	\item Test d'exctration des 32-mers après assemblage des 16-mers (sans paramètre sur leur nombre) => On
+		  en obtient peu, mais ils sont d'assez bonne qualité (99.70 \%)
+		  => Besoin d'assembler from scratch avec le graphe hybride pour obtenir l'intégralité des 32-mers
+		  
+	\item Réextraction de tous les 16-mers des SR (avec un trou au milieu de taille 0-10), avec et sans limite
+		  de fréquence à 5
+		  
+	\item Réextraction de tous les 16-mers des LR (avec un trou au milieu de taille 0-10), sans limite
+		  de fréquence		  
+		  
+	\item Adaptation du code de HG-CoLoR pour permettre la génération de tous les (2*k)-mers
+			=> Après test, sort des résultats convenables, mais pas assez de k-mers (ne couvre pas tout le gen ref)
+			=> Besoin de revoir la màj de la listes des k-mers déjà visités ?
+			
+	\item Réextraction de tous les 16-mers avec un trou, en fixant le nombre min à 5 + assemblage avec Minia
+		  =>
+\end{itemize}
+
+
 
 \end{document}

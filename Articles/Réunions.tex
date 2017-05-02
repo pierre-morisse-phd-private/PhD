@@ -2435,6 +2435,246 @@ Les k-mers non-fréquents ont une identité moyenne de 80 \% => Pas concluant no
 Idée : Récupérer les "k-mers" de taille 150-250 des LR, les corriger, et utiliser ces k-mers comme des SR dans les méthodes hybrides => Pas concluant,
 beaucoup trop de k-mers, fichier de 87Go \\
 
+\section{Extraction de k-mers espacés avec gkampi + comparaison LR SR}
+
+\subsection{16-mers LR dans SR}
+
+\subsubsection{16-mers contigus}
+
+8573238 k-mers found \\
+313920678 k-mers unfound
+
+\subsubsection{gap len 1}
+
+3537597 k-mers found \\
+323058907 k-mers unfound
+
+\subsubsection{gap len 2}
+
+3322096 k-mers found \\
+325878809 k-mers unfound
+
+\subsubsection{gap len 3}
+
+3219182 k-mers found \\
+327946780 k-mers unfound
+
+\subsubsection{gap len 4}
+
+3081568 k-mers found \\
+329662684 k-mers unfound
+
+\subsubsection{gap len 5}
+
+3075200 k-mers found \\
+330996901 k-mers unfound
+
+\subsubsection{gap len 6}
+
+3096178 k-mers found \\
+332111079 k-mers unfound
+
+\subsubsection{gap len 7}
+
+3085262 k-mers found \\
+333091775 k-mers unfound
+
+\subsubsection{gap len 8}
+
+3102228 k-mers found \\
+333915939 k-mers unfound
+
+\subsubsection{gap len 9}
+
+3122053 k-mers found \\
+334636410 k-mers unfound
+
+\subsubsection{gap len 10}
+
+3116139 k-mers found \\
+335293450 k-mers unfound
+
+\subsubsection{Union (canonique)}
+
+10 859 736 k-mers espacés des LR dans les SR (cumSize : 173 755 776)\\
+\indent 12 337 928 k-mers contigus dans les SR (cumSize : 197 406 848)
+
+\subsection{16-mers SR dans LR}
+
+\subsubsection{16-mers contigus}
+
+5202616 k-mers found \\
+10795171 k-mers unfound
+
+\subsubsection{gap len 1}
+
+1966214 k-mers found \\
+14018089 k-mers unfound
+
+\subsubsection{gap len 2}
+
+1635418 k-mers found \\
+14330827 k-mers unfound
+
+\subsubsection{gap len 3}
+
+1498805 k-mers found \\
+14447032 k-mers unfound
+
+\subsubsection{gap len 4}
+
+1405066 k-mers found \\
+14520532 k-mers unfound
+
+\subsubsection{gap len 5}
+
+1385540 k-mers found \\
+14521258 k-mers unfound
+
+\subsubsection{gap len 6}
+
+1395204 k-mers found \\
+14490563 k-mers unfound
+
+\subsubsection{gap len 7}
+
+1363879 k-mers found \\
+14499390 k-mers unfound
+
+\subsubsection{gap len 8}
+
+1369351 k-mers found \\
+14474018 k-mers unfound
+
+\subsubsection{gap len 9}
+
+1385700 k-mers found \\
+14435319 k-mers unfound
+
+\subsubsection{gap len 10}
+
+1358406 k-mers found \\
+14439327 k-mers unfound
+
+\subsubsection{Union (canonique)}
+
+12 513 347 16-mers espacés des SR dans les LR (cumSize : 200 213 552) \\
+\indent 12 337 928 16-mers contigus dans les SR (cumSize : 197 406 848) \\
+
+En ne prenant les 16-mers espacés que jusque 3 trous, on identifie la moitié des bons 16-mers. \\
+En ne prenant les 16-mers espacés que jusque 5 trous, on identifie deux tiers des bons 16-mers. \\
+=> Semble utile de bien aller jusqu'à 10 trous. \\
+
+Parmi les 12M de 16-mers espacés des SR présents dans les LR, seuls 3M sont bons (bien présents dans les SR)
+
+\subsection{32-mers LR dans SR}
+
+\subsubsection{32-mers contigus}
+
+3380653 k-mers found \\
+370442403 k-mers unfound
+
+\subsubsection{gap len 1}
+
+152642 k-mers found \\
+374089616 k-mers unfound
+
+\subsubsection{gap len 2}
+
+82015 k-mers found
+374491699 k-mers unfound
+
+\subsubsection{gap len 3}
+
+42826 k-mers found \\
+374799649 k-mers unfound
+
+\subsubsection{gap len 4}
+
+10861 k-mers found \\
+375049446 k-mers unfound
+
+\subsubsection{gap len 5}
+
+2944 k-mers found \\
+375234150 k-mers unfound
+
+\subsubsection{gap len 6}
+
+938 k-mers found \\
+375378784 k-mers unfound
+
+\subsubsection{gap len 7}
+
+396 k-mers found \\
+375494047 k-mers unfound
+
+\subsubsection{gap len 8}
+
+257 k-mers found \\
+375584967 k-mers unfound
+
+\subsubsection{gap len 9}
+
+119 k-mers found \\
+375656117 k-mers unfound
+
+\subsubsection{gap len 10}
+
+59 k-mers found \\
+375709656 k-mers unfound
+
+\subsubsection{Union}
+
+3 429 798 k-mers des LR dans les SR (cumSize : 109 753 536) \\
+\indent 17 293 762 k-mers dans les SR (cumSize : 670 574 592)
+
+\subsection{32-mers SR dans LR}
+
+Pas fait, car mauvais résultats avec les 16-mers
+
+\section{Extraction de k-mers espacés avec gkampi + comparaison LR SR v. 2}
+
+\subsection{16-mers LR dans SR}
+
+10 859 736 k-mers espacés des LR dans les SR (cumSize : 173 755 776)\\
+\indent 12 337 928 k-mers contigus dans les SR (cumSize : 197 406 848)
+
+\subsection{16-mers SR dans LR}
+
+12 513 347 16-mers espacés des SR dans les LR (cumSize : 200 213 552) \\
+\indent 12 337 928 16-mers contigus dans les SR (cumSize : 197 406 848) \\
+
+Parmi les 12M de 16-mers espacés des SR présents dans les LR, seuls 3M sont bons (bien présents dans les SR)
+
+\section{Extraction et comptage de k-mers espacés, LR seuls, puis recherche / alignement sur gen ref}
+
+Étude du nombre de 16-mers : \\
+- 12M dans les SR bruts \\
+- 3.5M dans le gen ref \\
+- 7.1M dans les SR corrigés \\
+
+Étude du nombre de 32-mers : \\
+- 17M dans les SR bruts \\
+- 3.5M dans le gen ref \\
+- 7.1M dans les SR corrigés \\
+
+Étude du nombre de 64-mers : \\
+- 22M dans les SR bruts \\
+- 3.5M dans le gen ref \\
+- 7.1M dans les SR corrigés \\
+
+\subsection{16-mers}
+
+En conservant uniquement les 16-mers apparaissant au moins 5 fois, et en fusionnant les fichiers après coup, en autorisant un gap de 0 à 10 : \\
+
+1 973 967 16-mers found \\
+\indent 15 383 253 16-mers unfound
+
+
+
+
+
 
 
 
