@@ -2340,6 +2340,8 @@ Test, sur un jeu de données de 602 LR 2D ADP1 corrigés => 445 LR :
 En comparant deux jeux de reads n'étant pas related (i.e. l'un n'est pas la correction de l'autre), on ne trouve aucun read similaire
 d'un jeu à l'autre. Commet nous permet donc au moins de déterminer de quel jeu de LR raw provient un ensemble de LR corrigé
 
+\section{Distribution de fréquence des k-mers contigus des LR}
+
 \subsection{Distribution des k-mers, k = 64}
 
 Sur un jeu de données de 602 LR 2D ADP1 corrigés => 445 LR :
@@ -2435,219 +2437,413 @@ Les k-mers non-fréquents ont une identité moyenne de 80 \% => Pas concluant no
 Idée : Récupérer les "k-mers" de taille 150-250 des LR, les corriger, et utiliser ces k-mers comme des SR dans les méthodes hybrides => Pas concluant,
 beaucoup trop de k-mers, fichier de 87Go \\
 
-\section{Extraction de k-mers espacés avec gkampi + comparaison LR SR}
+\section{Comparaison k-mers espacés LR / SR, sans seuil de fréquence}
 
-\subsection{16-mers LR dans SR}
+Espacement : Un trou de longueur 0 à 10 au milieu \\
 
-\subsubsection{16-mers contigus}
+=> !!! FAUX !!! Car les k-mers espacés de GkAmpi n'étaient pas calculés en canoniques. Mais beaucoup trop de
+k-mers sans seuil de fréquence, donc résultats non corrigés
 
-8573238 k-mers found \\
-313920678 k-mers unfound
+\subsection{16-mers espacés LR dans SR (insertions)}
 
-\subsubsection{gap len 1}
+=> Ici, on supprime des nucléotides des k-mers des LR (qui sont erronés), pour mimer des corrections aux
+erreurs d'insertion. Le fichier fasta produit contient donc des k-mers corrects, dans lesquels
+les erreurs d'insertion ont été corrigées. \\
 
-3537597 k-mers found \\
-323058907 k-mers unfound
+1 577 603 428 16-mers espacés au total dans les LR \\
+\indent 10 859 736 16-mers espacés des LR dans les SR \\
+\indent 12 337 928 16-mers contigus dans les SR
 
-\subsubsection{gap len 2}
+\subsection{16-mers espacés SR dans LR (suppressions)}
 
-3322096 k-mers found \\
-325878809 k-mers unfound
+=> Ici, on supprime des nucléotides des k-mers des SR (qui sont corrects) pour mimer des erreurs de suppression.
+Le fichier fasta produit contient donc des k-mers erronés, dans lesquels ont été introduits des erreurs de suppression. \\
 
-\subsubsection{gap len 3}
+124 643 012 16-mers espacés au total dans les SR \\
+\indent 29 020 215 16-mers espacés des SR dans les LR \\
+\indent 300 818 977 16-mers contigus dans les LR \\
 
-3219182 k-mers found \\
-327946780 k-mers unfound
+Parmi les 29M de 16-mers espacés des SR présents dans les LR, seuls 5M sont bien présents dans les SR (les autres étant erronés, à cause
+de l'ajout des erreurs de suppression) => Permet de détecter les k-mers victimes d'erreurs de suppression dans les LR, mais pas de récupérer les "bons"
+k-mers originaux
 
-\subsubsection{gap len 4}
+\subsection{Union insertions / suppressions (16-mers LR dans SR U 16-mers SR dans LR)}
 
-3081568 k-mers found \\
-329662684 k-mers unfound
+34 457 930 16-mers au total \\
+\indent 10 859 736 16-mers trouvés dans les SR \\
+\indent 12 337 928 16-mers contigus dans les SR \\
 
-\subsubsection{gap len 5}
+=> Impossible de récupérer tous les 16-mers des SR, à cause des 16-mers espacés des SR trouvés dans LR,
+qui contiennent des erreurs de suppression.
 
-3075200 k-mers found \\
-330996901 k-mers unfound
+\subsection{16-mers espacés communs SR et LR}
 
-\subsubsection{gap len 6}
+1 519 006 173 16-mers espacés dans les LR \\
+\indent 113 958 391 16-mers espacés dans les SR \\
+\indent 98 487 415 16-mers communs
 
-3096178 k-mers found \\
-332111079 k-mers unfound
+\section{Comparaison k-mers espacés LR / SR, seuil de fréquence : au moins 5}
 
-\subsubsection{gap len 7}
+Espacement : Un trou de longueur 0 à 10 au milieu \\
 
-3085262 k-mers found \\
-333091775 k-mers unfound
+\subsection{16-mers espacés LR dans SR (insertions)}
 
-\subsubsection{gap len 8}
+=> Ici, on supprime des nucléotides des k-mers des LR (qui sont erronés), pour mimer des corrections aux
+erreurs d'insertion. Le fichier fasta produit contient donc des k-mers corrects, dans lesquels
+les erreurs d'insertion ont été corrigées. \\
 
-3102228 k-mers found \\
-333915939 k-mers unfound
+28 462 918 16-mers espacés au total dans les LR \\
+\indent 2 565 388 16-mers espacés des LR dans les SR \\
+\indent 3 536 267 16-mers contigus dans les SR
 
-\subsubsection{gap len 9}
+\subsection{16-mers espacés SR dans LR (suppressions)}
 
-3122053 k-mers found \\
-334636410 k-mers unfound
+=> Ici, on supprime des nucléotides des k-mers des SR (qui sont corrects) pour mimer des erreurs de suppression.
+Le fichier fasta produit contient donc des k-mers erronés, dans lesquels ont été introduits des erreurs de suppression. \\
 
-\subsubsection{gap len 10}
+34 457 718 16-mers espacés au total dans les SR \\
+\indent 2 873 925 16-mers espacés des SR dans les LR \\
+\indent 3 865 005 16-mers contigus dans les LR \\
 
-3116139 k-mers found \\
-335293450 k-mers unfound
+Parmi les 2.8M de 16-mers espacés des SR présents dans les LR, seuls 2.5M sont bien présents dans les SR (les autres étant erronés, à cause
+de l'ajout des erreurs de suppression) => Permet de détecter les k-mers victimes d'erreurs de déletion dans les LR, mais pas de récupérer les "bons"
+k-mers originaux
 
-\subsubsection{Union (canonique)}
+\subsection{Union insertions / suppressions (16-mers LR dans SR U 16-mers SR dans LR)}
 
-10 859 736 k-mers espacés des LR dans les SR (cumSize : 173 755 776)\\
-\indent 12 337 928 k-mers contigus dans les SR (cumSize : 197 406 848)
+2 903 918 16-mers au total \\
+\indent 2 565 388 16-mers trouvés dans les SR \\
+\indent 3 536 267 16-mers contigus dans les SR \\
 
-\subsection{16-mers SR dans LR}
+=> Impossible de récupérer tous les 16-mers des SR, à cause des 16-mers espacés des SR trouvés dans LR,
+qui contiennent des erreurs de suppression
 
-\subsubsection{16-mers contigus}
+\subsection{16-mers espacés communs SR et LR}
 
-5202616 k-mers found \\
-10795171 k-mers unfound
+25 019 925 16-mers espacés dans les LR \\
+\indent 31 103 857 16-mers espacés dans les SR \\
+\indent 17 879 288 16-mers communs \\
 
-\subsubsection{gap len 1}
+\section{Comparaisons k-mers, k-mers "étendus", LR dans SR (suppressions) + k-mers espacés, LR dans SR (insertions)}
 
-1966214 k-mers found \\
-14018089 k-mers unfound
+=> Ici, on insert des nucléotides en plus dans les k-mers des LR (qui sont erronés), pour mimer des corrections
+aux erreurs de suppression. Le fichier fasta produit contient donc des k-mers corrects,
+dans lesquels les erreurs de suppression ont été corrigées. \\
 
-\subsubsection{gap len 2}
+Par ex, pour le 4-mer AAAA et le seed 11011, on obtiendra les quatre 5-mers suivants : AAAAA, AACAA, AAGAA, AATAA. 
 
-1635418 k-mers found \\
-14330827 k-mers unfound
+\subsection{16-mers, un trou d'emplacement variable, freq = 5}
 
-\subsubsection{gap len 3}
+=> En ne gardant qu'un trou, mais en le déplaçant (ex : 1011, 1101), on obtient des k-mers différents \\
 
-1498805 k-mers found \\
-14447032 k-mers unfound
+243 547 316 16-mers étendus au total dans les LR \\
+\indent 2 440 934 16-mers étendus des LR dans les SR \\
+\indent 3 536 267 16-mers contigus dans les SR \\
 
-\subsubsection{gap len 4}
+En faisant l'union des 16-mers "étendus" obtenus ici, et des 16-mers espacés des LR, avec un trou de taille fixe et d'emplacement variable : \\
 
-1405066 k-mers found \\
-14520532 k-mers unfound
+\indent Trou de longueur 1 : \\
+\indent x xxx xxx 16-mers espacés / étendus dans les LR \\
+\indent 3 092 709 16-mers trouvés dans les SR \\
+\indent 3 536 267 16-mers contigus dans les SR \\
 
-\subsubsection{gap len 5}
+\indent Trou de longueur 1 à 2 : \\
+\indent x xxx xxx 16-mers espacés / étendus dans les LR \\
+\indent 3 461 162 16-mers trouvés dans les SR \\
+\indent 3 536 267 16-mers contigus dans les SR \\
 
-1385540 k-mers found \\
-14521258 k-mers unfound
+=> Tout les k-mers sont quasiment trouvés.
 
-\subsubsection{gap len 6}
+\subsection{20-mers, un trou d'emplacement variable, freq = 5}
 
-1395204 k-mers found \\
-14490563 k-mers unfound
+Trou de longueur 1 : \\
+\indent 2 728 200 20-mers trouvés dans les SR \\
+\indent 3 553 127 20-mers contigus dans les SR \\
 
-\subsubsection{gap len 7}
+Trou de longueur 1 à 2 (canonique GkAmpi) : \\
+\indent 3 117 367 20-mers trouvés dans les SR \\
+\indent 3 553 127 20-mers contigus dans les SR \\
 
-1363879 k-mers found \\
-14499390 k-mers unfound
+=> Pas trop mal
 
-\subsubsection{gap len 8}
+\subsection{Étude du GC-content des k-mers non trouvés}
 
-1369351 k-mers found \\
-14474018 k-mers unfound
+\subsubsection{16-mers}
 
-\subsubsection{gap len 9}
+=> À REFAIRE
 
-1385700 k-mers found \\
-14435319 k-mers unfound
+Trou de longueur 1 : \\
+256 201 432 16-mers non trouvés dans les SR \\
+\indent 6 509 040 16-mers majoritairement GC \\
+\indent 72 685 961 16-mers majoritairement AT \\
+\indent 177 006 431 16-mers proportions semblables \\
 
-\subsubsection{gap len 10}
+Trou de longueur 1 à 2: \\
+Blabla
 
-1358406 k-mers found \\
-14439327 k-mers unfound
+\subsection{16-mers R9.4}
 
-\subsubsection{Union (canonique)}
+\indent Trou de longueur 1 : \\
+\indent 280 061 162 16-mers espacés / étendus dans les LR \\
+\indent 2 052 493 16-mers trouvés dans les SR \\
+\indent 3 536 267 16-mers contigus dans les SR \\
 
-12 513 347 16-mers espacés des SR dans les LR (cumSize : 200 213 552) \\
-\indent 12 337 928 16-mers contigus dans les SR (cumSize : 197 406 848) \\
+\indent Trou de longueur 1 à 2 : \\
+\indent 1 158 136 516 16-mers espacés / étendus dans les LR \\
+\indent 3 127 883 16-mers trouvés dans les SR \\
+\indent 3 536 267 16-mers contigus dans les SR \\
 
-En ne prenant les 16-mers espacés que jusque 3 trous, on identifie la moitié des bons 16-mers. \\
-En ne prenant les 16-mers espacés que jusque 5 trous, on identifie deux tiers des bons 16-mers. \\
-=> Semble utile de bien aller jusqu'à 10 trous. \\
+\section{Fusion des index Jellyfish (contigus / espacés / étendus) et étude des fréquence}
 
-Parmi les 12M de 16-mers espacés des SR présents dans les LR, seuls 3M sont bons (bien présents dans les SR)
+Moins de 100 (sous-représenté) : \\
+Trop de k-mers \\
 
-\subsection{32-mers LR dans SR}
+100 à 1000 (autres) : \\
+387 380 k-mers found \\
+2 197 274 k-mers unfound \\
 
-\subsubsection{32-mers contigus}
+Plus de 1000 (sur-représentés) : \\
+109 k-mers found \\
+3 944 k-mers unfound \\
 
-3380653 k-mers found \\
-370442403 k-mers unfound
+50 à 100 : \\
+1 421 721 k-mers found \\
+28 885 718 k-mers unfound \\
 
-\subsubsection{gap len 1}
+500 à 1000 : \\
+Trop peu de k-mers \\
 
-152642 k-mers found \\
-374089616 k-mers unfound
+100 à 500 : \\
 
-\subsubsection{gap len 2}
+386 860 k-mers found \\
+2 188 436 k-mers unfound \\
 
-82015 k-mers found
-374491699 k-mers unfound
+1 à 5 : \\
+Trop de k-mers  \\
 
-\subsubsection{gap len 3}
+5 à 10 : \\
+Trop de k-mers \\
 
-42826 k-mers found \\
-374799649 k-mers unfound
+25 à 50 : \\
+Trop de k-mers \\
 
-\subsubsection{gap len 4}
+\section{Assemblage des LR bruts avec Canu}
 
-10861 k-mers found \\
-375049446 k-mers unfound
+Impossible avec les LR bruts, trop de LR de taille < 1000. \\
+=> En les filtrant, on arrive à une taille moyenne de 9 961, mais Canu ne parvient toujours pas à calculer d'overlaps
 
-\subsubsection{gap len 5}
+\section{Récupération des LR s'alignant avec "bonne" identité}
 
-2944 k-mers found \\
-375234150 k-mers unfound
+90\% => Trop peu de LR (700), ne couvrent pas tout le gen ref \\
 
-\subsubsection{gap len 6}
+70\% => 3k LR, couvrent 99,99\% du gen ref : seuil retenu \\
 
-938 k-mers found \\
-375378784 k-mers unfound
 
-\subsubsection{gap len 7}
+\subsection{Extraction des 16-mers contigus / étendus / espacés de ce sous ensemble}
 
-396 k-mers found \\
-375494047 k-mers unfound
+On extrait ensuite les 16-mers (contigus, sans seuil de fréquence) et on cherche dans les bons 16-mers des SR (nb : 3.5M) : \\
 
-\subsubsection{gap len 8}
+Avec tous les LR, 300 818 977 16-mers au total : \\
 
-257 k-mers found \\
-375584967 k-mers unfound
+3 330 620 k-mers found \\
+297 488 357 k-mers unfound \\
 
-\subsubsection{gap len 9}
+Avec seulement les LR avec une bonne identité, 25 259 623 16-mers au total (sans seuil fréquence) : \\
 
-119 k-mers found \\
-375656117 k-mers unfound
+2 907 636 k-mers found \\
+22 351 987 k-mers unfound \\
 
-\subsubsection{gap len 10}
+Avec seulement les LR avec une bonne identité, 3 576 573 16-mers au total (freq 2) : \\
 
-59 k-mers found \\
-375709656 k-mers unfound
+2 223 699 k-mers found \\ 
+1 352 874 k-mers unfound \\
 
-\subsubsection{Union}
+Avec tous les LR, freq 5, 3 865 005 16-mers au total : \\
 
-3 429 798 k-mers des LR dans les SR (cumSize : 109 753 536) \\
-\indent 17 293 762 k-mers dans les SR (cumSize : 670 574 592)
+2 535 395 k-mers found \\
+1 329 610 k-mers unfound \\
 
-\subsection{32-mers SR dans LR}
+=> Semble plus simple / plus efficace de simplement mettre un seuil sur le nombre de 16-mers, on en obtient moins au total, mais
+avec une proportion similaire bien identifiée aux SR \\
 
-Pas fait, car mauvais résultats avec les 16-mers
+=> En fait, les résultats obtenus avec les 16-mers contigus ne sont pas si mauvais. On ne s'en rendait pas compte avant car on 
+cherchait à identifier les 16-mers des LR à tous les 16-mers des SR (nb : 12M), dont ceux contenant des erreurs. En terme de 
+proportions, on parvenait donc à identifier seulement 25-50\% des 16-mers des SR, mais on identifiait bien une grande partie des bons.
+Mais dans tous les cas, espacer les k-mers permet de récupérer les infos qui manquent dans les k-mers cotigus.
 
-\section{Extraction de k-mers espacés avec gkampi + comparaison LR SR v. 2}
+\section{Extraction des MAW des SR, et éliminations des LR contenant ces MAW}
 
-\subsection{16-mers LR dans SR}
+=> Pourrait potentiellement speed-up HG-CoLoR en virant les LR de très mauvais qualité ? Notamment au niveau du mapping \\
 
-10 859 736 k-mers espacés des LR dans les SR (cumSize : 173 755 776)\\
-\indent 12 337 928 k-mers contigus dans les SR (cumSize : 197 406 848)
+=> Besoin de trouver comment rechercher ces MAW dans les LR, car on ne peut pas indexer les LR avec PgSA (pas tous de même longueur),
+et GKA / CgKA sont trop lents à construire l'index
 
-\subsection{16-mers SR dans LR}
+\section{Extraction des MAW des LR, et élimination de k-mers}
 
-12 513 347 16-mers espacés des SR dans les LR (cumSize : 200 213 552) \\
-\indent 12 337 928 16-mers contigus dans les SR (cumSize : 197 406 848) \\
+=> 13M de MAWs dans les LR \\
 
-Parmi les 12M de 16-mers espacés des SR présents dans les LR, seuls 3M sont bons (bien présents dans les SR)
+Ceux avec une haute fréquence d'apparition (1k-10k) sont assez courts, et sont des séquences apparaissant correctement
+dans les SR / le gen ref, mais n'apparaissant pas dans grand nombre de LR, probablement à cause des nombreuses erreurs \\
 
-\section{Extraction et comptage de k-mers espacés, LR seuls, puis recherche / alignement sur gen ref}
+Ceux avec une faible fréquence d'apparition (< 1k) sont plus longs et sont, pour beaucoup, des séquences n'apparaissant pas
+dans les SR / le gen ref \\
+
+=> Peut permettre de se débarrasser des mauvais k-mers, éventuellement sans utiliser les SR ? \\
+
+\subsection{MAW fréquents}
+
+Pour les tests suivants, on élimine les MAW inclus dans d'autres. meanLength d'un MAW = 8.96 , nb de MAWs : 202 373 \\
+
+En ne conservant que les k-mers contenant au moins un MAW : \\
+=> Pas concluant, presque tous les k-mers contiennent au moins un MAW \\
+
+En filtrant les MAW trop courts (len < 9) => seuls 3k mauvais k-mers des LR ne contiennent aucun MAW \\
+=> En montant la len minimale (même à 10) => trop peu de MAWs, donc trop de k-mers ne contiennent aucun MAW, et on passe à côté de beaucoup de bons k-mers \\
+
+En regardant le nombre de MAW présent dans chaque k-mer, après filtration des MAW de len < 9 : \\
+Recherche de MAW dans les 16-mers des SR : 6.8 MAW par 16-mer en moyenne \\
+Recherche de MAW dans tous les 16-mers des LR : 7.09 par 16-mer en moyenne \\
+Recherche de MAW dans les mauvais 16-mers des LR : 7.2 par 16-mer en moyenne \\
+Recherche de MAW dans les bons 16-mers des LR : 7.03 par 16-mer en moyenne \\
+=> Convserver les MAW + courts ne change rien à ces propotions \\
+
+En regardant la couverture (i.e. nombre moyen de bases couvertes) des k-mers par les MAW : Pas concluant non plus, bons et mauvais k-mers
+sont couverts à peu près pareil \\
+
+=> Malgré tout, les MAW apportent de l'information ? Car ils sont tous présents dans les SR \\
+
+=> En fait non, car les MAW fréquents sont trop courts (avLen = 8.96) et que presque tous les 8-9-10-11-mers sont présents dans le GR et dans les SR. Besoin d'identifier des choses plus grandes pour pouvoir identifier les bons / mauvais k-mers. \\
+=> Jusqu'à k = 11, au moins 61\% des k-mers possibles sont bien présents dans les SR / dans le GR \\
+
+=> Étudier les MAWs non fréquents, qui, eux, sont plus longs et ne sont pour beaucoup par présents dans les SR / le GR ? 
+
+\subsubsection{MAW non fréquents}
+
+freq <= 10 : 13M MAWs, avLen = 13.393 \\
+=> En filtrant les MAWs de len < 13 : 4M MAWs, 435 637 présents dans les SR / le gen ref \\
+=> En filtrant les MAWs de len < 14 : 1.7M MAWs, 66 357 présents dans les SR / le gen ref \\
+
+freq <= 5 : 13M MAWs, avLen = 13.4457 \\
+=> En filtrant les MAWs de len < 13 : 4M MAWs, 428 015 présents dans les SR / le gen ref \\
+=> En filtrant les MAWs de len < 14 : 1.7M MAWs, 65 307 présents dans les SR / le gen ref \\
+
+freq = 1 : 10M MAWs, avLen = 14.1485 \\
+=> En filtrant les MAWs de len < 13 : 3.6M MAWs, 357 534 présents dans les SR / le gen ref \\
+=> En filtrant les MAWS de len < 14 : 1.6M MAWs, 60 516 présents dans les SR / le gen ref \\
+=> En filtrant les MAWs de len < 15 : 788K MAWs, 9 318 présents dans les SR / le gen ref \\
+=> En filtrant les MAWs de len < 16 : 473K MAWs, 2 601 présents dans les SR / le gen ref \\
+=> En filtrant les MAWs de len < 17 : 322K MAWs, 1 483 présents dans les SR / le gen ref \\
+=> En filtrant les MAWs de len < 18 : 242K MAWs, 1 122 présents dans les SR / le gen ref \\
+=> En filtrant les MAWs de len < 20 : 147K MAWS, 743 présents dans les SR / le gen ref \\
+
+=> freq = 1 et len >= 20 semble bien. Test de différenciation bon / mauvais k-mer (ici, si un MAW est dans un k-mer, le k-mer est mauvais), avec des 32-mers,
+apparaissant au moins 2 fois : \\
+
+Ne donne toujours rien, très peu de 32-mers contiennent un MAW, + 1/4 des 32-mers contenant un MAW sont en fait présents dans les SR (probablement à cause du peu
+de MAWs de l'ensemble qui sont bien présents dans les SR) \\
+=> Test discrimination avec 1 apparition et len 13 : Permet d'écarter 2.5M de 32-mers, parmi ces 32-mers écartés, 1M sont bien dans les SR (et parmi les 1M considérés comme bons, dans lesquels on ne trouve pas de MAW, 500K sont mauvais) \\
+=> Test discrimination avec 1 apparition et len 14 : Permet d'écarter 650K de 32-mers, parmi ces 32-mers écartés, 250K sont bien dans les LR \\
+=> Test discrimination avec 1 apparition et len 15-18 : Pareil que pour len = 20, permet d'écarter trop peu de 32-mers
+
+En regardant le nombre de MAW présent par 32-mer : Impossible de différence bon / mauvais 32-mers, environ autant de MAW par 32-mer dans les bons
+que dans les mauvais 32-mers \\
+
+En regardant la couverture : Idem \\
+
+=> Semble également difficile de déduire qqch des MAWs non fréquents
+
+\section{Comparaison de LR bruts avec Compareads}
+
+=> Pour identifier les LR provenant d'une même région du GR ? \\
+
+Prodécure de test : \\
+\begin{itemize}
+	\item Sélectionner un LR
+	
+	\item Récupérer ses LR similaires
+	
+	\item Recherche les LR corrigés correspondant
+	
+	\item Vérifier qu'ils se mappent bien sur la même région du GR.
+\end{itemize}
+
+Résultat :  \\ 
+
+En demandant deux 20-mers communs => 24 LRs similaires \\
+Récupération des LRs corrigés correspondants : 11 LR récupérés, 8 se mappent effectivement à peu près sur la même région \\
+
+=> Intéressant, pour ensuite faire une étude de k-mers / MAWS / consensus ?
+
+\section{Bugs dans PgSA}
+
+Pour un index donné, quand on lance une requête avec certains reads => seg fault \\
+
+\section{Problème avec NaS}
+
+=> Pas les mêmes résultats entre les fichiers dispo sur le site du Génoscope, et ceux obtenus à la main
+
+\section{Extraction de bons k-mers, puis construction de (2*k)-mers avec DBG}
+
+\subsection{16-mers}
+
+=> Extraction de tous les 16-mers espacés possibles de LR avec un seul trou se déplaçant \\
+
+=> Même en montant très haut le seuil de fréquence nécessaire à la conservation d'un k-mer,
+beaucoup de k-mers extraits sont erronés (non présents dans le gen ref) \\
+=> Notamment, en montant à 100, on trouve plus que de k-mers erronés que de k-mers corrects \\
+
+=> Quand on essaye de construire les 32-mers à partir des 16-mers avec un DBG, on en construit
+donc beaucoup plus qu'il n'y en a dans le gen ref, et l'identité moyenne est donc très mauvaise (96\%)
+
+\subsubsection{sur le gen ref}
+
+=> Quand on extrait les 16-mers du gen ref, et que l'on essaye de construire les 32-mers,
+on en obtient un peu trop, mais une identité moyenne de 99,82\% \\
+
+=> Probablement possible de corriger le soucis en jouant avec les fréquences des k-mers extraits
+et / ou des k-mers construits
+
+\subsection{8-mers}
+
+=> Impossible de construire l'index de PgSA
+
+\section{k-mers uniques gen ref}
+
+\subsection{k-mers ADP1}
+
+\subsubsection{64}
+
+99.45 \% uniques
+
+\subsubsection{32}
+
+99.39 \% uniques
+     
+\subsubsection{24}
+
+99.37 \% uniques
+
+\subsubsection{20}
+
+99.35 uniques
+     
+\subsubsection{16}
+
+99.12 \% uniques
+
+
+\section{HALC}
+
+Sur ADP1 : Corrige plus de LR, ne prend que 4h, mais pire qualité que nous (96.61 au mieux) \\
+Sur Coli : Corrige autant de LR, ne prend que 26min, mais légèrement pire qualité que nous (99.50 au mieux) \\
+Sur Yeast : Corrige plus de LR, ne prend que 3h, mais pire qualité que nous (98.45) \\
+
+=> + dans tous les cas, HALC produit des reads soit de bonne qualité mais très courts (pour le split) 
+soit longs mais de mauvaise qualité (corrected et trim) \\
+
+=> Pas intéressant ?
+
+\section{Etude nombre k-mers SR / cor SR / gen ref}
 
 Étude du nombre de 16-mers : \\
 - 12M dans les SR bruts \\
@@ -2663,19 +2859,6 @@ Parmi les 12M de 16-mers espacés des SR présents dans les LR, seuls 3M sont bo
 - 22M dans les SR bruts \\
 - 3.5M dans le gen ref \\
 - 7.1M dans les SR corrigés \\
-
-\subsection{16-mers}
-
-En conservant uniquement les 16-mers apparaissant au moins 5 fois, et en fusionnant les fichiers après coup, en autorisant un gap de 0 à 10 : \\
-
-1 973 967 16-mers found \\
-\indent 15 383 253 16-mers unfound
-
-
-
-
-
-
 
 
 \end{document}

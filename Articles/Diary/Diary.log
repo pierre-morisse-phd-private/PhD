@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.10.19)  22 MAR 2017 16:43
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.10.19)  4 MAY 2017 14:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1281,25 +1281,54 @@ up above has ended a previous alignment prematurely,
 you're probably due for more error messages, and you
 might try typing `S' now just to see what is salvageable.
 
-[53] [54] [55] [56] (./Diary.aux) ) 
+[53] [54] [55] [56] [57] [58] [59]
+Overfull \hbox (0.20532pt too wide) in paragraph at lines 2591--2597
+[]\T1/txr/m/n/12 Segfault dans HG-CoLoR => Re-cherche de la cause => Dé-pas-se-
+ment du cota disque
+ []
+
+[60] [61]
+Overfull \hbox (1.38869pt too wide) in paragraph at lines 2676--2681
+[]\T1/txr/m/n/12 Test re-lan-ce-ment HG-CoLoR sur les 200k LR Pac-Bio => Pas as
+-sez d'es-pace disque ?
+ []
+
+[62] [63] [64]
+! Misplaced alignment tab character &.
+l.2793 ...ction des 32-mers frÃ©quents (contigus &
+                                                   1 gap au milieu) avec Quo...
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+[65]
+Overfull \hbox (5.17332pt too wide) in paragraph at lines 2848--2849
+[]\T1/txr/m/n/12 Récupération ré-sul-tats Yeast PB et test d'as-sem-blage => Pa
+s beau-coup mieux qu'avec
+ []
+
+[66] [67] (./Diary.aux) ) 
 Here is how much of TeX's memory you used:
  17943 strings out of 493029
  328222 string characters out of 6136233
- 377503 words of memory out of 5000000
+ 378503 words of memory out of 5000000
  21096 multiletter control sequences out of 15000+600000
  29760 words of font info for 61 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,6n,54p,435b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvi
-ps/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/rtxmi.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/sh
-are/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/urw/times/utmri8a.pfb>
-Output written on Diary.pdf (56 pages, 146614 bytes).
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r
+.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/t
+imes/utmri8a.pfb>
+Output written on Diary.pdf (67 pages, 167019 bytes).
 PDF statistics:
- 210 PDF objects out of 1000 (max. 8388607)
- 145 compressed objects within 2 object streams
+ 245 PDF objects out of 1000 (max. 8388607)
+ 169 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

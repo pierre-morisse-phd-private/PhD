@@ -2742,7 +2742,7 @@
 	\item Avec seulement les 16-mers jusqu'à 5 trous => Seulement 2/3 des k-mers
 \end{itemize}
 
-\section{Jour 226}
+\section{Jour 226 reprise}
 
 \begin{itemize}
 	\item Vérification : Les k-mers des SR trouvés dans les LR sont ils bons (présents dans les SR) ? => Non, la plupart
@@ -2779,13 +2779,13 @@
 		  	  pour le reste, ils s'alignent à 95.8 \% (99.76\% en global)
 		  => Quand on passe aux k-mers espacés (même avec 1 seul gap), presque aucun ne se trouve dans le gen ref,
 		  	 mais ils s'alignent à 99.74\% en global
-		  => Quand on extrait tous les 32-mers : 98,26 \% en global
+		  => Quand on extrait tous les 32-mers : 98,26 \% en global => mauvais
 \end{itemize}
 
 \section{Jour 228}
 
 \begin{itemize}
-	\item Poursuite études des 32-mers des LR
+	\item Poursuite études des 32-mers SR / LR / gen ref
 		  => 32-mers des SR bruts : 99.54\%
 		  => 32-mers des SR corrigés : 99,99\%
 		  => On est donc encore bien en dessous de la qualité attendue, même en conservant uniquement les 32-mers fréquents
@@ -2825,7 +2825,7 @@
 	
 	\item Correction d'une ereur dans le schéma du graphe hybride dans le papier HG-CoLoR
 	
-	\item Test installation GkAmpi sur Crihan
+	\item Test installation GkAmpi sur Crihan => Toujours impossible
 	
 	\item Étude : Comment LoRMA adapte LoRDEC ? => Plusieurs itérations de correction avec les k-mers des LR,
 		  en ne gardant que ceux qui apparaissent un cetrain nombre de fois, et en augmentant k à chaque itération
@@ -2842,13 +2842,13 @@
 		  	 accélérer le traitement de HG-CoLoR 
 \end{itemize}
 
-\section{Jour 232}
+\section{Jour 233}
 
 \begin{itemize}
 	\item Récupération résultats Yeast PB et test d'assemblage => Pas beaucoup mieux qu'avec MinION pour l'assemblage
 \end{itemize}
 
-\section{Jour 233}
+\section{Jour 234}
 
 \begin{itemize}
 	\item Test d'exctration des 32-mers après assemblage des 16-mers (sans paramètre sur leur nombre) => On
@@ -2861,14 +2861,588 @@
 	\item Réextraction de tous les 16-mers des LR (avec un trou au milieu de taille 0-10), sans limite
 		  de fréquence		  
 		  
-	\item Adaptation du code de HG-CoLoR pour permettre la génération de tous les (2*k)-mers
+	\item Adaptation du code de HG-CoLoR pour permettre la génération de tous les (2*k)-mers + test avec les 16-mers des SR
 			=> Après test, sort des résultats convenables, mais pas assez de k-mers (ne couvre pas tout le gen ref)
-			=> Besoin de revoir la màj de la listes des k-mers déjà visités ?
-			
-	\item Réextraction de tous les 16-mers avec un trou, en fixant le nombre min à 5 + assemblage avec Minia
-		  =>
+			=> Besoin de revoir la màj de la liste des k-mers déjà visités ?
+			=> En changeant la méthode de maj, et en prenant des k-mers des SR sans limite de fréquence : Trop de k-mers,
+			   et faible identité
+			   => Besoin de trouver un seuil ?
+			   => Test avec au moins fréquence de 3 : Mauvais résultats (trop peu de 32-mers)
+			   => Test avec une fréquence de 1, mais avec minOverlap à 14 : Trop de k-mers
+			   => Test avec une fréquence de 1, mais avec minOverlap à 15 : Trop de k-mers
+			   => Test avec au moins fréquence de 2, minOverlap à 15 : Trop peu de k-mers
+			   => Test avec au moins fréquence de 2, minOverlap à 14 : Trop peu de k-mers
+			   => En fait, minOverlap ne change rien car si on trouve un overlap de longueur n, on ne cherche plus
+			   	  avec n - 1.
 \end{itemize}
 
+\section{Jour 235}
+
+\begin{itemize}
+	\item Réextraction de tous les 16-mers avec un trou d'emplacement variable et de taille fixe, en fixant le nombre min à 5
+		  + utilisation du graphe hybride pour générer des 32-mers => Génère BEAUCOUP TROP de 32-mers, de très mauvaise qualité
+		  => Test en passant à 10 pour le nombre min : Toujours trop de k-mers, de mauvaise qualité
+		  
+	\item Intersection / union de tous les 16-mers avec trou au milieu générés au jour 233 => Ne donne rien de plus qu'avant
+		  => Pas mal de trucs en commun quand on regarde les k-mers espacés des deux côtés
+		  => Impossible de chercher dans l'index des LR => À cause de certains des SR => Purge pour pouvoir lancer les tests
+\end{itemize}
+
+\section{Jour 236}
+
+\begin{itemize}
+	\item Purge des k-mers de SR causant les seg fault à la main => bcp trop long, mais même pattern ?
+
+	\item Test extraction des 8-mers fréquents des LR, et de construction des 16-mers
+		  => Impossible d'indexer des 8-mers avec PgSA
+		  
+	\item Test reconstruction de l'index des LR à partir du fasta produit par GkAmpi,
+		  puis recherche des 16-mers de SR => Ne marche pas non plus, mais pattern de seg fault différent
+		  
+	\item Test de purge des k-mers de SR causant les seg fault directement à partir des patterns erronés
+		  => Marche nickel !
+		  
+	\item Fin des calculs intersections / unions de tous les 16-mers
+		  => On retrouve peu de SR espacés dans les LR : bizarre ?
+	
+	\item Test de HALC
+		  => Sur ADP1 : Corrige plus de LR, ne prend que 4h, mais pire qualité que nous (96.61 au mieux)
+		  => Sur Coli : Corrige autant de LR, ne prend que 26min ???, mais légèrement pire qualité que nous (99.50 au mieux)
+		  => Sur Yeast : Corrige plus de LR, ne prend que 3h, mais pire qualité que nous (98.45)
+		  => A voir sur l'assemblage
+	
+	\item Test reconstruction des 32-mers du gen ref à partir des 16-mers du genref
+		  => Produit un peu trop de 32-mers, mais de bonne qualité (99,82)
+		  => Test de correction de ces 32-mers avec Quorum : n'augmente quasi rien
+\end{itemize}
+
+\section{Jour 237}
+
+\begin{itemize}
+	\item HALC produit des reads soit très courts (pour le split, bonne qualité) soit longs (corrected et trim, mauvaise qualité)
+		  => Il est donc clairement mauvais, même si rapide
+		  
+	\item Test extraction des 16-mers contigus en montant peu à peu le seuil, pour voir à partir de quand
+		  les 16-mers extraits deviennent fiables
+		  => 20 : 50/50
+		  => 30 : 50/50
+		  => 40 : 50/50
+		  => 50 : 50/50
+		  => 60 : + de unfound
+		  => 70 : presque que des unfound
+		  => 80 : presque que des unfound
+		  => Pareil jusque 100
+		  
+	\item Test extraction des 8-mers contigus => Même avec seuil de fréquence à 1000, on ne récupère pas
+		  tous les 8-mers du gen ref, et on a encore des mauvais 8-mers
+		  
+	\item Réunion w/ GT
+	
+	\item Poursuite diapos, 75\% faits
+	
+	\item Lancement correction NaS sur Ecoli afin d'essayer de récupéter le temps d'exec
+\end{itemize}
+
+\section{Jour 240}
+
+\begin{itemize}
+	\item Extraction des 16-mers espacés (étendus) des LR et recherche dans les SR (pour catch les suppressions)
+		  => Pour les 16-mers, besoin d'extraire des (16-gap)-mers, donc difficile de mettre le gap au milieu
+		  => Résultats très différents si on met le gap plus à droite ou plus à gauche
+		  
+	\item Test génération 16-mers étendus des LR avec un trou d'emplacement variable, freq = 5
+		  => Semble permettre de catch pas mal de 16-mers des SR
+		  => L'union avec les 16-mers espacés des LR (trou 0-10 au milieu) présents dans les SR semble prometteuse
+\end{itemize}
+
+\section{Jour 241}
+
+\begin{itemize}
+	\item Surveillance exam
+	
+	\item Génération 16-mers espacés des LR avec un trou d'emplacement variable et de taille 2 ET pareil avec taille 1
+		  => Recréation des fichiers
+		  
+	\item Union 16-mers espacés taille 1 et 2 + 16-mers étendus taille 1 => Pas grand chose en plus dans les SR
+		  par rapport à la version sans 16-mers espacés taille 2
+	
+	\item Génération 16-mers étendus des LR avec un trou d'emplacement variable et de taille 2
+	
+	\item Union et recherche des deux ensembles précédents dans les SR (espacés + étendus, 1 et 2 trous)
+		  => on identifie tout, à 100k près
+\end{itemize}
+
+\section{Jour 242}
+
+\begin{itemize}
+	\item Réunion w/ TL \& AL
+	
+	\item Génération des 32-mers à partir des bons 16-mers extraits des LR
+		  => Très mauvais avec les bons 16-mers seuls
+		  => Pas mal avec les RC en plus, un peu trop de 32-mers mais bonne qualité globale (99.64 \%)
+		  
+	\item Étude du GC-content des k-mers espacés / étendus des LR avec un trou
+		  => Majoritairement : Même proportions, puis AT, puis GC, pas très intéressant ?
+		  
+	\item Recherche seuil de k à partir duquel les k-mers sont uniques dans ADP1
+		  => Pas d'énorme différence entre 16 et 64, 20 semble pas mal, bon compromis (+ 0.2 \% par rapport à 16, à 0.1 \% de 64)
+		  
+	\item Calcul des 20-mers espacés / étendus des LR (vieille chimie)
+	
+	\item Récupération de données Yeast / ADP1 de R9.4
+		  => Comparaison ADP1 old / R9.4 par qualité (36.1 \% VS 42 \%) et recherche des 16-mers (65,6 \% VS 24 \%)
+		  => Comparaison Yeast old / R9.4 par qualité : 8.2 \% vs 67.9 \%
+		  => Nouvelle chimie un peu mieux, mais probablement difficile également de faire quelque chose avec les k-mers (ADP1)
+		  => Nouvelle chimie BEAUCOUP mieux (Yeast)
+		  => Lancement HG-CoLoR sur Yeast
+\end{itemize}
+
+\section{Jour 243}
+
+\begin{itemize}
+	\item Recherche sur bug HG-CoLoR de FX
+		  => BLASR ? Non, quelques LR avec un seul seed, mais pas la plupart
+		  => Bug dans le code ? Non, marche sur ADP1
+		  => Qualité des SR ? Non, ceux de FX sont mieux
+		  => Qualité des 64-mers ? Non, ceux de FX sont mieux aussi (99.35 vs 99.98)
+		  => Nombre des 64-mers ?
+		  			=> Dans les SR corrigés : Beaucoup trop (+ de x2) dans le jeu de FX
+		  			=> Dans les SR bruts : Beaucoup trop (+ de x3) dans le jeu de FX
+		  => Trop de backtracks ? Non, la plupart des sources n'overlappent que peu / pas de k-mers
+		  => Test avec les anciens SR : Marche bien
+	
+	\item Fin calcul 20-mers espacés (2 gaps) + recherche des 20-mers espacés ADP1 (vieille chimie) dans les SR
+		  => Mauvais avec 2 trous
+		  => Recalcul car les calculs n'étaient pas faits en canonique avec GkAmpi
+		  
+	\item Tout ce qui a été fait sur les 16-mers est à refaire (car GkAmpi pas réglé en canonique)
+		  => Lancement d'un script pour faire ça pendant la nuit (LR / SR avec trou au milieu, LR avec trou qui se déplace len 1-2)	
+		  
+	\item Comparaison 16-mers contigus vieille chimie / R9.4 => R9.4 a l'air pire (en nombre de 16-mers dans les SR)
+	
+	\item Calcul des 16-mers étendus ADP1 R9.4
+\end{itemize}
+
+\section{Jour 244-246}
+
+\begin{itemize}
+	\item Recalcul des union / inter avec les ensembles de 16-mers espacés / étendus des LR (trou emplacement variable)
+		  (en calculant les 16-mers espacés canoniques avec GkAmpi)
+		  => 1 et 2 trous : Un peu mieux, mais pas beaucoup de changement 
+		  
+	\item Fin recalcul 16-mers uniquement espacés (SR / LR, trou au milieu) + reprise des résultats
+		  (en calculant les 16-mers espacés canoniques avec GkAmpi)
+		  => Très peu de différence par rapport à la version non canonique, bien qu'un peu mieux
+		  
+	\item Fin recalcul des 20-mers espacés (2 gaps, GkAmpi)
+		  => Bien mieux que les résultats d'avant (manque 400k 20-mers)
+	
+	\item Calcul des 16-mers espacés / étendus ADP1 R9.4
+		  => Après union avec les 16-mers étendus : Pire que la vieille chimie
+	
+	\item Recherche dans code source jellyfish => Impossible de modifier pour espacer les k-mers ici
+	
+	\item Solution retenue : sortir tous les k-mers espacés / étendus direct sur la sortie standard, sans les compter
+		  (donc, avec doublons), et rediriger vers l'entrée de Jellyfish pour indexer.
+		  Commande : \textsc{getSpacedKMers | jellyfish count -m 16 -s 500M -t 8 -C /dev/stdin}
+		  Une fois les index construits pour plusieurs seeds différents, merge les index et extraitre
+		  les k-mers
+		  
+	\item Extraction de tous les 16-mers espacés avec un trou taille 1 emplacement variable dans une même base Jellyfish
+		  => Même en mettant un gros -L, impossible d'extraire des bons 16-mers 
+\end{itemize}
+
+\section{Jour 247}
+
+\begin{itemize}
+	\item Récupération runtime NaS SENSITIVE sur Ecoli + lancement NaS FAST sur ADP1
+	
+	\item Exatraction des 16-mers étedus avec un trou de taille 1 emplacement variable dans une même base Jellyfish
+		  => Impossible ? Beaucoup trop de 15-mers quand on ne limite pas avec un -L
+		  => En prenant les 15-mers apparaissant un certain nombre de fois ? => Non, car en sortant les fréquents
+		  	 dans un fasta, on ne peut pas récupérer leur nombre d'occurrences
+		  => En fait, même problème en sortant les non fréquents : Besoin de lancer extend sur les reads direct
+	
+	\item Test recherche d'un set de 16-mers étendus dans l'index des SR
+		  => freq = 10 : Pas terrible 
+		  => freq = 20 : Pas mieux
+		  => Pas grand chose à déduire des fréquences pour le moment, à voir avec tous les 16-mers étendus,
+		  	 et en combinant avec les 16-mers espacés
+		  
+	\item Calcul de tous les sets de 16-mers étendus avec un trou (13h de runtime)
+			
+	\item Exctraction de tous les 16-mers espacés avec un trou taille 2 emplacement variable dans une même base Jellyfish
+		  => En combinant 1 + 2 trous : Même avec une très haute fréquence, on a toujours bcp de mauvais k-mers,
+		  	 voire même plus que de bons (pour -L 150)
+		  	 
+	\item Test assemblage (sans correction) des raw LR ADP1 avec Canu
+		  => Impossible, même après filtrage des LR courts
+	
+	\item Extraction des LR se mappant à + de 90\% de ADP1 + extraction des k-mers étendus / espacés
+		  => Bof, car les LR ne couvrent pas 100\% du génome, il y en a trop peu
+\end{itemize}
+
+\section{Jour 248}
+
+\begin{itemize}
+	\item Génération des 2 ensembles : 16-mers espacés / étendus 1 trou et 16-mers espacés / étendus 1 trou et 2 trou
+		  => Fichier de 16-mers étendus supprimé comme un GROS CONNARD :) RECALCUL
+		  => Pour avoir les fréquences de tous les 16-mers contigus / espacés / étendus possibles
+		  
+	\item Extraction des MAW des SR, pour pouvoir filter out les LR / k-mers contenant ces mots
+		  => Le programme donne les MAW pour chacune des séquences séparemment, et non pour
+		  l'ensemble des séquences
+		  => => Extraction des MAW du GR directement, pour tester
+		  => Possible de récupérer l'ensemble des MAW de tous les SR avec sort | awk, comme pour les LR
+		  => Besoin maintenant de trouver comment repérer ces MAW dans les LR, car impossible d'indexer avec PgSA (pas tous de même taille)
+		  
+	\item En fait, si on extrait les 16-mers contigus des LR, et qu'on cherche dans les bons 16-mers
+		  des SR, on trouve presque tout ce dont on a besoin (car maintenant on cherche dans les bons
+		  k-mers des SR, alors qu'avnat on cherchait aussi parmi les mauvais, donc on identifiait
+		  une faible proportion de 16-mers, mais on avait déjà les bons)
+		  
+	\item Extraction des LR se mappant à + de 70\% de ADP1 + extraction de leurs 16-mers contigus 
+		  => On perd très peu d'info par rapport à l'extraction des 16-mers contigus de tous les LR,
+		  	 mais on diminue énormément (x13) le nombre de 16-mers total (sans threshold sur la fréquence)
+		  	 => Avec threshold sur la fréquence : Pas possible au dessus de 2, réduit encore bcp le nombre
+		  	 de mauvais 16-mers, et relativement peu le nombre de bons
+		  => Intéressant de se débarrasser de ces mauvais LR, pour extraire ensuite les bons k-mers, sûrement + facile
+		  => Semble en fait revenir à peu près au même que de prendre directement les 16-mers fréquents (-L 5) de tous les LR,
+		  	 peut être même un peu moins bien
+		  => Abandon
+		  
+	\item Idée : Extraire les MAW de tous les LR, et regarder les plus récurrents, puis virer les LR / k-mers
+		  contenant ces MAW ?
+		  - Récupération des MAW read par read (avec et sans reverse) => => Étude suivant sans les reverse
+		  - Comptage / compaction et formatage FASTA des résultats => 12M de MAW
+		  - Recherche des MAW dans les SR (donne pareil dans le gen ref) en fonction de leur fréquence
+		  	=> Basse fréqence (1) : Beaucoup n'apparaissent pas dans les SR (4/5ème)
+		  	=> Haute fréquence (10k) : Apparaissent tous
+		  	=> Haute fréquence (Au moins 5k) : Apparaissent tous
+		  	=> Moyenne fréquence (1k-5k) : Apparaissent presque tous (à 65 / 100k près)
+		  	=> Moyenne-haute fréquence (1k-10k) : Aparaissent presque tous, 127 942 matches pour 65 non match
+		  		=> Car les choses apparaissant trop souvent sont très courtes
+		  		=> + intéressant de se pencher sur les choses rares, + longues
+		  	=> Récupération des 16+ puis des 16-mers des MAW basse fréquence (1) : Presque aucun n'est présent (sur 4xx k)
+		  	=> Basse fréquence (1-1k) : La moitié dans les SR / l'autre non
+		  	=> Moyenne fréquence (10-1k) : Presque tout dans les SR (1.6M vs 160k)
+		  	=> Basse fréquence (1-10) : + d'unfound que de found (2/3 unfound)
+		  	=> Basse fréquence (1-5) : + d'unfound que de found (2/3 unfound)
+		  		=> + minLen 12 + 12 mers => Pas une grande différence entre found et unfound
+		  		=> + minLen 13 + 13 mers => bcp d'unfound, mais nombre non négligeable de found
+		  		=> + minLen 14 + 14 mers => Pareil
+		  		=> Inutile d'aller au dessus
+		  		
+	\item Récupération des MAW, de longueur max 16 => seulement 500k en moins par rapport à tous les MAW
+		  => Récupération des MAW de longueur = 16 => Seulement 250k, aucun présent dans les SR
+		  => Les MAW récupérés n'ont donc aucune garantie d'être dans les SR (logique en fait)
+		  	
+	\item Correctifs mineurs sur diapos
+\end{itemize}
+
+\section{Jour 249}
+
+\begin{itemize}
+	\item Génération ensemble 16-mers espacés étendus 1 trous + ensemble 16-mers étendus un trou et 16-mers espacés 1--2 trou
+		  => Besoin de recalculer les 16-mers espacés pour avoir la même tailel de hash (1 et 2 trous)
+		  => Recalcul + génération
+		  => Refail encore lors de la fusion des fichiers de 16-mers espacés (oublié le -o ...) => => RERERERERERERERECALCUL
+		  
+	\item Idée : Déterminer les bons k-mers selon la présence de MAW dedans ? (indexer les k mers, fichier requête avec
+		  les MAW, sortir les k-mers contenant un MAW), car tous les MAW de grande fréquence sont dans les SR
+		  => Test de récupération de bons 16-mers à partir d'un MAW exemple : Beaucoup sont unfound après recherche dans les SR...
+		  => Besoin de virer les MAW inclus dans d'autres (ie si AA, AAA et AAAA, ne garder que AAAA)
+			 => Script python créé
+		  => Si on n'exige qu'un MAW par 16-mer : On ne filtre rien
+		  => En créant un PgSA par 16-mer LR : seg fault
+		  => En faisant les requêtes avec GkAmpi ? Permet de récupérer l'id du read (ici, du k-mer) dans lequel apparait une séquence (ici un MAW)
+		  	 => À voir
+		  => Recherche de MAWs dans un bon k-mer : 8 apparitions ; dans un mauvais k-mer : 1-6 apparitions (en prenant ici des k-mers des SR)
+		  => Recherche de MAWs dans un mauvais k-mer : 9 apparitions (en prenant ici un k-mer des LR)
+		  => Programmation d'un (mauvais) script pour tester les apparitions dans tous les mauvais k-mers => Pas concluant avec 1k-10k
+		  => Test avec 5k-10k : Pas concluant non plus
+		  => Retest avec 1k-10k + filtration des MAW de len < 10 : Semble permettre de filtrer certains mauvais k-mers
+			 => Le fait qu'exiger un MAW par 16-mer ne filtrait rien venait de l'absence de filtre des courts MAWS
+\end{itemize}
+
+\section{Jour 250}
+
+\begin{itemize}
+	\item Fusion des bases .jf de 16-mers enfin obtenues, avec un trou de taille fixe se déplaçant
+	
+	\item Étude des fréquences de ces 16-mers en tri en 3 paquet (sous / sur / autre représenté) + recherche
+		  dans les SR
+		  => + de 1000 (sur-représenté) : mauvais
+		  => 100 à 1000 (autres) : mauvais
+		  => - de 100 (sous représenté) : mauvais 
+		  => 50 à 100 : mauvais
+		  => Autres tests : mauvais
+		  
+	\item Programmation recherche de MAW dans les k-mers aec PgSA (on sort un k-mer s'il a un MAW)
+
+	\item En cherchant aussi les RC des MAW dans les k-mers, on couvre en fait mieux un + grand nombre de k-mers
+		  => Il y en a tout de même 220k sans aucun MAW dedans (dans les k-mers des LR non présents dans les SR)
+		  => Mais parmis les bons k-mers, on en a quand même 620k sans aucun MAW
+		  => Tous les MAW sont dans les SR, mais tous les k-mers des SR n'ont pas de MAW
+		  	 => Quand on extrait les k-mers des SR avec au moins un MAW dedans, on en obtient que 2.5M
+		  => Retest en prenant les MAW avec le switch -r 
+		  	 => Toujours presque tous présents dans les SR
+		  	 => Parmi les k-mers des LR non présents dans les SR : 3k sans aucun MAW dedans
+		  	 => Parmi les bons k-mers, 11k sans aucun MAW
+		  	 => Quand on extrait les SR avec au moins un MAW dedans : 3.51M sur 3.52M
+		  => Semble difficile de déterminer les bons k-mers à l'aide de MAW
+		  
+	\item Génération de 16-mers étendus avec 2 trous : Impossible, bcp trop long
+	
+	\item Installation de DE-Kupl => Impossible d'installer ses dépendances de merde
+\end{itemize}
+
+\section{Jour 251-253}
+
+\begin{itemize}
+	\item Lancement de HG-CoLoR param par défaut / full DBG sur ADP1
+		  => Qualité un peu moins bonne avec DBG (0.1 \%)
+		  => Assemblage très légèrement moins bon avec DBG (moins de bases du gen ref couvertes)
+		  
+	\item Lancement de HG-CoLoR param par défaut / full DBG sur Ecoli
+		  =>	 Qualité moins bonne avec DBG (0.06 \%)
+		  => Assemblage légèrement moins bon avec DBG
+		  => Plus long avec DBG
+		  
+	\item Adaptation du code PgSA pour déterminer la couverture en MAW de chaque k-mer (nb de MAW présent / k-mer)
+		  => Les bons et les mauvais ont à peu près la même couverture en MAW
+		  => Les MAW ne nous serviront pas à déterminer les bons 16-mers
+		  => Voir le nb de bases couvertes plutôt que le nombre ?
+		  
+	\item Adaptation code PgSA pour déterminer le coverage en MAW de chaque base de chaque k-mer
+		  => On a effectivement certaines bases non couvertes par les MAW (dans les bons comme dans les mauvais k-mers)
+		  => Découverte d'une erreur dans le code de filtrage de HG-CoLoR + correction
+		  => En fait, mauvais résultats si on converse les MAW trop longs (pas assez de bases des k-mers couvertes)
+		  => Retour aux MAW courts => Ne semble pas beaucoup mieux
+		  => Retour aux MAW sans élimination des MAW inclus dans d'autres => Toujours pas top, présence de MAW bcp trop courts
+		  => Filtrage de la taille à 8 (sans virer les MAW inclus) => Ne change rien
+		  => Moyenne sur le nombre de base couvertes pour avoir un coverage en X => Aucune info
+		  
+		  
+	\item Nouveaux tests sur les fréquences d'apparition des 16-mers
+		  => Difficile d'en tirer qqch
+	
+	\item Récupération runtime NaS FAST sur ADP1 + lancement NaS SENSITIVE sur ADP1
+	
+	\item Retouches correctifs article HG-CoLoR (synthetic, simulated, + conclusions avec HG > DBG)
+	
+	\item N'extraire que les k-mers fréquents des SR corrigés pour HG-CoLoR ?
+		  => Non, car les SR utilisés comme seeds peuvent contenir des mauvais k-mers
+		  
+	\item HG-CoLoR ne donne plus du tout les bons résultats... Bien moins bon assemblage...
+		  => Besoin de voir comment corriger le problème de tri version c++ ?
+		  => Lancement sur Coli avec l'ancienne version, voir si on obtient les mêmes résultats qu'avant
+		  		=> On obtient bien les mêmes résultats qu'avant
+\end{itemize}
+
+\section{Jour 254}
+
+\begin{itemize}
+	\item Fin retouches papier HG-CoLoR (synthetic / simulated / etc)
+	
+	\item HG-CoLoR redonne bien les mêmes résultats si on lance l'ancienne version avec un fichier de mapping différent,
+		  le bug vient donc de la fonction de tri ?
+		  => Lancement de nouvelle / ancienne version sur M12D et recherche pour obtenir les mêmes résultats
+		  => Les fichiers d'alignement ne sont pas les mêmes
+		  	=> Car script pas mis à jour dans l'ancienne version, retest après màj
+		  	=> Les fichiers alignements ne sont toujours pas les mêmes, mais sur la V1, même en relançant plusieurs fois, on a toujours les mêmes alignements
+		  	=> Retest sans traiter les fichiers
+		  	=> Toujours différent, mais les LR n'étaient pas formatés pareil, retest 
+		  	=> Même fichiers d'alignements
+		 => Mais les SLR obtenus ne sont toujours pas les mêmes, à cause de la fonction de tri ?
+		 => Recherche d'un LR différent et étude du fichier de partAln
+		 	=> Le fichier aln est le même, mais pas dans le même ordre
+		 	=> Le problème vient donc bien du sort
+		 	=> Difficile à régler ?
+		 => Impossible d'obtenir le même sort qu'en C, avant, il semble assez aléatoire et dépendant du pivot pour le qsort
+		  
+	\item Test modification HG-CoLoR sort 
+		  => sur la fonction <, en considérant que < et = renvoient le même res
+		  	=> Seg fault
+		  => Sur la fonction <, en prenant en compte la longueur de l'alignement en cas d'égalité de pos alignement
+		  	=> Plus de seg fault, mais toujours pas le même res
+		  => En comparrant ensuite le score en cas d'encore égalité
+			=> Toujours pas les mêmes res 2 fois de suite
+		  => En comparant ensuite les séquences en elles mêmes
+		  => On récupère bien maintenant les mêmes résultats si on lance deux fois de suite (aussi bien alignement que LR corrigés)
+		  => Lancement sur full Coli
+	
+	\item Idée : Génrer des k-mers plus grands à partir des bons MAW de taille 9
+		  => PgSA ne peut indexer des reads de cette taille		  
+		  
+	\item Bug sortie HG-CoLoR, on peut avoir plusieurs tags qui se suivent, et plusieurs séquences qui se suivent ??
+		  => correction en sortant tag ET LR sur la même ligne de code
+		  
+	\item Run Jabba avec k = 64 et k = 59 => Impossible avec 64, donc test avec 65 : marche
+		  => Voir demain si on fait 64 / 65 / 59
+		  => Semble pire avec une taille de k-mer plus petite
+\end{itemize}
+
+\section{Jour 255}
+
+\begin{itemize}
+	\item Dernières retouches HG-CoLoR
+
+	\item Réunion w/ TL \& AL => Validations modifs
+	
+	\item Récupération correction HG-CoLoR Coli avec nouvel version du tri + assemblage 
+		  => Encore des bugs de merde de mauvais format => Correction du format du fichier + de l'erreur dans le code
+		  => Assemblage : Toujours un peu moins bon, mais pas énormément, autres métriques très similaires
+		  => Recherche de nouveaux paramètres pour diminuer le nb de contigs => Pas trouvé
+		  => Comparaison avec version DBG une dernière fois => 
+		  
+	\item Recalcul des MAW sur fichier LR + RC-LR, en virant les MAW inclus + comparaison des MAW fréquents
+		  => En Forward : Plus que F sur LR seuls, mais moins que F+R sur LR seuls, même remarque sur la longueur moyenne des
+		  => En F+R : Bien plus que F+R sur LR seuls, et longueur bien meilleure
+		  => Besoin de voir si on peut récupérer des choses longues et bonnes
+		  
+	\item Recherche de correspondances k-mers / MAW
+		  => Les 64-mers (même mauvais) des LR semblent en fait contenir 100\% de bons 9-mers se chevauchant sur len = 8
+	
+	\item Problème avec le switch -C de Jellyfish
+		  => Quand on compte les 8-mers + les RC de ces 8-mers avec Jellyfish, utiliser le switch C ne donne pas le bon nombre de k-mers
+		  	 (on peut avoir un k-mer ET son RC qui apparaissent dans le fichier de dump)
+		  	 
+	\item HG-CoLoR peut séparer 2 fragments d'un même LR corrigé par plusieurs LR corrigés dans le fichier de sortie
+		  => Besoin de repasser par le système de fichiers intermédiaires pour rectifier le tir
+		  
+	\item Étude des 8-mers et 9-mers des SR / GR, afin de voir si les MAW sont vraiment intéressants
+		  SR (sans freq) => 32 896 8-mers
+		     			=> 131 064 9-mers
+		     			=> 521 533 10-mers
+
+		  SR (-L 5) => 32 896 8-mers 
+		  		   => 130 830 9-mers
+		  		   => 491 587 10-mers
+				   => 1 882 748 11-mers
+
+		  GR => 32 858 x2 = 100\% 8-mers possibles
+		     => 129 317 x2 = 98.7\% 9-mers possibles
+		     => 470 422 x 2 = 89.73\% 10-mers possibles
+		     => 1 284 353 x2 = 61.24\% 11-mers possibles
+		     => 2 785 593 x 2 = 33.2\% 12-mers possibles
+		     
+		 => k-mers bons SR = 2 x k-mers GR
+		  
+	\item Besoin de trouver des MAWs plus longs pour pouvoir en faire qqch
+		  => Jusque 10, presque tout est dans le gen ref
+		  => Aller jusque 12 apporterait de l'info
+		  => Mais il y a presque autant de 12 que de 16 mers dans le GR / SR, donc difficile
+		  => Explorer la piste des MAW non présents dans le GR / SR ?
+		  
+	\item Étude des MAW peu fréquents (donc non présents), < 100 occ : Meilleure longueur, très peu de bons, bcp de mauvais
+		  => besoin d'identifier tous les mauvais
+\end{itemize}
+
+\section{Jour 256-260}
+
+\begin{itemize}
+	\item Étude des MAW fréquents récupérés avec -r 1 dans LR + RC-LR
+		  => Plus longs que ceux récupérés sur LR seuls
+		  => On ne peut récupérer que 5k 12-mers
+		  => De plus, ils n'aparaissent pas tous dans le gen ref
+		  => Inutile de se pencher sur les MAW fréquents
+		  
+	\item Étude des MAW peu fréquents
+		  => Toutes les bonnes choses sont toujours presque identifiées au milieu de nombreuses mauvaises choses
+		  => qu'en faire ?
+		  
+	\item Étude : 2 LR se mappant au même endroit ont-ils les mêmes MAW ?
+		  => Beaucoup de MAWs communs, qq MAWs différents (sans RC les LR traités)
+		  En modifiant un peu un des LR => Des MAWs apparaissant très fréquemment
+		  
+	\item Étude : Peut-on récupérer des LR bruts similaires avec Commet ?
+		  => Test avec un LR : k = 32 => Aucun LR similaire
+		                     : k = 16 => 41 625 LR similaires
+		                     : k = 24 => Aucun LR similaire
+		                     : k = 20 => 25 LRs similaires
+		  => Vérification sur les LRs corrigés : On en récupère 11 ayant pu être corrigés, 8 se mappent effectivement à peu près sur la même zone
+		  => Peut-être prometteur ?
+		  => Test avec 3 20-mers en commun : On récupère moins de LR similaires (10), très peu de corrigés (3), et encore moins se mappant
+		  	 dans la même région (2)
+		  => Test avec 2 22-mers en commun : On ne récupère que 4 LR similaires
+		  => Semble bien de rester sur 2 20-mers communs 
+		  => En fait non ? En sélectionnant un autre LR comme LR de base, on obtient beaucoup (120) de LRs similaires
+		  	 => Peut être bien pour un gros consensus ?
+		  
+	\item Script permettant d'extraire LR par LR, les LR similaires
+		  => Bête, car tous les LR d'un ensemble ne partagent pas forcément tous 2 k-mers entre eux
+		  => Il sera donc impossible de récupérer un set de reads par région du gen ref
+		  => Sûrement possible de corriger LR par LR en récupérant les LR similaires à chaque fois, mais comment ?
+		  => Possible quand même de récupérer un set de LRs similaires pour chaque LR
+		  
+	\item Récupération du coverage en X pour HG-CoLoR, NaS, CoLoRMAP, Jabba, + ajout de la case dans tableau
+	
+	\item Test correction de k-mers des LR avec Karect (car capable de gérer les indels)
+		  => Impossible de lancer la correction, seg fault
+		  => Test avec les 64-mers plus fréquents : Déjà avec -L 2, trop peu de k-mers
+		  => Test avec les 32-mers
+		  
+	\item Correction de l'exemple OLG / DBG / HG sur les diapos de présentation
+		  + avance sur la préparation des diapos seeds linking
+		  
+	\item Run de HG-CoLoR sur Yeast beaucoup trop long sur machine perso (< 100 LR à l'heure)
+		  => Test sur ADP1 : Bien rapide comme d'habitude
+		  => À cause du trop gros fichier d'alignement ?
+		  => Rerun avec 16 threads : Toujours trop lent, 1000 LRs en 5 heures
+		  => Test sur machine Crihan : Bien + de 1k de LR corrigés / heure, on laisse
+		  
+	\item Tests sur les nombres moyens de LR similaire à un LR donné avec Commet
+		  => Très long de tout obtenir, mieux de voir ce qu'on peut faire LR par LR,
+		  	 avant de lancer l'extraction
+\end{itemize}
+
+\section{Jour 261}
+
+\begin{itemize}
+	\item Fin préparation diapos
+	
+	\item Étude des MAWs non fréquents : Ok, pas mal avec 1 apparition et len 20
+		  => Test discrimination des 32-mers (récupérer les mauvais) : Ne donne toujours rien, très peu de 32-mers contiennent un MAW
+		  	 => De plus, les 32-mers contenant un MAW (pourtant erroné) sont présents dans les SR
+		  => Test discrimination avec d'autres valeurs : Pas concluant
+		  
+	\item Test sur la couverture des 32-mers avec les MAWs non fréquents => Problème : Impossible de récupérer la couverture correctement
+		  	=> Non, on récupère bien la couverture moyenne et non le nombre de MAWs qui se mappent
+		  => bons et mauvais 32-mers ont la même couverture
+		  
+	\item Test sur le nombre de MAWs présent par 32-mers => Bon et mauvais 32-mers ont autant des MAWs
+\end{itemize}
+
+\section{Jour 262}
+
+\begin{itemize}
+	\item Étude k-mers / MAWs d'un jeu de LR similaires
+	
+	\item Idée : Récupérer les plus long sous-mots communs à deux LR similaires
+		  => Pas concluant
+		  => Extraire les k-mers de ces sous-mots n'est pas concluant non plus
+		  
+	\item HG-CoLoR va en fait être plus rapide que prévu sur Yeast
+		  
+	\item Extraction de bons k-mers en cherchant les similaires aux uns et autres autres,
+		  puis en cherchant les plus longs sous-mots communs ? Car ils permettent de capturer les indels
+		  => Sur un sous ensemble de 64-mers similaire à un 64-mer donné : Les sous-mots apparaissant souvent ne s'alignent pas,
+		  	 mais présence de beaucoup d'alignement à 100\% ou avec une seule indel
+		  => Sur tous les 64-mers apparaissant au moins 2 fois : De même, les sous-mots apparaissant souvent de s'alignent pas,
+		  	 mais présence de beaucoup d'alignement à 100\% ou avec une seule indel
+\end{itemize}
+
+\section{Jour 263}
+
+\begin{itemize}
+	\item Étude des résultats nouvelle version HG-CoLoR sur Yeast (Début : 28, 11h43 - Fin : 31, 2h41 => 63 heures)
+		  => Pareil sur les métriques / l'alignement
+		  => Sur l'assemblage : Semble un peu moins bon
+		  => Recherche de bons paramètres pour assemblage
+	
+	\item Lancement HG-CoLoR sur ADP1 et Ecoli
+\end{itemize}
 
 
 \end{document}
